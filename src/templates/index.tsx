@@ -1,18 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useTheme } from './styles/theme';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './styles/GlobalStyle';
-import theme from './styles/theme';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import ServicesSection from './components/ServicesSection';
 import Footer from './components/Footer';
 
 const App: React.FC = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  type Theme = 'light' | 'dark';
+  const [colorMode, setColorMode] = useState<Theme>('light');
+  // change theme localstorage value
+  // const toggleColorMode = () => {
+  //   if (colorMode === 'light') {
+  //     setColorMode('dark');
+  //     localStorage.setItem('color-mode', 'dark');
+  //   } else {
+  //     setColorMode('light');
+  //     localStorage.setItem('color-mode', 'light');
+  //   }
+  // };
 
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <Header />
+      <Header toggleColorMode={toggleTheme} mode={colorMode} />
       <HeroSection />
       <ServicesSection />
       <Footer />

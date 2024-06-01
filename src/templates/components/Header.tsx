@@ -12,11 +12,17 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import ToggleColorMode from './ToggleColorMode';
+import { useEffect, useState } from 'react';
+import API_HOST from '../../config';
+import { useTheme } from '../styles/theme';
+import '../css/style.css'
+import Logo from '../../assets/Static/logo.jpg'
 
 const logoStyle = {
-  width: '140px',
+  width: '50px',
   height: 'auto',
   cursor: 'pointer',
+  borderRadius: '50%',
 };
 
 interface AppAppBarProps {
@@ -25,6 +31,36 @@ interface AppAppBarProps {
 }
 
 function Header({ mode, toggleColorMode }: AppAppBarProps) {
+
+  const { theme } = useTheme();
+
+  const [username, setUsername] = useState('');
+  const [showLogin, setShowLogin] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      let token = localStorage.getItem('token');
+      if (!token) {
+        setShowLogin(true);
+        return;
+      }
+      try {
+        const response = await fetch(`${API_HOST}/api/user`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+          },
+        });
+        const data = await response.json();
+        setUsername(data.username);
+      } catch (error) {
+        console.error('There was an error!', error);
+        setShowLogin(true);
+      }
+    }
+    fetchData();
+  }, []);
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -90,41 +126,45 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
             >
               <img
                 src={
-                  'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg'
+                  // 'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg'
+                  Logo
                 }
                 style={logoStyle}
                 alt="logo of sitemark"
               />
+              <Typography
+                color="text.primary"
+                sx={{ ml: 1, }}
+              >
+                Bizztrow
+              </Typography>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <MenuItem
-                  onClick={() => scrollToSection('features')}
+                  onClick={() => window.open('/create-restaurant/', '_self')}
                   sx={{ py: '6px', px: '12px' }}
                 >
                   <Typography variant="body2" color="text.primary">
-                    Features
+                    Restorant
                   </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => scrollToSection('testimonials')}
                   sx={{ py: '6px', px: '12px' }}
-                >
-                  <Typography variant="body2" color="text.primary">
+                ><Typography variant="body2" color="text.primary">
                     Testimonials
                   </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => scrollToSection('highlights')}
                   sx={{ py: '6px', px: '12px' }}
-                >
-                  <Typography variant="body2" color="text.primary">
+                ><Typography variant="body2" color="text.primary">
                     Highlights
                   </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => scrollToSection('pricing')}
                   sx={{ py: '6px', px: '12px' }}
-                >
-                  <Typography variant="body2" color="text.primary">
+                ><Typography variant="body2" color="text.primary">
                     Pricing
                   </Typography>
                 </MenuItem>
@@ -145,7 +185,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                 alignItems: 'center',
               }}
             >
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+              <ToggleColorMode mode={theme.colors.white == '#fff' ? 'light' : 'dark'} toggleColorMode={toggleColorMode} />
               {/* <Button
                 color="primary"
                 variant="text"
@@ -156,18 +196,35 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
               >
                 Sign in
               </Button> */}
-              <Button
+              {showLogin ? <Button
                 color="primary"
                 variant="contained"
                 size="small"
                 component="a"
-                href="/signup/"
+                href="/login/"
                 target="_blank"
+                style={{
+                  backgroundColor: theme.colors.primary,
+                }}
+                className='login-button'
               >
-                <AccountCircle />
-              </Button>
+                Login
+              </Button> : <Button
+                color="primary"
+                variant="contained"
+                size="small"
+                component="a"
+                href="/app/"
+                target="_blank"
+                style={{
+                  backgroundColor: theme.colors.primary,
+                }}
+                className='login-button'
+              >
+                {username}
+              </Button>}
             </Box>
-            <Box sx={{ display: { sm: '', md: 'none' } }}>
+            <Box sx={{ display: { sm: '', md: 'none' } }} >
               <Button
                 variant="text"
                 color="primary"
@@ -177,13 +234,14 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
               >
                 <MenuIcon />
               </Button>
-              <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
+              <Drawer anchor="right" open={open} onClose={toggleDrawer(false)} >
                 <Box
                   sx={{
                     minWidth: '60dvw',
                     p: 2,
-                    backgroundColor: 'background.paper',
+                    backgroundColor: theme.colors.white,
                     flexGrow: 1,
+                    color: theme.colors.text,
                   }}
                 >
                   <Box
@@ -194,10 +252,10 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                       flexGrow: 1,
                     }}
                   >
-                    <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+                    <ToggleColorMode mode={theme.colors.white == '#fff' ? 'light' : 'dark'} toggleColorMode={toggleColorMode} />
                   </Box>
-                  <MenuItem onClick={() => scrollToSection('features')}>
-                    Features
+                  <MenuItem onClick={() => window.open('/create-restaurant/', '_self')}>
+                    Restotant
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('testimonials')}>
                     Testimonials
@@ -211,28 +269,28 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
                   <Divider />
                   <MenuItem>
-                    <Button
+                    {showLogin ? <Button
                       color="primary"
                       variant="contained"
+                      size="small"
                       component="a"
-                      href="/material-ui/getting-started/templates/sign-up/"
+                      href="/login/"
                       target="_blank"
-                      sx={{ width: '100%' }}
+                      className='login-button'
                     >
-                      Sign up
-                    </Button>
-                  </MenuItem>
-                  <MenuItem>
-                    <Button
+                      Login
+                    </Button> : <Button
                       color="primary"
-                      variant="outlined"
+                      variant="contained"
+                      size="small"
                       component="a"
-                      href="/material-ui/getting-started/templates/sign-in/"
+                      href="/app/"
                       target="_blank"
-                      sx={{ width: '100%' }}
+                      style={{ display: 'flex', gap: 0.5, justifyContent: 'space-between' }}
+                      className='login-button'
                     >
-                      Sign in
-                    </Button>
+                      <AccountCircle />{username}
+                    </Button>}
                   </MenuItem>
                 </Box>
               </Drawer>

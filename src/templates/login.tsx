@@ -4,10 +4,10 @@ import { Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { styled } from 'styled-components';
 import { motion } from 'framer-motion';
 import { useSpring, animated } from 'react-spring';
-import theme from './styles/theme';
 import Alert from '@mui/material/Alert';
 import React from 'react';
-// import { HistoryRouter } from 'react-router-dom';
+import { useTheme } from './styles/theme';
+import API_HOST from '../config';
 
 const StyledGrid = styled(Grid)`
   display: flex;
@@ -15,14 +15,57 @@ const StyledGrid = styled(Grid)`
   align-items: center;
   height: 100vh;
   width: 60%;
-  background-color: #f5f5f5;
-  border-radius: 19px;
-
+  background-color: ${({ theme }) => theme.colors.background};
   @media (max-width: 768px) {
     width: 100%;
   }
 `;
+
+const StyledGrid_2 = styled(Grid)`
+    background-color: ${({ theme }) => theme.colors.background};
+    border-radius: 19px;
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+    `;
+
+const StyledPaper = styled(Paper)`
+padding: 16px;
+margin-top: 50px;
+background-color: 'transparent';
+boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+              borderRadius: '10px',
+`;
+
+const StyledButton = styled(Button)`
+margin-top: 16px;
+background-color: ${({ theme }) => theme.colors.primary};
+&:hover {
+  background-color: ${({ theme }) => theme.colors.secondary};
+}
+`;
+
+const StyledForm = styled.form`
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+background-color: ${({ theme }) => theme.colors.white};
+color: ${({ theme }) => theme.colors.black};
+`;
+
+const StyledDiv = styled.div`
+margin: 0;
+background-color: ${({ theme }) => theme.colors.background};
+color: ${({ theme }) => theme.colors.tex};
+padding: 0;
+min-height: 100vh;
+padding: 20px;
+`;
+
+
 const Signup = () => {
+    const { theme, toggleTheme } = useTheme();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -51,7 +94,7 @@ const Signup = () => {
         if (aleart_message) {
             const timer = setTimeout(() => {
                 setAleartMessage(''); // clear the aleart_message
-            }, 3000);
+            }, 2200);
             return () => clearTimeout(timer);
         }
     }, [aleart_message]);
@@ -63,7 +106,7 @@ const Signup = () => {
             return;
         }
         try {
-            const response = await axios.post('http://127.0.0.1:8000/signup/', {
+            const response = await axios.post(`${API_HOST}/signup/`, {
                 username: username,
                 email: email,
                 password: password
@@ -87,94 +130,115 @@ const Signup = () => {
         visible: { opacity: 1 },
     };
     return (
-        <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={formVariants}
-            transition={{ duration: 0.5 }}
-            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '95vh', width: '100%' }}
-        >
-            <StyledGrid container component="div">
-                <Grid item xs={12} sm={8} md={6}>
-                    <StyledPaper>
-                        <Typography
-                            style={{ fontSize: '1.5rem', marginBottom: '16px' }}
-                            variant="h3"
-                            align="center"
-                        >
-                            Bizztrow
-                        </Typography>
-                        {/* <Typography style={{ fontSize: '0.9rem' }} variant="h4" align="center">
-                            Sign Up
-                        </Typography> */}
-                        <form onSubmit={handleSubmit}>
-                            <AnimatedTextField
-                                fullWidth
-                                margin="normal"
-                                size="small"
-                                type="text"
-                                placeholder="Name"
-                                onChange={e => setUsername(e.target.value)}
-                                style={useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 200 })}
-                            />
-                            <AnimatedTextField
-                                fullWidth
-                                margin="normal"
-                                size="small"
-                                type="email"
-                                placeholder="Email"
-                                onChange={e => setEmail(e.target.value)}
-                                style={useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 400 })}
-                            />
-                            <AnimatedTextField
-                                fullWidth
-                                margin="normal"
-                                size="small"
-                                type="password"
-                                placeholder="Password"
-                                onChange={e => setPassword(e.target.value)}
-                                style={useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 600, padding: '0px' })}
-                            />
-                            <StyledButton
-                                fullWidth
-                                type="submit"
-                                variant="contained"
-                                color="primary"
+        <StyledDiv>
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={formVariants}
+                transition={{ duration: 0.5 }}
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '80vh',
+                    width: '100%',
+                    backgroundColor: theme.colors.background,
+                    margin: 0,
+                    padding: 0
+                }}
+            >
+                <StyledGrid container >
+                    <StyledGrid_2 item xs={12} sm={8} md={6}>
+                        <StyledPaper style={{
+                            backgroundColor: theme.colors.white,
+                            boxShadow: theme.colors.shadow,
+                        }}>
+                            <Typography
+                                style={{ fontSize: '1.5rem', marginBottom: '16px', backgroundColor: theme.colors.white, color: theme.colors.primary }}
+                                variant="h3"
+                                align="center"
                             >
-                                Sign Up
-                            </StyledButton>
-                        </form>
-                    </StyledPaper>
-                </Grid>
-            </StyledGrid>
-            {is_alart_visible && <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#f5f5f5',
-                position: 'absolute',
-                borderRadius: '10px',
-            }}><Alert severity="error">{aleart_message}</Alert></div>}
-        </motion.div>
+                                Bizztrow
+                            </Typography>
+                            <StyledForm onSubmit={handleSubmit}>
+                                <AnimatedTextField
+                                    fullWidth
+                                    margin="normal"
+                                    size="small"
+                                    type="text"
+                                    placeholder="Name"
+                                    onChange={e => setUsername(e.target.value)}
+                                    style={{
+                                        ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 200 }),
+                                        backgroundColor: 'white',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${theme.colors.primary}`,
+                                    }}
+                                />
+                                <AnimatedTextField
+                                    fullWidth
+                                    margin="normal"
+                                    size="small"
+                                    type="email"
+                                    placeholder="Email"
+                                    onChange={e => setEmail(e.target.value)}
+                                    style={{
+                                        ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 400 }),
+                                        backgroundColor: 'white',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${theme.colors.primary}`,
+                                    }}
+                                />
+                                <AnimatedTextField
+                                    fullWidth
+                                    margin="normal"
+                                    size="small"
+                                    type="password"
+                                    placeholder="Password"
+                                    onChange={e => setPassword(e.target.value)}
+                                    style={{
+                                        ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 600 }),
+                                        backgroundColor: 'white',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${theme.colors.primary}`,
+                                    }}
+                                />
+                                <StyledButton
+                                    fullWidth
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    Sign Up
+                                </StyledButton>
+                            </StyledForm>
+                            {/* link to login */}
+                            <Typography
+                                style={{ fontSize: '0.9rem', marginTop: '16px', color: theme.colors.primary }}
+                                variant="h4"
+                                align="center"
+                            >
+                                Already have an account? <a href="/login">Login</a>
+                            </Typography>
+                        </StyledPaper>
+                    </StyledGrid_2>
+                </StyledGrid>
+                {is_alart_visible && <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#f5f5f5',
+                    position: 'absolute',
+                    borderRadius: '10px',
+                }}><Alert severity="error">{aleart_message}</Alert></div>}
+            </motion.div>
+        </StyledDiv>
     );
 }
-const StyledPaper = styled(Paper)`
-  padding: 16px;
-  margin-top: 50px;
-  background-color: ${theme.colors.background};
-  boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                borderRadius: '10px',
-`;
 
-const StyledButton = styled(Button)`
-  margin-top: 16px;
-  background-color: #3f51b5;
-  &:hover {
-    background-color: #303f9f;
-  }
-`;
 
 const Login = () => {
+    const { theme, toggleTheme } = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     // const history = useHistory();
@@ -193,7 +257,7 @@ const Login = () => {
             setAlartVisible(true);
             const timer = setTimeout(() => {
                 setAlartVisible(false);
-            }, 3000);
+            }, 2200);
             return () => clearTimeout(timer);
         }
     }, [aleart_message]);
@@ -214,7 +278,7 @@ const Login = () => {
             return;
         }
         try {
-            const response = await axios.post('http://127.0.0.1:8000/login/', {
+            const response = await axios.post(`${API_HOST}/login/`, {
                 email: email,
                 password: password
             });
@@ -238,66 +302,88 @@ const Login = () => {
     };
 
     return (
-        <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={formVariants}
-            transition={{ duration: 0.5 }}
-            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '95vh', width: '100%' }}
-        >
-            <StyledGrid container component="div">
-                <Grid item xs={12} sm={8} md={6}>
-                    <StyledPaper>
-                        <Typography
-                            style={{ fontSize: '1.5rem', marginBottom: '16px' }}
-                            variant="h3"
-                            align="center"
-                        >
-                            Bizztrow
-                        </Typography>
-                        {/* <Typography style={{ fontSize: '0.9rem' }} variant="h4" align="center">
+        <StyledDiv>
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={formVariants}
+                transition={{ duration: 0.5 }}
+                style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', width: '100%', backgroundColor: theme.colors.background, margin: 0, padding: 0 }}
+            ><StyledGrid container >
+                    <Grid item xs={12} sm={8} md={6}>
+                        <StyledPaper style={{
+                            backgroundColor: theme.colors.white,
+                            boxShadow: theme.colors.shadow,
+                        }}>
+                            <Typography
+                                style={{ fontSize: '1.5rem', marginBottom: '16px', backgroundColor: theme.colors.white, color: theme.colors.primary }}
+                                variant="h3"
+                                align="center"
+                            >
+                                Bizztrow
+                            </Typography>
+                            {/* <Typography style={{ fontSize: '0.9rem' }} variant="h4" align="center">
                             Login
                         </Typography> */}
-                        <form onSubmit={handleSubmit}>
-                            <AnimatedTextField
-                                fullWidth
-                                margin="normal"
-                                size="small"
-                                type="email"
-                                placeholder="Email"
-                                onChange={e => setEmail(e.target.value)}
-                                style={useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 200 })}
-                            />
-                            <AnimatedTextField
-                                fullWidth
-                                margin="normal"
-                                size="small"
-                                type="password"
-                                placeholder="Password"
-                                onChange={e => setPassword(e.target.value)}
-                                style={useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 400 })}
-                            />
-                            <StyledButton
-                                fullWidth
-                                type="submit"
-                                variant="contained"
-                                color="primary"
+                            <StyledForm onSubmit={handleSubmit}>
+                                <AnimatedTextField
+                                    fullWidth
+                                    margin="normal"
+                                    size="small"
+                                    type="email"
+                                    placeholder="Email"
+                                    onChange={e => setEmail(e.target.value)}
+                                    style={{
+                                        ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 200 }),
+                                        backgroundColor: 'white',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${theme.colors.primary}`,
+                                    }}
+                                />
+                                <AnimatedTextField
+                                    fullWidth
+                                    margin="normal"
+                                    size="small"
+                                    type="password"
+                                    placeholder="Password"
+                                    onChange={e => setPassword(e.target.value)}
+                                    style={{
+                                        ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 500 }),
+                                        backgroundColor: 'white',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${theme.colors.primary}`,
+                                    }}
+                                />
+                                <StyledButton
+                                    fullWidth
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    Login
+                                </StyledButton>
+                            </StyledForm>
+                            {/* link to login */}
+                            <Typography
+                                style={{ fontSize: '0.9rem', marginTop: '16px', color: theme.colors.primary }}
+                                variant="h4"
+                                align="center"
                             >
-                                Login
-                            </StyledButton>
-                        </form>
-                    </StyledPaper>
-                </Grid>
-            </StyledGrid>
-            {is_alart_visible && <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#f5f5f5',
-                position: 'absolute',
-                borderRadius: '10px',
-            }}><Alert severity="error">{aleart_message}</Alert></div>}
-        </motion.div>
+                                Don't have an account? <a href="/signup">Sign Up</a>
+                            </Typography>
+                        </StyledPaper>
+                    </Grid>
+                </StyledGrid>
+                {is_alart_visible && <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#f5f5f5',
+                    position: 'absolute',
+                    borderRadius: '10px',
+                }}><Alert severity="error">{aleart_message}</Alert></div>}
+            </motion.div>
+        </StyledDiv>
     );
 };
 

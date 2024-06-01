@@ -1,7 +1,85 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { Button, List, ListItem, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import API_HOST from "../config";
+import DeleteIcon from '@mui/icons-material/Delete';
+import Divider from '@mui/material/Divider';
+import { useTheme } from './styles/theme';
+import Chip from '@mui/material/Chip';
+import Accordion from '@mui/material/Accordion';
+import AccordionActions from '@mui/material/AccordionActions';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SimpleAlert from "./components/succes_aleart";
 
+
+const Wrapper = styled.div`
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  padding: 20px;
+  min-height: 100vh;
+`;
+
+const StyledButton = styled(Button)`
+  color: ${({ theme }) => theme.colors.white};
+  margin: 10px 0;
+  background-color: ${({ theme }) => theme.colors.secondary};
+  width: 70%;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+const StyledListItem = styled(ListItem)`
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  padding: 10px 15px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.text}20;
+  &:last-child {
+    border-bottom: none;
+  }
+  fontfamily: 'Roboto', sans-serif;
+`;
+
+const StyledGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+    `;
+
+const SectionStyled = styled.section`
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: ${({ theme }) => theme.colors.white};
+    box-shadow: ${({ theme }) => theme.colors.shadow};
+    border-radius: 5px;
+    `;
+
+const StyledSelect = styled(Select)`
+    width: 90vw;
+    margin-bottom: 10px;
+    padding-left: 40px;
+    font-size: 1rem;
+    @media (max-width: 1268px) {
+        width: 80vw;
+    }
+    @media (max-width: 768px) {
+        width: 70vw;
+    }
+    `;
 function create_table() {
+    const { theme } = useTheme();
+    // alert stats
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState('Loading...');
+    const [type, setType] = useState('success');
 
     const { id } = useParams();
     // const location = useLocation();
@@ -13,7 +91,7 @@ function create_table() {
     const [manu_category, setManu_category] = useState('');
     const [manu_description, setManu_description] = useState('');
     const [manu_category_list, setManu_category_list] = useState([]);
-    let url = 'http://127.0.0.1:8000'
+    let url = API_HOST
 
     useEffect(() => {
         let yourToken = localStorage.getItem('token');
@@ -35,13 +113,19 @@ function create_table() {
                     setManu_category_list(data.results);
                 }
             })
-            .catch((error) => console.error('Error:', error));
+            .catch((error) => {
+                // alert
+                setMessage('Something went wrong, Try again later.');
+                setType('error');
+                setOpen(true);
+
+            });
     }
         , []);
-    function submit_manu_category(e: any) {
-        e.preventDefault();
+    function submit_manu_category() {
+        // e.preventDefault();
         let yourToken = localStorage.getItem('token');
-        fetch('http://127.0.0.1:8000/categories/', {
+        fetch(url + '/categories/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,33 +138,66 @@ function create_table() {
             }),
         })
             .then(response => response.json())
-            .then(data => alert(data))
-            .catch((error) => console.error('Error:', error));
+            .then(data => {
+                setManu_category_list([...manu_category_list, data])
+                // reset form
+                setManu_category('');
+                setManu_description('');
+                // alert
+                setMessage('Category Created Successfully');
+                setType('success');
+                setOpen(true);
+            })
+            .catch((error) => {
+                // alert
+                setMessage('Failed to create Category, Try again later.');
+                setType('error');
+                setOpen(true);
+            });
     }
 
-    function delete_category(category_id: any) {
-        let yourToken = localStorage.getItem('token');
-        fetch(url + '/categories/', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${yourToken}`
-            },
-            body: JSON.stringify({ category_id: category_id })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => console.error('Error:', error));
+    async function delete_category(category_id: any) {
+        if (await window.confirm("Are you sure you want to delete this category?")) {
+            let yourToken = localStorage.getItem('token');
+
+            fetch(url + '/categories/', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${yourToken}`
+                },
+                body: JSON.stringify({ category_id: category_id })
+            })
+                .then(response => {
+                    if (!response.ok) { // or check for response.status === 200 for strictly checking for 200
+                        alert('Failed to delete category, Try again later.')
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    let new_manu_category_list = manu_category_list.filter((category: any) => category.id !== category_id)
+                    setManu_category_list(new_manu_category_list)
+                    // alert
+                    setMessage('Category Deleted Successfully');
+                    setType('success');
+                    setOpen(true);
+                })
+                .catch((error) => {
+                    // alert
+                    setMessage('Failed to delete category, Try again later.');
+                    setType('error');
+                    setOpen(true);
+                });
+        }
     }
 
     const [tabel_name, setTable_name] = useState('');
     const [table_number, setTable_number] = useState('');
     const [table_capacity, setTable_capacity] = useState('');
     // table form submit
-    function submit_form(e: any) {
-        e.preventDefault();
+    function submit_form() {
         let yourToken = localStorage.getItem('token');
-        fetch('http://127.0.0.1:8000/tables/', {
+        fetch(url + '/tables/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -93,31 +210,67 @@ function create_table() {
                 restorant: id
             }),
         })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => console.error('Error:', error));
+            .then(response => {
+                if (!response.ok) {
+                    alert('Failed to create Table, Try again later.')
+                }
+                return response.json();
+            })
+            .then(data => {
+                settables([...tables, data])
+                // reset form
+                setTable_name('');
+                setTable_number('');
+                setTable_capacity('');
+                // alert
+                setMessage('Table Created Successfully');
+                setType('success');
+                setOpen(true);
+            })
+            .catch((error) => {
+                // alert
+                setMessage('Failed to create Table, Try again later.');
+                setType('error');
+                setOpen(true);
+            });
     }
     // delete table
     function delete_table(table_id: any) {
         let yourToken = localStorage.getItem('token');
-        fetch('http://127.0.0.1:8000/tables', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${yourToken}`
-            },
-            body: JSON.stringify({
-                'table_id': table_id
+        if (window.confirm("Are you sure you want to delete this table?")) {
+            fetch(url + '/tables', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${yourToken}`
+                },
+                body: JSON.stringify({
+                    'table_id': table_id
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => console.error('Error:', error));
+                .then(response => response.json())
+                .then(() => {
+                    // remove table from list
+                    let new_tables = tables.filter((table: any) => table.id !== table_id)
+                    settables(new_tables)
+                    // alert
+                    setMessage('Table Deleted Successfully');
+                    setType('success');
+                    setOpen(true);
+                })
+                .catch((error) => {
+                    // alert
+                    setMessage('Failed to delete Table, Try again later.');
+                    setType('error');
+                    setOpen(true);
+                });
+        }
+
     }
 
     useEffect(() => {
         let yourToken = localStorage.getItem('token');
-        fetch('http://127.0.0.1:8000/tables?restorant_id=' + id, {
+        fetch(url + '/tables?restorant_id=' + id, {
             method: 'GET',
             headers: {
                 'Authorization': `Token ${yourToken}`
@@ -150,8 +303,8 @@ function create_table() {
     function open_creat_manu_item_form() {
         setShowmanuitemform(!showmanuitemform);
     }
-    function submit_manu_item(e: any) {
-        e.preventDefault();
+    function submit_manu_item() {
+        // e.preventDefault();
         const form_data_manu_item = new FormData();
         form_data_manu_item.append('name', manu_item);
         form_data_manu_item.append('price', manu_price);
@@ -159,10 +312,6 @@ function create_table() {
         form_data_manu_item.append('category', manu_category_1);
         if (item_image) {
             form_data_manu_item.append('image', item_image);
-        }
-        else {
-            alert('Select Image')
-            return
         }
         if (manu_category_1 === '') {
             alert('Select Category')
@@ -177,24 +326,52 @@ function create_table() {
             body: form_data_manu_item
         })
             .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => console.error('Error:', error));
+            .then(data => {
+                // alert
+                setMessage('Item Created Successfully');
+                setType('success');
+                setOpen(true);
+                setManu_item('');
+                setManu_price('');
+                setManu_description('');
+            })
+            .catch((error) => {
+                // alert
+                setMessage('Failed to create Item, Try again later.');
+                setType('error');
+                setOpen(true);
+            });
     }
     function delete_manu_item(item_id: any) {
         let yourToken = localStorage.getItem('token');
-        fetch(url + '/items', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${yourToken}`
-            },
-            body: JSON.stringify({
-                item_id: item_id
+
+        if (window.confirm("Are you sure you want to delete this item?")) {
+            fetch(url + '/items', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${yourToken}`
+                },
+                body: JSON.stringify({
+                    item_id: item_id
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    // alert
+                    setMessage('Item Deleted Successfully');
+                    setType('success');
+                    setOpen(true);
+
+                })
+                .catch((error) => {
+                    // alert
+                    setMessage('Failed to delete Item, Try again later.');
+                    setType('error');
+                    setOpen(true);
+
+                });
+        }
     }
     useEffect(() => {
         let yourToken = localStorage.getItem('token');
@@ -211,100 +388,155 @@ function create_table() {
             .catch((error) => console.error('Error:', error));
     }, [manu_category_2]);
     return (
-        <div style={{ backgroundColor: 'black', color: 'white' }} id="wrapper">
-            <h1>Restorant</h1>
-            <h3>Details</h3>
-            {/* <ul>
-                <li>Name: {created_by.name}</li>
-                <li>Email: {created_by.email}</li>
-                <li>Phone: {created_by.phone}</li>
-                <li>{id}</li>
-            </ul> */}
-            <ul>
-                {/* tables */}
-                {tables && tables.map((table: any) => (
-                    <div key={table.id}><button onClick={() => navigate(`/table/${table.id}`, { state: { table } })}>
-                        <li >{table.name}</li>
-                        <li key={table.id}>{table.capacity}</li>
-                        {/* delete button */}
-                    </button>
-                        <button onClick={() => { delete_table(table.id) }}>Delete</button></div>
-                ))}
-                <button onClick={open_creat_table_form}>
-                    create table
-                </button>
-                {showform ? (
-                    <form onSubmit={submit_form}>
-                        <input type="text" placeholder="Table Name" value={tabel_name} onChange={e => setTable_name(e.target.value)} />
-                        <input type="text" placeholder="Table Number" value={table_number} onChange={e => setTable_number(e.target.value)} />
-                        <input type="text" placeholder="Table Capacity" value={table_capacity} onChange={e => setTable_capacity(e.target.value)} />
-                        <button>Submit</button>
-                    </form>
-                ) : null}
-            </ul>
-            {/* manu category list */}
-            <h2>Manu Category</h2>
-            {manu_category_list && manu_category_list.map((category: any) => (
-                // <button key={category.id} onClick={() => navigate(`/manu/${category.id}`, { state: { category } })}>
-                <div key={category.id}><li >{category.name}</li>
-                    <li >{category.description}</li>
-                    {/* delete button */}
-                    <button onClick={() => { delete_category(category.id) }}>Delete
-                    </button></div>
-                // </button>
-            ))}
-            {/* create manu */}
-            <button onClick={open_creat_manu_form}>
-                create manu
-            </button>
-            {showmanuform ? (
-                <form onSubmit={submit_manu_category}>
-                    <input type="text" placeholder="Manu Category" value={manu_category} onChange={e => setManu_category(e.target.value)} />
-                    <input type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} />
-                    <button>Submit</button>
-                </form>
-            ) : null}
+        <Wrapper id="wrapper">
+            <h1>Manage Restorant</h1>
+            <SectionStyled>
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                    >
+                        <span style={{
+                            fontFamily: 'Roboto, sans-serif',
 
-            {/* items */}
-            <h2>Manu Items</h2>
-            <select name="manu_category" id="manu_category" value={manu_category_2} onChange={e => setManu_category_2(e.target.value)}>
-                <option value="">Select Category</option>
-                {manu_category_list && manu_category_list.map((category: any) => (
-                    <option key={category.id} value={category.id}>{category.name}</option>
-                ))}
-            </select>
-            {manu_items && manu_items.map((item: any) => (
-                <div key={item.id}>
-                    <li >{item.name}</li>
-                    <li key={item.id}>{item.price}</li>
-                    <li key={item.id}>{item.description}</li>
-                    {/* delete button */}
-                    <button onClick={() => { delete_manu_item(item.id) }}>Delete</button>
-                </div>
-            ))}
-            {/* create manu item */}
-            <button onClick={open_creat_manu_item_form}>
-                create manu item
-            </button>
-            {showmanuitemform ? (
-                <form onSubmit={submit_manu_item}>
-                    <section>
-                        <select name="manu_category" id="manu_category" value={manu_category_1} onChange={e => setManu_category_1(e.target.value)}>
-                            <option value="">Select Category</option>
+                        }}>Table's</span>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <List>
+                            <StyledGrid>
+                                {tables && tables.map((table: any) => (
+                                    <div key={table.id}>
+                                        <StyledButton onClick={() => navigate(`/table/${table.id}`, { state: { table } })}>
+                                            <StyledListItem>{table.name}</StyledListItem>
+                                            <StyledListItem key={table.id}>{table.capacity}</StyledListItem>
+                                        </StyledButton>
+                                        <StyledButton onClick={() => { delete_table(table.id) }} startIcon={<DeleteIcon />}>Delete</StyledButton>
+                                    </div>
+                                ))}
+                            </StyledGrid>
+                            <StyledButton onClick={open_creat_table_form}>create table</StyledButton>
+                            {showform ? (
+                                <form >
+                                    <TextField type="text" placeholder="Table Name" value={tabel_name} onChange={e => setTable_name(e.target.value)} style={{
+                                        marginRight: '10px'
+                                    }} />
+                                    <TextField type="text" placeholder="Table Number" value={table_number} onChange={e => setTable_number(e.target.value)} />
+                                    <TextField type="text" placeholder="Table Capacity" value={table_capacity} onChange={e => setTable_capacity(e.target.value)} />
+                                    <StyledButton onClick={submit_form}>Submit</StyledButton>
+                                </form>
+                            ) : null}
+                        </List>
+                    </AccordionDetails>
+                </Accordion>
+            </SectionStyled>
+            <SectionStyled>
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                    >
+                        <span style={{
+                            fontFamily: 'Roboto, sans-serif',
+
+                        }}>Manu's</span>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <StyledGrid>
                             {manu_category_list && manu_category_list.map((category: any) => (
-                                <option key={category.id} value={category.id}>{category.name}</option>
+                                <div key={category.id} style={{
+                                    fontFamily: 'Roboto, sans-serif',
+                                }}>
+                                    <StyledListItem>{category.name}</StyledListItem>
+                                    <StyledListItem>{category.description}</StyledListItem>
+                                    <StyledButton onClick={() => { delete_category(category.id) }} startIcon={<DeleteIcon />}>Delete</StyledButton>
+                                </div>
                             ))}
-                        </select>
-                    </section>
-                    <input type="text" placeholder="Manu Item" value={manu_item} onChange={e => setManu_item(e.target.value)} />
-                    <input type="text" placeholder="Manu Price" value={manu_price} onChange={e => setManu_price(e.target.value)} />
-                    <input type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} />
-                    <input type="file" onChange={e => setItem_image(e.target.files ? e.target.files[0] : null)} />
-                    <button>Submit</button>
-                </form>
-            ) : null}
-
-        </div>
+                        </StyledGrid>
+                        <StyledButton onClick={open_creat_manu_form} style={{
+                            backgroundColor: theme.colors.secondary,
+                            color: theme.colors.white,
+                        }}>create manu</StyledButton>
+                        {showmanuform ? (
+                            <form >
+                                <TextField type="text" placeholder="Manu Category" value={manu_category} onChange={e => setManu_category(e.target.value)} style={{}} />
+                                <TextField type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} />
+                                <StyledButton onClick={submit_manu_category}>Submit</StyledButton>
+                            </form>
+                        ) : null}
+                    </AccordionDetails>
+                </Accordion>
+            </SectionStyled>
+            <SectionStyled>
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                    >
+                        <span style={{
+                            fontFamily: 'Roboto, sans-serif',
+                        }}>Manu Items</span>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <FormControl>
+                            <InputLabel id="manu_category_label">Select Category</InputLabel>
+                            <StyledSelect name="manu_category" id="manu_category" value={manu_category_2} onChange={e => setManu_category_2(e.target.value)}>
+                                <MenuItem value=""><em>None</em></MenuItem>
+                                {manu_category_list && manu_category_list.map((category: any) => (
+                                    <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
+                                ))}
+                            </StyledSelect>
+                        </FormControl>
+                        {manu_items && manu_items.map((item: any) => (
+                            <div key={item.id} style={{
+                                fontFamily: 'Roboto, sans-serif',
+                            }}>
+                                <StyledListItem>{item.name}</StyledListItem>
+                                <StyledListItem key={item.id}>{item.price}</StyledListItem>
+                                <StyledListItem key={item.id}>{item.description}</StyledListItem>
+                                <StyledButton onClick={() => { delete_manu_item(item.id) }} startIcon={<DeleteIcon />}>Delete</StyledButton>
+                            </div>
+                        ))}
+                        <StyledButton onClick={open_creat_manu_item_form}>create manu item</StyledButton>
+                        {showmanuitemform ? (
+                            <form>
+                                <FormControl>
+                                    <InputLabel id="manu_category_label_1">Select Category</InputLabel>
+                                    <Select name="manu_category" id="manu_category" value={manu_category_1} onChange={e => setManu_category_1(e.target.value)} style={{
+                                        width: '50vw',
+                                    }}>
+                                        <MenuItem value=""><em>None</em></MenuItem>
+                                        {manu_category_list && manu_category_list.map((category: any) => (
+                                            <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <TextField type="text" placeholder="Manu Item" value={manu_item} onChange={e => setManu_item(e.target.value)} />
+                                <TextField type="text" placeholder="Manu Price" value={manu_price} onChange={e => setManu_price(e.target.value)} />
+                                <TextField type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} />
+                                <input type="file" onChange={e => setItem_image(e.target.files ? e.target.files[0] : null)} />
+                                <StyledButton onClick={submit_manu_item}>Submit</StyledButton>
+                            </form>
+                        ) : null}
+                    </AccordionDetails>
+                </Accordion>
+            </SectionStyled>
+            <div style={{
+                position: 'fixed',
+                bottom: 10,
+                right: 10,
+                minWidth: '300px',
+            }}>
+                <SimpleAlert
+                    message={message}
+                    type={type}
+                    open={open}
+                    setOpen={setOpen}
+                />
+            </div>
+        </Wrapper>
     )
 }
 

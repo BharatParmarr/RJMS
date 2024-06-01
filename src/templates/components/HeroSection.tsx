@@ -1,13 +1,17 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useTheme } from '../styles/theme';
 import { motion } from 'framer-motion';
 import heroImage from '../../assets/Static/home.png';
 import { useSpring, animated } from 'react-spring';
+// import { theme } from 'antd';
 // import google fonts
+import '../css/style.css'
 
 const HeroSection: React.FC = () => {
     const props = useSpring({ opacity: 1, from: { opacity: 0 } });
     const [props_2, set] = useSpring(() => ({ scale: 1 }));
+    const { theme, toggleTheme } = useTheme();
     return (
         <HeroContainer>
             <HeroContent
@@ -16,7 +20,7 @@ const HeroSection: React.FC = () => {
                 transition={{ duration: 0.7 }}
             >
                 <StyledDiv>
-                    <animated.div style={{ ...props, width: '45.0%' }}>
+                    <animated.div style={{ ...props }} className='Main_continer_div'>
                         <animated.div
                             style={{
                                 ...props_2,
@@ -32,7 +36,7 @@ const HeroSection: React.FC = () => {
                         </Subtitle>
                         {/* call to action */}
                         <button style={{
-                            backgroundColor: '#f1356d',
+                            backgroundColor: theme.colors.primary,
                             color: 'white',
                             padding: '10px 20px',
                             border: 'none',
@@ -55,7 +59,14 @@ const HeroContainer = styled.section`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  height: 110vh;
+  height: 100vh;
+  padding-top: 10vh;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        padding-top: 7.3vh;
+        height: 90;
+    }
 `;
 
 const HeroContent = styled(motion.div)`
@@ -66,6 +77,9 @@ const HeroContent = styled(motion.div)`
 const Title = styled.h1`
   font-size: 2.4rem;
   margin-bottom: 1rem;
+  font-weight: 600;
+  font-family: "Oswald", sans-serif;
+  color: ${({ theme }) => theme.colors.secondary};
 `;
 
 // const typing = keyframes`
@@ -91,6 +105,14 @@ const Title = styled.h1`
 
 const Subtitle = styled.h2`
     font-size: 1.29rem;
+    font-family: "Edu TAS Beginner", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
     `;
 
 const StyledDiv = styled.div`
@@ -109,6 +131,7 @@ const ImageContainer = styled.div`
 
     @media (max-width: 768px) {
         width: 95%;
+        margin-top: 2rem;
     }
     `;
 

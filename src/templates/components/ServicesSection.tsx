@@ -42,6 +42,14 @@ const ServicesSection: React.FC = () => {
                             <ServiceTitle>Analytics</ServiceTitle>
                             <ServiceDescription>Get insights into your restaurant's performance with detailed reports.</ServiceDescription>
                         </Service>
+                        <Service>
+                            <ServiceTitle>Table Management</ServiceTitle>
+                            <ServiceDescription>Efficiently manage table bookings and customer seating.</ServiceDescription>
+                        </Service>
+                        <Service>
+                            <ServiceTitle>Table Management</ServiceTitle>
+                            <ServiceDescription>Efficiently manage table bookings and customer seating.</ServiceDescription>
+                        </Service>
                     </ServicesContainer>
                 </motion.div>
             </div>
@@ -52,29 +60,35 @@ const ServicesSection: React.FC = () => {
 const ServicesContainer = styled.section`
   display: flex;
   justify-content: space-around;
-  padding: 4rem 2rem;
+  padding: 2.4rem 2rem;
   background-color: ${({ theme }) => theme.colors.background};
+  flex-wrap: wrap;
 
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
-  
+ 
   }
 `;
 
 const Service = styled.div`
-  flex: 1;
-  max-width: 300px;
-  text-align: center;
-  shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    max-width: 269px;
+    text-align: center;
+    shadow: ${({ theme }) => theme.colors.shadow};
     padding: 2rem;
     border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: ${({ theme }) => theme.colors.objectBg};
     transition: transform 0.3s;
     &:hover {
-        transform: translateY(-10px);
+    transform: translateY(-10px);
     }
+    margin: 1rem;
+    min-height: 200px;
+    @media (max-width: 768px) {
+        margin: 1rem 0;
+    }
+
 `;
 
 const ServiceTitle = styled.h2`

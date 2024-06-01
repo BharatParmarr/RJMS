@@ -1,0 +1,11 @@
+.login-button:hover {
+  color: #00ff08;
+}
+.Main_continer_div {
+    width: 45%;
+}
+@media (max-width: 768px) {
+    .Main_continer_div {
+        width: 95.0%;
+    }
+}
