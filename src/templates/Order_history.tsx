@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import API_HOST from "../config";
 import styled from 'styled-components';
 import { Button, List, ListItem, ListItemText, Typography } from '@mui/material';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { useTheme } from './styles/theme';
-import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -14,15 +11,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Accordion from '@mui/material/Accordion';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
-import React from "react";
-import useWebSocket from 'react-use-websocket';
 import { motion, AnimatePresence } from 'framer-motion';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import Fab from '@mui/material/Fab';
-import FullScreenDialog from "./order_modify_dilog";
-import HistoryIcon from '@mui/icons-material/History';
-import AnimatedButton from "./components/Button_with_animationText";
+import { useParams } from "react-router-dom";
+import React from "react";
 
 
 const Container = styled.div`
@@ -34,15 +26,6 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
 `;
-
-// const OrderDetails = styled.div`
-//   width: 80%;
-//   margin: 20px auto;
-//   border-radius: 5px;
-//   background-color: ${({ theme }) => theme.colors.background};
-//   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-//   padding: 20px;
-// `;
 
 const OrderList = styled(List)`
   background-color: transparent; /* Remove unnecessary background color */
@@ -94,14 +77,6 @@ const Tablesnamelist = styled.div`
     }
 `;
 
-// const OrderTitle = styled(Typography)`
-//   font-weight: bold;
-//   margin-bottom: 10px;
-// `;
-
-// const OrderStatus = styled(Typography)`
-//   color: ${({ theme }) => theme.colors.primary}; /* Dynamic color based on status */
-// `;
 const StyledButton = styled.div`
     display: flex;
     justify-content: center;
@@ -121,35 +96,14 @@ const StyledButton = styled.div`
         `;
 
 
-const StyledDiv1 = styled.div`
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 10px;
-        flex-direction: column;
-        background-color: ${({ theme }) => theme.colors.white};
-        border-radius: 5px;
-        padding: 10px;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s;
-        `
 
-const StyledFab = styled(Fab)`
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: 'white';
-    font-family: 'Roboto, sans-serif';
-    text-transform: capitalize;
-    z-index: 1000;
-`
-
-
-function Orders_view() {
+export default function Order_history() {
     const { theme } = useTheme();
-    let url = API_HOST
+    const [open, setOpen] = useState(false)
+    const { id } = useParams<{ id: string }>();
 
+    const [page, setPage] = useState(1)
+    const [empty, setEmpty] = useState(false)
     type Order = {
         table: number,
         status: boolean,
@@ -185,188 +139,46 @@ function Orders_view() {
         }
     }, [selectedTable, orders]);
 
-    const { id } = useParams<{ id: string }>();
-    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://192.168.181.82:8000/ws/orders/' + id + '/');
-
-    // modify order
-    const [showOrderModify, setShowOrderModify] = useState(false);
-    const [orderDetails, setOrderDetails] = useState<any>(null);
-    const [orderId, setOrderId] = useState<number | null>(null);
-    function ModifiyOrder(order_id: number, order_details: any) {
-        setOrderId(order_id);
-        setOrderDetails(order_details);
-        setShowOrderModify(true);
-    };
-    // count the number of items
-
+    const ref = React.useRef(0);
     useEffect(() => {
-        if (lastMessage !== null) {
-            const data = JSON.parse(lastMessage.data);
-            // console.log(data);
-            if (data.incomplete_orders) {
-                setOrders(oldOrders => [...(oldOrders || []), ...data.incomplete_orders]);
+        console.log('render', ref.current);
+        setOpen(true)
+        if (empty || ref.current === 0) {
+            ref.current += 1;
+            return
+        }
+        fetch(API_HOST + '/api/orderHistory?page=' + page + '&' + 'restorant_id=' + id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + localStorage.getItem('token')
+            }
+        }).then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    setEmpty(true)
+                    return
+                }
+                setOrders([...orders, ...data])
+                // set tables, table ids
                 let tables_list_id: number[] = []
                 let tables_list: string[] = []
-                data.incomplete_orders.map((order: any) => {
-                    if (!tables_list_id.includes(order.table_id)) {
+                data.map((order: any) => {
+                    if (!tables_list_id.includes(order.table_id) && !tablesId.includes(order.table_id)) {
                         tables_list_id.push(order.table_id);
                         tables_list.push(order.table_name);
                     }
                 });
                 setTables(oldTables => [...oldTables, ...tables_list]);
                 setTablesId(oldTablesId => [...oldTablesId, ...tables_list_id]);
-            } else if (data.order) {
-                setOrders(oldOrders => [data.order, ...(oldOrders || [])]);
-                if (data.order.table_id) {
-                    if (!tablesId.includes(data.order.table_id)) {
-                        setTablesId(oldTablesId => [...oldTablesId, data.order.table_id]);
-                        setTables(oldTables => [...oldTables, data.order.table_name]);
-                    }
-                }
-            }
-        }
-    }, [lastMessage]);
-
-
-    const markAsPartial = (orderId: number, itemId: number) => {
-        handleOpen()
-        // Create a new copy of the orders
-        let newOrders = orders ? [...orders] : [];
-        let orderIndex = newOrders.findIndex((order: any) => order.id === orderId);
-        let itemIndex = newOrders[orderIndex].order_details.findIndex((item: any) => item.id === itemId);
-
-        // Send a get request to the server
-        fetch(url + '/order_complete/order_details/' + itemId, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Token ${localStorage.getItem('token')} `
-            },
-        })
-            .then(response => {
-                if (response.status === 200) {
-                    return response.json();
-                } else {
-                    throw new Error('Something went wrong');
-                }
+            }).catch((error) => {
+                console.error('Error:', error);
+            }).finally(() => {
+                setOpen(false)
             })
-            .then(data => {
-                console.log(data);
-                if (itemIndex !== -1) {
-                    // Change the status of the item
-                    newOrders[orderIndex].order_details[itemIndex].is_completed = !newOrders[orderIndex].order_details[itemIndex].is_completed;
-                    // Update the state with the new orders
-                    setOrders(newOrders);
-                }
-            })
-            .catch((error) => console.error('Error:', error))
-            .finally(() => {
-                handleClose()
-            });
-    }
-
-    function markAsComplete(orderId: number) {
-        handleOpen()
-        // Create a new copy of the orders
-        let newOrders = orders ? [...orders] : [];
-        let orderIndex = newOrders.findIndex((order: any) => order.id === orderId);
-
-        // Send a get request to the server
-        fetch(url + '/order_complete/record_payment/' + orderId, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Token ${localStorage.getItem('token')} `
-            },
-        })
-            .then(response => {
-                if (response.status === 200) {
-                    return response.json();
-                } else {
-                    throw new Error('Something went wrong');
-                }
-            })
-            .then(data => {
-                console.log(data);
-                if (orderIndex !== -1) {
-                    // Change the status of the order
-                    newOrders[orderIndex].status = !newOrders[orderIndex].status;
-                    // Update the state with the new orders
-                    // remove the order from the list 
-                    newOrders.splice(orderIndex, 1);
-                    setOrders(newOrders);
-                }
-            })
-            .catch((error) => console.error('Error:', error))
-            .finally(() => {
-                handleClose()
-            });
-    }
-
-    // Modify order
-    function Modify_order(order_id: number, order_details: any) {
-        // handleOpen()
-        // Create a new copy of the orders
-        let newOrders = orders ? [...orders] : [];
-        let orderIndex = newOrders.findIndex((order: any) => order.id === order_id);
-        let newOrderdetails = newOrders[orderIndex].order_details;
-        newOrders[orderIndex].order_details = newOrderdetails.map((item: any) => {
-            let newItem = order_details.items.find((newItem: any) => newItem.item === item.item);
-            if (newItem) {
-                return {
-                    ...item,
-                    quantity: newItem.quantity,
-                }
-            } else {
-                return item;
-            }
-        });
-
-
-        // set new data to old data
-        let data = {
-            'incomplete_orders': newOrders
-        }
-
-        setOrders(data.incomplete_orders);
-        let tables_list_id: number[] = []
-        let tables_list: string[] = []
-        data.incomplete_orders.map((order: any) => {
-            if (!tables_list_id.includes(order.table_id)) {
-                tables_list_id.push(order.table_id);
-                tables_list.push(order.table_name);
-            }
-        });
-        setTables(tables_list);
-        setTablesId(tables_list_id);
-
-
-    }
-
-    const [open, setOpen] = React.useState(false);
-    const handleClose = () => {
-        setOpen(false);
-    };
-    const handleOpen = () => {
-        setOpen(true);
-    };
-    const navigate = useNavigate();
-
+    }, [page])
     return (
         <Container>
-            <StyledFab onClick={() => {
-                navigate('/order-history/' + id)
-            }} variant="extended" style={{
-                backgroundColor: theme.colors.primary,
-                color: 'white',
-                fontFamily: 'Roboto, sans-serif',
-                textTransform: 'capitalize',
-                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-                position: 'fixed',
-                bottom: '20px',
-                right: '20px',
-            }}>
-                <HistoryIcon sx={{ mr: 1 }} />
-                <span className="text">Orders History</span>
-            </StyledFab>
             <Tablesnamelist>
                 {tables && tables.map((table: any) => (
                     <StyledButton onClick={() => setSelectedTable(tablesId[tables.indexOf(table)])} key={table} style={{
@@ -388,7 +200,6 @@ function Orders_view() {
                     id="panel1-header"
                     style={{
                         backgroundColor: theme.colors.primary + '35',
-
                         fontFamily: 'Roboto, sans-serif',
                         borderRadius: '5px 5px 0 0',
                     }}
@@ -423,6 +234,9 @@ function Orders_view() {
                                         <ListItemText primary={order.table_name} secondary={new Date(order.order_time).toLocaleString('en-US', {
                                             hour: 'numeric',
                                             minute: 'numeric',
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric'
                                         })} secondaryTypographyProps={{
                                             style: {
                                                 color: theme.colors.gray
@@ -440,7 +254,7 @@ function Orders_view() {
                                 <OrderList>
                                     {order.order_details.filter((item) => item.is_completed).map((item) => (
                                         <OrderListItem key={item.id}>
-                                            <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total} `}
+                                            <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total}`}
                                                 primaryTypographyProps={{
                                                     style: {
                                                         textDecoration: 'line-through'
@@ -463,37 +277,27 @@ function Orders_view() {
                                     {order.order_details.filter((item) => !item.is_completed).map((item) => (
                                         <motion.div key={item.id} style={{ width: '100%' }} exit={{ opacity: 0, scale: 0 }}>
                                             <OrderListItem key={item.id}>
-                                                <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total} `} secondaryTypographyProps={{
+                                                <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total}`} secondaryTypographyProps={{
                                                     style: {
                                                         color: theme.colors.gray
                                                     }
                                                 }} />
-                                                <Button variant="outlined" color="primary" onClick={() => markAsPartial(order.id, item.id)} startIcon={<TaskAltIcon />} ></Button>
                                             </OrderListItem>
                                         </motion.div>
                                     ))}
                                 </OrderList>
-                                <StyledDiv1>
-                                    <Fab variant="extended" onClick={() => ModifiyOrder(order.id, order.order_details)} style={{
-                                        backgroundColor: theme.colors.primary,
-                                        color: theme.colors.white,
-                                        fontFamily: 'Roboto, sans-serif',
-                                        textTransform: 'capitalize',
-                                        marginTop: '10px',
-                                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-                                    }}><EditNoteIcon sx={{ mr: 1 }} />
-                                        Modify
-                                    </Fab>
-                                    <Button variant="outlined" color="primary" onClick={() => markAsComplete(order.id)} startIcon={<CurrencyRupeeIcon />} style={{
-                                        marginTop: '10px',
-                                        fontFamily: 'Roboto, sans-serif',
-                                        textTransform: 'capitalize',
-                                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-
-                                    }}>Record Payment</Button>
-                                </StyledDiv1>
                             </motion.div>
                         ))}
+                        {/* load more button */}
+                        {empty ? <Typography variant="h3" style={{ fontSize: '1.5rem' }}>No more orders</Typography> : <StyledButton onClick={() => setPage(page + 1)} style={{
+                            border: '2px solid ' + theme.colors.white,
+                        }}>
+                            <Button variant="text" style={{
+                                fontSize: '0.75rem', color: theme.colors.text,
+                                fontFamily: 'Roboto, sans-serif',
+                                textTransform: 'capitalize',
+                            }} >Load More</Button>
+                        </StyledButton>}
                     </AnimatePresence>
                 </AccordionDetails>
             </Accordion>
@@ -502,16 +306,6 @@ function Orders_view() {
                 open={open}
             ><CircularProgress color="inherit" />
             </Backdrop>
-            <FullScreenDialog
-                open={showOrderModify}
-                setOpen={setShowOrderModify}
-                orderId={orderId}
-                id={id}
-                order={orderDetails}
-                modify_order={Modify_order}
-            />
         </Container>
     )
 }
-
-export default Orders_view

@@ -23,6 +23,8 @@ import Restorant_table_list from "./templates/Restoratn_table_list";
 import Orders_view from "./templates/Orders_view";
 import { ThemeProvider } from "./templates/styles/theme";
 import Data_anlysis from "./templates/data_anlysis";
+import Pricing_page from "./templates/pricing_page";
+import Order_history from "./templates/Order_history";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -40,6 +42,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/restorant/Manage/:id" element={<Create_table />} />
           <Route path="/Orders_view/:id" element={<Orders_view />} />
           <Route path="/data-analysis/:id" element={<Data_anlysis />} />
+          <Route path="/pricing" element={<Pricing_page />} />
+          <Route path="/order-history/:id" element={<Order_history />} />
         </Routes>
       </Router>
     </ThemeProvider>

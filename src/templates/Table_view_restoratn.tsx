@@ -84,8 +84,7 @@ function Restroant_view() {
                 }
             })
             .catch((error) => console.error('Error:', error));
-    }
-        , []);
+    }, []);
 
 
     // useEffect(() => {

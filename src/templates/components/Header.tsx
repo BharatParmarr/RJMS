@@ -162,7 +162,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   </Typography>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => scrollToSection('pricing')}
+                  onClick={() => window.open('/pricing/', '_self')}
                   sx={{ py: '6px', px: '12px' }}
                 ><Typography variant="body2" color="text.primary">
                     Pricing
