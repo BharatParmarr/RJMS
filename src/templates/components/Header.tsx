@@ -148,10 +148,10 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   </Typography>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => scrollToSection('testimonials')}
+                  onClick={() => window.open('/hostels', '_self')}
                   sx={{ py: '6px', px: '12px' }}
                 ><Typography variant="body2" color="text.primary">
-                    Testimonials
+                    Hostels
                   </Typography>
                 </MenuItem>
                 <MenuItem
@@ -257,8 +257,8 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   <MenuItem onClick={() => window.open('/create-restaurant/', '_self')}>
                     Restotant
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('testimonials')}>
-                    Testimonials
+                  <MenuItem onClick={() => window.open('/hostels', '_self')}>
+                    Hostels
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('highlights')}>
                     Highlights

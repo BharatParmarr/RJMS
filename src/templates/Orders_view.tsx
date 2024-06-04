@@ -274,7 +274,7 @@ function Orders_view() {
         fetch(url + '/order_complete/record_payment/' + orderId, {
             method: 'GET',
             headers: {
-                'Authorization': `Token ${localStorage.getItem('token')} `
+                'Authorization': `Token ${localStorage.getItem('token')}`
             },
         })
             .then(response => {

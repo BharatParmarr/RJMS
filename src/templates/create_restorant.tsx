@@ -280,12 +280,13 @@ export default function Create_restorant() {
                             value={name}
                             style={{
                                 ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 200 }),
-                                backgroundColor: 'white',
+                                backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
                                 width: '97%',
                                 marginLeft: '1.5%',
                             }}
+                            sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
                         <AnimatedTextField
                             fullWidth
@@ -296,12 +297,13 @@ export default function Create_restorant() {
                             onChange={e => setAddress(e.target.value)}
                             style={{
                                 ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 400 }),
-                                backgroundColor: 'white',
+                                backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
                                 width: '97%',
                                 marginLeft: '1.5%',
                             }}
+                            sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
                         <AnimatedTextField
                             fullWidth
@@ -313,12 +315,13 @@ export default function Create_restorant() {
                             onChange={e => setPhone(e.target.value)}
                             style={{
                                 ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 600 }),
-                                backgroundColor: 'white',
+                                backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
                                 width: '97%',
                                 marginLeft: '1.5%',
                             }}
+                            sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
                         <AnimatedTextField
                             fullWidth
@@ -329,12 +332,13 @@ export default function Create_restorant() {
                             onChange={e => setEmail(e.target.value)}
                             style={{
                                 ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 800 }),
-                                backgroundColor: 'white',
+                                backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
                                 width: '97%',
                                 marginLeft: '1.5%',
                             }}
+                            sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
                         <AnimatedTextField
                             fullWidth
@@ -349,12 +353,13 @@ export default function Create_restorant() {
                             }}
                             style={{
                                 ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1000 }),
-                                backgroundColor: 'white',
+                                backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
                                 width: '97%',
                                 marginLeft: '1.5%',
                             }}
+                            sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
                         <AnimatedTextField
                             fullWidth
@@ -366,11 +371,11 @@ export default function Create_restorant() {
                             style={{
                                 ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1200 }),
                                 borderRadius: '10px',
-                                border: `1px solid ${theme.colors.primary}`,
-                                backgroundColor: 'white',
+                                backgroundColor: theme.colors.background,
                                 width: '97%',
                                 marginLeft: '1.5%',
                             }}
+                            sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
                         <AnimatedTextField
                             fullWidth
@@ -379,12 +384,12 @@ export default function Create_restorant() {
                             onChange={e => setLogo(e.target.files ? e.target.files[0] : '')}
                             style={{
                                 ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1400 }),
-                                backgroundColor: 'white',
+                                backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
-                                border: `1px solid ${theme.colors.primary}`,
                                 width: '27%',
                                 marginLeft: '1.5%',
                             }}
+                            sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
                         {/* show choosen image */}
                         {logo && <img src={URL.createObjectURL(logo)} alt="logo" style={{

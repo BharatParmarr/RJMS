@@ -1,14 +1,3 @@
-// import React from 'react'
-// import ReactDOM from 'react-dom/client'
-// import App from './App.tsx'
-// import './index.css'
-
-// ReactDOM.createRoot(document.getElementById('root')!).render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>,
-// )
-
 import * as ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import App from './App'
@@ -25,6 +14,14 @@ import { ThemeProvider } from "./templates/styles/theme";
 import Data_anlysis from "./templates/data_anlysis";
 import Pricing_page from "./templates/pricing_page";
 import Order_history from "./templates/Order_history";
+import Inventory from "./templates/Inventory";
+import HostelList from './templates/HostelList';
+import HostelForm from './templates/HostelForm';
+import RoomList from './templates/RoomList';
+import RoomForm from './templates/RoomForm';
+import StudentList from './templates/StudentList';
+import StudentForm from './templates/StudentForm';
+import Hostel_view from "./templates/Hostel_view";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -44,6 +41,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/data-analysis/:id" element={<Data_anlysis />} />
           <Route path="/pricing" element={<Pricing_page />} />
           <Route path="/order-history/:id" element={<Order_history />} />
+          <Route path="/inventory/:id" element={<Inventory />} />
+          <Route path="/hostels" element={<HostelList />} />
+          <Route path="/hostels/create" element={<HostelForm />} />
+          <Route path="/hostels/:id" element={<Hostel_view />} />
+          <Route path="/rooms" element={<RoomList />} />
+          <Route path="/rooms/create" element={<RoomForm />} />
+          {/* <Route path="/rooms/:id" element={<RoomForm />} /> */}
+          <Route path="/students" element={<StudentList />} />
+          <Route path="/students/create" element={<StudentForm />} />
+          {/* <Route path="/students/:id" element={<StudentForm />} />*/}
         </Routes>
       </Router>
     </ThemeProvider>

@@ -9,6 +9,7 @@ import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import API_HOST from "../config";
 import QRCode from 'react-qr-code';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import { useTheme } from "./styles/theme";
 
 const Wrapper = styled(animated.div)`
   background-color: ${({ theme }) => theme.colors.background};
@@ -28,13 +29,25 @@ const TableHolder = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  background-color: ${({ theme }) => theme.colors.white};
+    color: ${({ theme }) => theme.colors.text};
 
     @media (max-width: 768px) {
         flex-direction: column;
     }
+
+    svg {
+        margin-right: 10px;
+    }
 `;
 
+const StyledTypograpy = styled(Typography)`
+  color: ${({ theme }) => theme.colors.gray};
+`;
+
+
 function DownloadableQRCode({ value }: any) {
+
     const qrRef = useRef(null);
 
     const downloadQR = () => {
@@ -80,6 +93,7 @@ function DownloadableQRCode({ value }: any) {
     );
 }
 function Restorant_table_list() {
+    const { theme } = useTheme();
     const springProps = useSpring({ opacity: 1, from: { opacity: 0 } });
     const CurrentUrl = window.location.origin;
 
@@ -109,7 +123,6 @@ function Restorant_table_list() {
     }, []);
 
 
-
     return (
         <Wrapper style={springProps}>
             <Typography variant="h1" component="div" style={{
@@ -128,6 +141,7 @@ function Restorant_table_list() {
                         <StyledButton onClick={() => navigate(`/Orders_view/${id}`)}>Orders</StyledButton>
                         <StyledButton onClick={() => navigate(`/restorant/Manage/${id}`)}>Manage</StyledButton>
                         <StyledButton onClick={() => navigate(`/data-analysis/${id}`)}>Data Analysis</StyledButton>
+                        <StyledButton onClick={() => navigate(`/inventory/${id}`)}>Inventory</StyledButton>
                     </span>
                 </div>
             </Typography>
@@ -147,7 +161,7 @@ function Restorant_table_list() {
                         margin: '10px 0',
                         borderRadius: '5px',
                         boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                        backgroundColor: '#fff',
+                        backgroundColor: theme.colors.white,
                         color: '#000'
                     }}>
                         <TableHolder>
@@ -157,8 +171,7 @@ function Restorant_table_list() {
                             }} />
                             <ListItemText
                                 primary={table.name}
-                                secondary={`Capacity: ${table.capacity}`}
-                                style={{ flex: '1' }}
+                                secondary={<StyledTypograpy>Capacity: {table.capacity}</StyledTypograpy>}
                             />
                             {/* make qr code form link API_HOST+`/table/${table.id}` */}
                             <DownloadableQRCode value={`${CurrentUrl}/restorant/table/${id}/${table.id}`} />

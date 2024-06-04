@@ -4,11 +4,8 @@ import styled from 'styled-components';
 import { Button, List, ListItem, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import API_HOST from "../config";
 import DeleteIcon from '@mui/icons-material/Delete';
-import Divider from '@mui/material/Divider';
 import { useTheme } from './styles/theme';
-import Chip from '@mui/material/Chip';
 import Accordion from '@mui/material/Accordion';
-import AccordionActions from '@mui/material/AccordionActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -23,9 +20,9 @@ const Wrapper = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-  color: ${({ theme }) => theme.colors.white};
-  margin: 10px 0;
-  background-color: ${({ theme }) => theme.colors.secondary};
+margin: 10px 0;
+backgroundColor: ${({ theme }) => theme.colors.background};
+color: ${({ theme }) => theme.colors.text};
   width: 70%;
 
     @media (max-width: 768px) {
@@ -74,6 +71,43 @@ const StyledSelect = styled(Select)`
         width: 70vw;
     }
     `;
+
+const StyledAccordion = styled(Accordion)`
+    width: 100%;
+    background-color: ${({ theme }) => theme.colors.white};
+    color: ${({ theme }) => theme.colors.text};
+    `;
+
+const StyledTextField = styled(TextField)`
+    width: 90vw;
+    margin-bottom: 10px;
+    padding-left: 40px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid ${({ theme }) => theme.colors.gray};
+    @media (max-width: 1268px) {
+        width: 80vw;
+    }
+    @media (max-width: 768px) {
+        width: 70vw;
+    }
+    `;
+
+const StyledForm = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 400px;
+    background-color: ${({ theme }) => theme.colors.white};
+    color: ${({ theme }) => theme.colors.text};
+    padding: 20px;
+    border-radius: 8px;
+    @media (max-width: 768px) {
+        min-width: 100%;
+    }
+    `;
+
+
 function create_table() {
     const { theme } = useTheme();
     // alert stats
@@ -113,7 +147,7 @@ function create_table() {
                     setManu_category_list(data.results);
                 }
             })
-            .catch((error) => {
+            .catch(() => {
                 // alert
                 setMessage('Something went wrong, Try again later.');
                 setType('error');
@@ -148,7 +182,7 @@ function create_table() {
                 setType('success');
                 setOpen(true);
             })
-            .catch((error) => {
+            .catch(() => {
                 // alert
                 setMessage('Failed to create Category, Try again later.');
                 setType('error');
@@ -182,7 +216,7 @@ function create_table() {
                     setType('success');
                     setOpen(true);
                 })
-                .catch((error) => {
+                .catch(() => {
                     // alert
                     setMessage('Failed to delete category, Try again later.');
                     setType('error');
@@ -227,7 +261,7 @@ function create_table() {
                 setType('success');
                 setOpen(true);
             })
-            .catch((error) => {
+            .catch(() => {
                 // alert
                 setMessage('Failed to create Table, Try again later.');
                 setType('error');
@@ -258,7 +292,7 @@ function create_table() {
                     setType('success');
                     setOpen(true);
                 })
-                .catch((error) => {
+                .catch(() => {
                     // alert
                     setMessage('Failed to delete Table, Try again later.');
                     setType('error');
@@ -326,7 +360,7 @@ function create_table() {
             body: form_data_manu_item
         })
             .then(response => response.json())
-            .then(data => {
+            .then(() => {
                 // alert
                 setMessage('Item Created Successfully');
                 setType('success');
@@ -335,7 +369,7 @@ function create_table() {
                 setManu_price('');
                 setManu_description('');
             })
-            .catch((error) => {
+            .catch(() => {
                 // alert
                 setMessage('Failed to create Item, Try again later.');
                 setType('error');
@@ -357,14 +391,14 @@ function create_table() {
                 })
             })
                 .then(response => response.json())
-                .then(data => {
+                .then(() => {
                     // alert
                     setMessage('Item Deleted Successfully');
                     setType('success');
                     setOpen(true);
 
                 })
-                .catch((error) => {
+                .catch(() => {
                     // alert
                     setMessage('Failed to delete Item, Try again later.');
                     setType('error');
@@ -391,18 +425,25 @@ function create_table() {
         <Wrapper id="wrapper">
             <h1>Manage Restorant</h1>
             <SectionStyled>
-                <Accordion>
+                <StyledAccordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
+                        style={{
+                            backgroundColor: theme.colors.white,
+                            color: theme.colors.text
+                        }}
                     >
                         <span style={{
                             fontFamily: 'Roboto, sans-serif',
 
                         }}>Table's</span>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails style={{
+                        backgroundColor: theme.colors.white,
+                        color: theme.colors.text
+                    }}>
                         <List>
                             <StyledGrid>
                                 {tables && tables.map((table: any) => (
@@ -415,20 +456,24 @@ function create_table() {
                                     </div>
                                 ))}
                             </StyledGrid>
-                            <StyledButton onClick={open_creat_table_form}>create table</StyledButton>
+                            <StyledButton onClick={open_creat_table_form} style={{
+                                backgroundColor: theme.colors.background,
+                                color: theme.colors.text
+                            }}>create table</StyledButton>
                             {showform ? (
-                                <form >
-                                    <TextField type="text" placeholder="Table Name" value={tabel_name} onChange={e => setTable_name(e.target.value)} style={{
-                                        marginRight: '10px'
-                                    }} />
-                                    <TextField type="text" placeholder="Table Number" value={table_number} onChange={e => setTable_number(e.target.value)} />
-                                    <TextField type="text" placeholder="Table Capacity" value={table_capacity} onChange={e => setTable_capacity(e.target.value)} />
-                                    <StyledButton onClick={submit_form}>Submit</StyledButton>
-                                </form>
+                                <StyledForm>
+                                    <StyledTextField type="text" placeholder="Table Name" value={tabel_name} onChange={e => setTable_name(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
+                                    <StyledTextField type="text" placeholder="Table Number" value={table_number} onChange={e => setTable_number(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
+                                    <StyledTextField type="text" placeholder="Table Capacity" value={table_capacity} onChange={e => setTable_capacity(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
+                                    <StyledButton onClick={submit_form} style={{
+                                        backgroundColor: theme.colors.background,
+                                        color: theme.colors.text
+                                    }}>Submit</StyledButton>
+                                </StyledForm>
                             ) : null}
                         </List>
                     </AccordionDetails>
-                </Accordion>
+                </StyledAccordion>
             </SectionStyled>
             <SectionStyled>
                 <Accordion>
@@ -436,13 +481,20 @@ function create_table() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
+                        style={{
+                            backgroundColor: theme.colors.white,
+                            color: theme.colors.text
+                        }}
                     >
                         <span style={{
                             fontFamily: 'Roboto, sans-serif',
 
                         }}>Manu's</span>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails style={{
+                        backgroundColor: theme.colors.white,
+                        color: theme.colors.text
+                    }}>
                         <StyledGrid>
                             {manu_category_list && manu_category_list.map((category: any) => (
                                 <div key={category.id} style={{
@@ -455,15 +507,18 @@ function create_table() {
                             ))}
                         </StyledGrid>
                         <StyledButton onClick={open_creat_manu_form} style={{
-                            backgroundColor: theme.colors.secondary,
-                            color: theme.colors.white,
+                            backgroundColor: theme.colors.background,
+                            color: theme.colors.text
                         }}>create manu</StyledButton>
                         {showmanuform ? (
-                            <form >
-                                <TextField type="text" placeholder="Manu Category" value={manu_category} onChange={e => setManu_category(e.target.value)} style={{}} />
-                                <TextField type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} />
-                                <StyledButton onClick={submit_manu_category}>Submit</StyledButton>
-                            </form>
+                            <StyledForm>
+                                <StyledTextField type="text" placeholder="Manu Category" value={manu_category} onChange={e => setManu_category(e.target.value)} style={{}} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
+                                <StyledTextField type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
+                                <StyledButton onClick={submit_manu_category} style={{
+                                    backgroundColor: theme.colors.background,
+                                    color: theme.colors.text
+                                }}>Submit</StyledButton>
+                            </StyledForm>
                         ) : null}
                     </AccordionDetails>
                 </Accordion>
@@ -474,18 +529,31 @@ function create_table() {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1-content"
                         id="panel1-header"
+                        style={{
+                            backgroundColor: theme.colors.white,
+                            color: theme.colors.text
+                        }}
                     >
                         <span style={{
                             fontFamily: 'Roboto, sans-serif',
                         }}>Manu Items</span>
                     </AccordionSummary>
-                    <AccordionDetails>
-                        <FormControl>
-                            <InputLabel id="manu_category_label">Select Category</InputLabel>
-                            <StyledSelect name="manu_category" id="manu_category" value={manu_category_2} onChange={e => setManu_category_2(e.target.value)}>
-                                <MenuItem value=""><em>None</em></MenuItem>
+                    <AccordionDetails style={{
+                        backgroundColor: theme.colors.white,
+                        color: theme.colors.text
+                    }}>
+                        <FormControl >
+                            <InputLabel id="manu_category_label" style={{
+                                backgroundColor: theme.colors.white,
+                                color: theme.colors.text
+                            }}>Select Category</InputLabel>
+                            <StyledSelect name="manu_category" id="manu_category" value={manu_category_2} onChange={e => setManu_category_2(e.target.value)} style={{
+                                color: theme.colors.text,
+                                backgroundColor: theme.colors.white,
+                            }} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }}>
+                                <MenuItem value="" style={{ backgroundColor: theme.colors.white, color: theme.colors.text }}><em>None</em></MenuItem>
                                 {manu_category_list && manu_category_list.map((category: any) => (
-                                    <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
+                                    <MenuItem style={{ backgroundColor: theme.colors.white, color: theme.colors.text }} key={category.id} value={category.id}>{category.name}</MenuItem>
                                 ))}
                             </StyledSelect>
                         </FormControl>
@@ -499,26 +567,35 @@ function create_table() {
                                 <StyledButton onClick={() => { delete_manu_item(item.id) }} startIcon={<DeleteIcon />}>Delete</StyledButton>
                             </div>
                         ))}
-                        <StyledButton onClick={open_creat_manu_item_form}>create manu item</StyledButton>
+                        <StyledButton onClick={open_creat_manu_item_form} style={{
+                            backgroundColor: theme.colors.background,
+                            color: theme.colors.text
+                        }}>create manu item</StyledButton>
                         {showmanuitemform ? (
-                            <form>
+                            <StyledForm>
                                 <FormControl>
-                                    <InputLabel id="manu_category_label_1">Select Category</InputLabel>
+                                    <InputLabel id="manu_category_label_1" style={{
+                                        backgroundColor: theme.colors.white,
+                                        color: theme.colors.text
+                                    }}>Select Category</InputLabel>
                                     <Select name="manu_category" id="manu_category" value={manu_category_1} onChange={e => setManu_category_1(e.target.value)} style={{
                                         width: '50vw',
-                                    }}>
-                                        <MenuItem value=""><em>None</em></MenuItem>
+                                    }} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }}>
+                                        <MenuItem value="" style={{ backgroundColor: theme.colors.white, color: theme.colors.text }}><em>None</em></MenuItem>
                                         {manu_category_list && manu_category_list.map((category: any) => (
-                                            <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
+                                            <MenuItem key={category.id} value={category.id} style={{ backgroundColor: theme.colors.white, color: theme.colors.text }}>{category.name}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
-                                <TextField type="text" placeholder="Manu Item" value={manu_item} onChange={e => setManu_item(e.target.value)} />
-                                <TextField type="text" placeholder="Manu Price" value={manu_price} onChange={e => setManu_price(e.target.value)} />
-                                <TextField type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} />
+                                <StyledTextField type="text" placeholder="Manu Item" value={manu_item} onChange={e => setManu_item(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
+                                <StyledTextField type="text" placeholder="Manu Price" value={manu_price} onChange={e => setManu_price(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
+                                <StyledTextField type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
                                 <input type="file" onChange={e => setItem_image(e.target.files ? e.target.files[0] : null)} />
-                                <StyledButton onClick={submit_manu_item}>Submit</StyledButton>
-                            </form>
+                                <StyledButton style={{
+                                    backgroundColor: theme.colors.background,
+                                    color: theme.colors.text
+                                }} onClick={submit_manu_item}>Submit</StyledButton>
+                            </StyledForm>
                         ) : null}
                     </AccordionDetails>
                 </Accordion>

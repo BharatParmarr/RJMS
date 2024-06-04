@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import API_HOST from '../config';
 
 const VerifyOTPView = () => {
     const [email, setEmail] = useState('');
@@ -7,7 +8,7 @@ const VerifyOTPView = () => {
 
     const verifyOTP = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:8000/verify-otp/', { email, otp });
+            const response = await axios.post(API_HOST + '/verify-otp/', { email, otp });
             if (response.status === 200) {
                 alert(response.data.message);
                 localStorage.setItem('token', response.data.token);
