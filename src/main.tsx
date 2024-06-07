@@ -22,6 +22,11 @@ import RoomForm from './templates/RoomForm';
 import StudentList from './templates/StudentList';
 import StudentForm from './templates/StudentForm';
 import Hostel_view from "./templates/Hostel_view";
+import Room_view from "./templates/Room_view";
+import PaymentsHistory from "./templates/PaymentsHistory";
+import Meals_list from "./templates/Meals_list";
+import Notice_bord from "./templates/Notice_bord";
+import Settings from "./templates/Settings";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -44,13 +49,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/inventory/:id" element={<Inventory />} />
           <Route path="/hostels" element={<HostelList />} />
           <Route path="/hostels/create" element={<HostelForm />} />
+          <Route path="/hostels/room/:id/:roomid/:room_name" element={<Room_view />} />
           <Route path="/hostels/:id" element={<Hostel_view />} />
           <Route path="/rooms" element={<RoomList />} />
           <Route path="/rooms/create" element={<RoomForm />} />
-          {/* <Route path="/rooms/:id" element={<RoomForm />} /> */}
           <Route path="/students" element={<StudentList />} />
           <Route path="/students/create" element={<StudentForm />} />
-          {/* <Route path="/students/:id" element={<StudentForm />} />*/}
+          <Route path="/hostels/pyments/:id" element={<PaymentsHistory />} />
+          <Route path="/hostels/Meals/:id" element={<Meals_list />} />
+          <Route path="/hostels/NoticeBord/:id" element={<Notice_bord />} />
+          <Route path="/hostels/Settings/:id" element={<Settings />} />
         </Routes>
       </Router>
     </ThemeProvider>

@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '../styles/theme';
 import AddBoxSharpIcon from '@mui/icons-material/AddBoxSharp';
+import Payment_form_student from './Payment_form_student';
 
 const BootstrapDialog = styled(Dialog)(() => ({
     '& .MuiDialogContent-root': {
@@ -21,7 +22,7 @@ const BootstrapDialog = styled(Dialog)(() => ({
     },
 }));
 
-export default function CustomizedDialogs({ name = "Room", From = RoomForm, Hostel_id, rooms, styleButton }: any) {
+export default function Payment_form({ From = Payment_form_student, Hostel_id, rooms, student_id }: any) {
     const { theme } = useTheme();
     const [open, setOpen] = React.useState(false);
 
@@ -35,12 +36,11 @@ export default function CustomizedDialogs({ name = "Room", From = RoomForm, Host
 
     return (
         <React.Fragment>
-            <Button variant="contained" onClick={handleClickOpen} startIcon={<AddBoxSharpIcon />} style={
-                styleButton ? styleButton : {
-                    backgroundColor: theme.colors.primary,
-                    color: theme.colors.text
-                }}>
-                New {name}
+            <Button variant="contained" onClick={handleClickOpen} startIcon={<AddBoxSharpIcon />} style={{
+                backgroundColor: theme.colors.primary,
+                color: theme.colors.text
+            }}>
+                Payments
             </Button>
             <BootstrapDialog
                 onClose={handleClose}
@@ -51,7 +51,7 @@ export default function CustomizedDialogs({ name = "Room", From = RoomForm, Host
                     backgroundColor: theme.colors.background,
                     color: theme.colors.text
                 }}>
-                    {name}
+                    Student Payment
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -62,20 +62,14 @@ export default function CustomizedDialogs({ name = "Room", From = RoomForm, Host
                         top: 8,
                         color: (theme) => theme.palette.grey[500],
                     }}
-                >
-                    <CloseIcon />
+                ><CloseIcon />
                 </IconButton>
                 <DialogContent dividers style={{
                     backgroundColor: theme.colors.background,
                     color: theme.colors.text
                 }}>
-                    {name == "Student" ? <From onSave={handleClose} Hostel_id={Hostel_id} rooms={rooms} /> : <From onSave={handleClose} Hostel_id={Hostel_id} />}
+                    <From onSave={handleClose} Hostel_id={Hostel_id} rooms={rooms} student_id={student_id} />
                 </DialogContent>
-                {/* <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
-                        Save changes
-                    </Button>
-                </DialogActions> */}
             </BootstrapDialog>
         </React.Fragment>
     );

@@ -27,7 +27,11 @@ const StudentForm = ({ student, onSave, Hostel_id, rooms }: any) => {
             api.put(`/students/${student.id}/`, formData).then(onSave);
         } else {
             api.post('/students', formData).then(onSave).catch((error) => {
-                console.log(error);
+                if (error.response.status === 409) {
+                    alert('User already exists in this Hostel')
+                } else if (error.response.status === 412) {
+                    alert('User already exists in Another Hostel');
+                }
             });
         }
     };

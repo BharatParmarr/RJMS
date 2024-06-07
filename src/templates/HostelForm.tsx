@@ -37,7 +37,8 @@ const HostelForm = ({ hostel }: any) => {
         newFormData.append('phone', formData.phone);
         newFormData.append('email', formData.email);
         newFormData.append('website', formData.website);
-        newFormData.append('logo', formData.logo);
+        if (formData.logo) newFormData.append('logo', formData.logo);
+        // newFormData.append('logo', formData.logo);
 
         if (hostel) {
             api.put(`hostels/${hostel.id}/`, newFormData).then(onSave);

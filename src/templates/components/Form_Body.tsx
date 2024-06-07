@@ -1,46 +1,44 @@
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 // import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-// import Typography from '@mui/material/Typography';
-import RoomForm from "../RoomForm";
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
 import { useTheme } from '../styles/theme';
+// import Typography from '@mui/material/Typography';
 import AddBoxSharpIcon from '@mui/icons-material/AddBoxSharp';
 
-const BootstrapDialog = styled(Dialog)(() => ({
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
-        padding: 10,
+        padding: theme.spacing(2),
     },
     '& .MuiDialogActions-root': {
-        padding: 10,
+        padding: theme.spacing(1),
     },
 }));
 
-export default function CustomizedDialogs({ name = "Room", From = RoomForm, Hostel_id, rooms, styleButton }: any) {
+export default function Form_dilog({ Form, title, setData, Data }: any) {
     const { theme } = useTheme();
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
     };
-    const handleClose = () => {
+    function handleClose() {
         setOpen(false);
-        window.location.reload();
     };
 
     return (
         <React.Fragment>
-            <Button variant="contained" onClick={handleClickOpen} startIcon={<AddBoxSharpIcon />} style={
-                styleButton ? styleButton : {
-                    backgroundColor: theme.colors.primary,
-                    color: theme.colors.text
-                }}>
-                New {name}
+            <Button variant="contained" onClick={handleClickOpen} startIcon={<AddBoxSharpIcon />} style={{
+                backgroundColor: theme.colors.primary,
+                color: theme.colors.text
+            }}>
+                {title}
             </Button>
             <BootstrapDialog
                 onClose={handleClose}
@@ -51,7 +49,7 @@ export default function CustomizedDialogs({ name = "Room", From = RoomForm, Host
                     backgroundColor: theme.colors.background,
                     color: theme.colors.text
                 }}>
-                    {name}
+                    {title}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -69,13 +67,9 @@ export default function CustomizedDialogs({ name = "Room", From = RoomForm, Host
                     backgroundColor: theme.colors.background,
                     color: theme.colors.text
                 }}>
-                    {name == "Student" ? <From onSave={handleClose} Hostel_id={Hostel_id} rooms={rooms} /> : <From onSave={handleClose} Hostel_id={Hostel_id} />}
+                    <Form setOpen={setOpen} setData={setData} Data={Data} />
                 </DialogContent>
-                {/* <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
-                        Save changes
-                    </Button>
-                </DialogActions> */}
+
             </BootstrapDialog>
         </React.Fragment>
     );

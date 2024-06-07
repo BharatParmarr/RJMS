@@ -13,7 +13,7 @@ const HostelList = () => {
         phone: string;
         email: string;
         website: string;
-        logo: string;
+        logo?: string;
     };
     const [hostels, setHostels] = useState<Hostel[]>();
 
@@ -23,7 +23,6 @@ const HostelList = () => {
                 setHostels(response.data);
                 console.log(response.data);
             }
-
         });
     }, []);
 
@@ -35,7 +34,7 @@ const HostelList = () => {
                 }} key={hostel.id}>
                     <ListItemText primary={hostel.name} />
                     <ListItemText primary={hostel.address} />
-                    <ListItemImage src={`${API_HOST}${hostel.logo}`} alt={hostel.name} />
+                    {hostel.logo && <ListItemImage src={`${API_HOST}${hostel.logo}`} alt={hostel.name} />}
                 </StyledListItem>
             ))}
             <Button variant="contained" color="primary"

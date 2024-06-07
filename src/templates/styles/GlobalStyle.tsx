@@ -13,9 +13,16 @@ const GlobalStyle = createGlobalStyle`
     color: ${({ theme }) => theme.colors.text};
   }
 
-  a {
+  a{
     text-decoration: none;
     color: inherit;
+  }
+
+  .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+    color: ${({ theme }) => theme.colors.text};
+  }
+  .MuiOutlinedInput-input{
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
 

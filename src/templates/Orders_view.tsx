@@ -22,7 +22,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import Fab from '@mui/material/Fab';
 import FullScreenDialog from "./order_modify_dilog";
 import HistoryIcon from '@mui/icons-material/History';
-import AnimatedButton from "./components/Button_with_animationText";
+// import AnimatedButton from "./components/Button_with_animationText";
 
 
 const Container = styled.div`
