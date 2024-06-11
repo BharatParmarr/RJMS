@@ -61,10 +61,17 @@ const StyledList = styled.div`
 
 const StyledButton2 = styled(Button)`
 color: ${({ theme }) => theme.colors.primary};
+border: 1px solid ${({ theme }) => theme.colors.background};
+
 &:hover {
-    box-shadow: ${({ theme }) => theme.colors.primary}65 2px 2px 10px 5px;
-  color: ${({ theme }) => theme.colors.secondary};
+    box-shadow: ${({ theme }) => theme.colors.primary}55 2px 2px 9px 5px;
+    color: ${({ theme }) => theme.colors.secondary};
+    border: 1px solid ${({ theme }) => theme.colors.primary};
+    transition: all 0.4s ease-in-out;
 }
+  & > *:hover {
+    box-shadow: 0px 0px 0px 0px;
+  }
 
 `;
 
@@ -140,6 +147,22 @@ export default function Create_restorant() {
         if (logo) {
             formdata.append('logo', logo);
         }
+        if (!name || !address || !phone || !email || !website || !description) {
+            alert('Please fill all the fields');
+            return;
+        }
+        if (logo.size > 2000000) {
+            alert('Image size should be less than 1MB');
+            return;
+        }
+        if (logo.type !== 'image/jpeg' && logo.type !== 'image/png') {
+            alert('Image should be in jpeg or png format');
+            return;
+        }
+        if (website && !website.includes('https')) {
+            alert('Website should start with https://');
+            return;
+        }
 
         let yourToken = localStorage.getItem('token');
         fetch(`${API_HOST}/restorants/`, {
@@ -149,8 +172,25 @@ export default function Create_restorant() {
             },
             body: formdata
         })
-            .then(response => response.json())
-            .then(data => console.log(data))
+            .then(response => {
+                if (response.status === 201) {
+                    alert('Congratulations! Restorant Is Online.');
+                    setName('');
+                    setAddress('');
+                    setPhone('');
+                    setEmail('');
+                    setWebsite('');
+                    setDescription('');
+                    setLogo('');
+                    setShowForm(false);
+                } else {
+                    alert('Error: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // setRestorants(data);
+            })
             .catch((error) => console.error('Error:', error));
     }
     return (
@@ -178,12 +218,75 @@ export default function Create_restorant() {
                     >
                         My Restaurants
                     </Typography>
+                    <Typography variant="h5" style={{
+                        marginBottom: '20px',
+                        fontSize: '1rem',
+                        color: `${({ theme }: any) => theme.colors.primary}`
+                    }}>Owner</Typography>
+                    <StyledList style={{
+                        backgroundColor: theme.colors.background,
+                        marginBottom: '30px',
+                    }} >
+                        {restorants?.created_by.length && restorants.created_by.length > 0 ? '' : <Typography variant="h5" style={{
+                            marginBottom: '20px',
+                            fontSize: '0.59rem',
+                            color: theme.colors.gray,
+                        }}>No restorant as owner</Typography>}
+                        {restorants?.created_by.map((created_by: any) => (
+                            <StyledButton2 style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '10px',
+                                borderRadius: '9px',
+                                backgroundColor: theme.colors.white,
+                                color: `${({ theme }: any) => theme.colors.text}`,
+                                margin: '20px'
+                            }} key={created_by.id}
+                                onClick={() => navigate(`/restorant/${created_by.id}`, { state: { created_by } })}
+                            >
+                                <ListImage src={API_HOST + created_by.logo} alt={created_by.name} />
+                                <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${created_by.id}`, { state: { created_by } })} style={{
+                                    color: theme.colors.primary,
+                                    backgroundColor: `${({ theme }: any) => theme.colors.white}`,
+                                    borderRadius: '10px',
+                                    padding: '10px',
+                                    marginTop: '10px',
+                                    boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
+                                }}>
+                                    {created_by.name}
+                                </StyledButton2>
+                            </StyledButton2>
+                        ))}
+                    </StyledList>
                     {restorants?.manager_restorant.length && restorants?.manager_restorant.length > 0 ? <StyledList>
                         {restorants?.manager_restorant.map((restorant: any) => (
-                            <ListItem key={restorant.id}>
-                                <ListItemText primary={restorant.name} />
-                                <ListItemText primary={restorant.logo} />
-                            </ListItem>
+                            <StyledButton2 style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '10px',
+                                borderRadius: '9px',
+                                border: `1px solid ${theme.colors.primary}`,
+                                backgroundColor: `${({ theme }: any) => theme.colors.white}`,
+                                color: `${({ theme }: any) => theme.colors.text}`,
+                            }} key={restorant.id}
+                                onClick={() => navigate(`/restorant/${restorant.id}`, { state: { restorant } })}
+                            >
+                                <ListImage src={API_HOST + restorant.logo} alt={restorant.name} />
+                                <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${restorant.id}`, { state: { restorant } })} style={{
+                                    color: theme.colors.primary,
+                                    backgroundColor: `${({ theme }: any) => theme.colors.white}`,
+                                    borderRadius: '10px',
+                                    padding: '10px',
+                                    marginTop: '10px',
+                                    boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
+                                }}>
+                                    {restorant.name}
+                                </StyledButton2>
+                            </StyledButton2>
                         ))}
                     </StyledList> :
                         <Typography variant="h5" style={{
@@ -199,27 +302,6 @@ export default function Create_restorant() {
                     }}>Staff</Typography>
                     {restorants?.staffs.length && restorants.staffs.length > 0 ? <StyledList>
                         {restorants?.staffs.map((staff: any) => (
-                            <ListItem key={staff.id}>
-                                <ListItemText primary={staff.name} />
-                            </ListItem>
-                        ))}
-                    </StyledList> :
-                        <Typography variant="h5" style={{
-                            marginBottom: '20px',
-                            marginTop: '10px',
-                            fontSize: '0.59rem',
-                            color: theme.colors.gray,
-                        }}>No restorant as staff</Typography>}
-                    <Typography variant="h5" style={{
-                        marginBottom: '20px',
-                        fontSize: '1rem',
-                        color: `${({ theme }: any) => theme.colors.primary}`
-                    }}>Created by</Typography>
-                    <StyledList style={{
-                        backgroundColor: theme.colors.background,
-                        marginBottom: '30px',
-                    }} >
-                        {restorants?.created_by.map((created_by: any) => (
                             <StyledButton2 style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -230,27 +312,30 @@ export default function Create_restorant() {
                                 border: `1px solid ${theme.colors.primary}`,
                                 backgroundColor: `${({ theme }: any) => theme.colors.white}`,
                                 color: `${({ theme }: any) => theme.colors.text}`,
-                            }} key={created_by.id}
-                                onClick={() => navigate(`/restorant/${created_by.id}`, { state: { created_by } })}
+                            }} key={staff.id}
+                                onClick={() => navigate(`/restorant/${staff.id}`, { state: { staff } })}
                             >
-                                <ListImage src={API_HOST + created_by.logo} alt={created_by.name} />
-                                <StyledButton2 onClick={() => navigate(`/restorant/${created_by.id}`, { state: { created_by } })} style={{
+                                <ListImage src={API_HOST + staff.logo} alt={staff.name} />
+                                <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${staff.id}`, { state: { staff } })} style={{
                                     color: theme.colors.primary,
                                     backgroundColor: `${({ theme }: any) => theme.colors.white}`,
-
                                     borderRadius: '10px',
                                     padding: '10px',
                                     marginTop: '10px',
                                     boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
                                 }}>
-                                    {created_by.name}
+                                    {staff.name}
                                 </StyledButton2>
-                                {/* <ListItemText primary={API_HOST + created_by.logo} /> */}
                             </StyledButton2>
                         ))}
-                    </StyledList>
+                    </StyledList> :
+                        <Typography variant="h5" style={{
+                            marginBottom: '20px',
+                            marginTop: '10px',
+                            fontSize: '0.59rem',
+                            color: theme.colors.gray,
+                        }}>No restorant as staff</Typography>}
 
-                    {/* <button onClick={() => show()}>Create</button> */}
                     <Button onClick={() => show()} style={{
                         backgroundColor: `${({ theme }: any) => theme.colors.primary}`,
                         color: `${({ theme }: any) => theme.colors.white}`,
@@ -381,7 +466,7 @@ export default function Create_restorant() {
                             fullWidth
                             margin="normal"
                             type="file"
-                            onChange={e => setLogo(e.target.files ? e.target.files[0] : '')}
+                            onChange={(e: any) => setLogo(e.target.files ? e.target.files[0] : '')}
                             style={{
                                 ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1400 }),
                                 backgroundColor: theme.colors.background,

@@ -23,7 +23,7 @@ import Fab from '@mui/material/Fab';
 import FullScreenDialog from "./order_modify_dilog";
 import HistoryIcon from '@mui/icons-material/History';
 // import AnimatedButton from "./components/Button_with_animationText";
-
+import BlockIcon from '@mui/icons-material/Block';
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
@@ -123,15 +123,21 @@ const StyledButton = styled.div`
 
 const StyledDiv1 = styled.div`
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         align-items: center;
         margin: 10px;
-        flex-direction: column;
+        flex-direction: row;
         background-color: ${({ theme }) => theme.colors.white};
         border-radius: 5px;
         padding: 10px;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
         transition: all 0.3s;
+        gap: 30px;
+
+        @media (max-width: 768px) {
+            width: 100%;
+        flex-direction: column;
+        }
         `
 
 const StyledFab = styled(Fab)`
@@ -145,7 +151,44 @@ const StyledFab = styled(Fab)`
     z-index: 1000;
 `
 
+const StyledAnimatePresence = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
 
+    & > * {
+        width: 29%;
+        margin: 2%;
+        }
+
+    @media (max-width: 768px) {
+        & > * {
+            width: 100%;
+            margin: 0%;
+        }
+            flex-direction: column;
+    }
+    `
+const StyledDivmotiondiv = styled(motion.div)`
+    width: ${props => props.filteredOrders.length > 2 ? '29%' : '100%'};
+    marginBottom: 10px;
+    padding: 10px;
+    background-color: ${({ theme }) => theme.colors.white};
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    border-radius: 9px;
+    transition: all 0.3s;
+    margin: '2%';
+
+  
+    @media (max-width: 768px) {
+      width: 100%;
+        margin: 0%;
+    }
+  `;
 function Orders_view() {
     const { theme } = useTheme();
     let url = API_HOST
@@ -200,30 +243,60 @@ function Orders_view() {
     // count the number of items
 
     useEffect(() => {
-        if (lastMessage !== null) {
-            const data = JSON.parse(lastMessage.data);
-            // console.log(data);
-            if (data.incomplete_orders) {
-                setOrders(oldOrders => [...(oldOrders || []), ...data.incomplete_orders]);
-                let tables_list_id: number[] = []
-                let tables_list: string[] = []
-                data.incomplete_orders.map((order: any) => {
-                    if (!tables_list_id.includes(order.table_id)) {
-                        tables_list_id.push(order.table_id);
-                        tables_list.push(order.table_name);
-                    }
-                });
-                setTables(oldTables => [...oldTables, ...tables_list]);
-                setTablesId(oldTablesId => [...oldTablesId, ...tables_list_id]);
-            } else if (data.order) {
-                setOrders(oldOrders => [data.order, ...(oldOrders || [])]);
-                if (data.order.table_id) {
-                    if (!tablesId.includes(data.order.table_id)) {
-                        setTablesId(oldTablesId => [...oldTablesId, data.order.table_id]);
-                        setTables(oldTables => [...oldTables, data.order.table_name]);
+        if (readyState == WebSocket.OPEN) {
+            if (lastMessage !== null) {
+                const data = JSON.parse(lastMessage.data);
+                // console.log(data);
+                if (data.incomplete_orders) {
+                    setOrders(oldOrders => [...(oldOrders || []), ...data.incomplete_orders]);
+                    let tables_list_id: number[] = []
+                    let tables_list: string[] = []
+                    data.incomplete_orders.map((order: any) => {
+                        if (!tables_list_id.includes(order.table_id)) {
+                            tables_list_id.push(order.table_id);
+                            tables_list.push(order.table_name);
+                        }
+                    });
+                    setTables(oldTables => [...oldTables, ...tables_list]);
+                    setTablesId(oldTablesId => [...oldTablesId, ...tables_list_id]);
+                } else if (data.order) {
+                    setOrders(oldOrders => [data.order, ...(oldOrders || [])]);
+                    if (data.order.table_id) {
+                        if (!tablesId.includes(data.order.table_id)) {
+                            setTablesId(oldTablesId => [...oldTablesId, data.order.table_id]);
+                            setTables(oldTables => [...oldTables, data.order.table_name]);
+                        }
                     }
                 }
             }
+        } else {
+            fetch(url + '/orders?restorant_id=' + id, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Token ${localStorage.getItem('token')} `
+                },
+            }).then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    throw new Error('Something went wrong');
+                }
+            }).then(data => {
+                console.log(data.results);
+                if (data.results) {
+                    setOrders(data.results);
+                    let tables_list_id: number[] = []
+                    let tables_list: string[] = []
+                    data.results.map((order: any) => {
+                        if (!tables_list_id.includes(order.table_id)) {
+                            tables_list_id.push(order.table_id);
+                            tables_list.push(order.table_name);
+                        }
+                    });
+                    setTables(tables_list);
+                    setTablesId(tables_list_id);
+                }
+            }).catch((error) => console.error('Error:', error));
         }
     }, [lastMessage]);
 
@@ -337,8 +410,50 @@ function Orders_view() {
         });
         setTables(tables_list);
         setTablesId(tables_list_id);
+    }
 
+    // Block the ip
+    function BlockTheIp(orderId: number) {
+        if (window.confirm('Are you sure you want to block this user?')) {
+            // console.log('Block the user')
+            handleOpen()
+            // Create a new copy of the orders
+            let newOrders = orders ? [...orders] : [];
+            let orderIndex = newOrders.findIndex((order: any) => order.id === orderId);
 
+            // Send a get request to the server
+            fetch(url + '/api/block_ip?for=restorant&restorant_id=' + id, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'order_id': orderId, reason: 'Block by restorant', for: 'restorant' }),
+            })
+                .then(response => {
+                    console.log(response)
+                    if (response.status === 200) {
+                        return response.json();
+                    } else {
+                        throw new Error('Something went wrong');
+                    }
+                })
+                .then(data => {
+                    console.log(data);
+                    if (orderIndex !== -1) {
+                        // Change the status of the order
+                        newOrders[orderIndex].status = !newOrders[orderIndex].status;
+                        // Update the state with the new orders
+                        // remove the order from the list 
+                        newOrders.splice(orderIndex, 1);
+                        setOrders(newOrders);
+                    }
+                })
+                .catch((error) => console.error('Error:', error))
+                .finally(() => {
+                    handleClose()
+                });
+        }
     }
 
     const [open, setOpen] = React.useState(false);
@@ -405,95 +520,103 @@ function Orders_view() {
                     borderRadius: '5px 5px 0 0',
                 }}>
                     {orders?.length === 0 && <Typography variant="h3" style={{ fontSize: '1.5rem' }}>No orders found</Typography>}
-                    <AnimatePresence >
-                        {filteredOrders && filteredOrders.map((order) => (
-                            <motion.div key={order.id} style={{
-                                marginBottom: '10px',
-                                padding: '10px',
-                                backgroundColor: theme.colors.white,
-                                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-                                marginTop: '5px',
-                            }}
-                                whileHover={{ boxShadow: '0px 4px 8px ' + theme.colors.primary + '80' }}
-                                exit={{ opacity: 0, scale: 0 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                            >
-                                <OrderList>
-                                    <OrderListItem>
-                                        <ListItemText primary={order.table_name} secondary={new Date(order.order_time).toLocaleString('en-US', {
-                                            hour: 'numeric',
-                                            minute: 'numeric',
-                                        })} secondaryTypographyProps={{
-                                            style: {
-                                                color: theme.colors.gray
-                                            }
-                                        }} />
-                                        <ListItemText primary={'Total: ₹' + order.order_details.reduce((acc, item) => acc + item.total, 0)} />
-                                        <ListItemText primary={order.status ? <DoneAllIcon /> : <PendingActionsIcon />} />
-                                    </OrderListItem>
-                                </OrderList>
-                                <Typography variant="h3" style={{
-                                    marginBottom: '20px',
-                                    fontSize: '1.1rem',
-                                    color: theme.colors.gray
-                                }}>Completed</Typography>
-                                <OrderList>
-                                    {order.order_details.filter((item) => item.is_completed).map((item) => (
-                                        <OrderListItem key={item.id}>
-                                            <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total} `}
-                                                primaryTypographyProps={{
-                                                    style: {
-                                                        textDecoration: 'line-through'
-                                                    }
-                                                }}
-                                                secondaryTypographyProps={{
+                    <AnimatePresence>
+                        <StyledAnimatePresence>
+                            {filteredOrders && filteredOrders.map((order) => (
+                                <StyledDivmotiondiv
+                                    filteredOrders={filteredOrders}
+                                    key={order.id}
+                                    whileHover={{ boxShadow: '0px 4px 8px ' + theme.colors.primary + '80' }}
+                                    exit={{ opacity: 0, scale: 0 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                >
+                                    <OrderList>
+                                        <OrderListItem>
+                                            <ListItemText
+                                                primary={order.table_name}
+                                                secondary={new Date(order.order_time).toLocaleString('en-US', {
+                                                    hour: 'numeric',
+                                                    minute: 'numeric',
+                                                })} secondaryTypographyProps={{
                                                     style: {
                                                         color: theme.colors.gray
                                                     }
                                                 }} />
+                                            <ListItemText primary={'Total: ₹' + order.order_details.reduce((acc, item) => acc + item.total, 0)} />
+                                            <ListItemText primary={order.status ? <DoneAllIcon /> : <PendingActionsIcon />} />
                                         </OrderListItem>
-                                    ))}
-                                </OrderList>
-                                <Typography variant="h3" style={{
-                                    marginBottom: '10px',
-                                    fontSize: '1.1rem',
-                                    color: theme.colors.gray
-                                }}>Incomplete</Typography>
-                                <OrderList>
-                                    {order.order_details.filter((item) => !item.is_completed).map((item) => (
-                                        <motion.div key={item.id} style={{ width: '100%' }} exit={{ opacity: 0, scale: 0 }}>
+                                    </OrderList>
+                                    <Typography variant="h3" style={{
+                                        marginBottom: '20px',
+                                        fontSize: '1.1rem',
+                                        color: theme.colors.gray
+                                    }}>Completed</Typography>
+                                    <OrderList>
+                                        {order.order_details.filter((item) => item.is_completed).map((item) => (
                                             <OrderListItem key={item.id}>
-                                                <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total} `} secondaryTypographyProps={{
-                                                    style: {
-                                                        color: theme.colors.gray
-                                                    }
-                                                }} />
-                                                <Button variant="outlined" color="primary" onClick={() => markAsPartial(order.id, item.id)} startIcon={<TaskAltIcon />} ></Button>
+                                                <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total} `}
+                                                    primaryTypographyProps={{
+                                                        style: {
+                                                            textDecoration: 'line-through'
+                                                        }
+                                                    }}
+                                                    secondaryTypographyProps={{
+                                                        style: {
+                                                            color: theme.colors.gray
+                                                        }
+                                                    }} />
                                             </OrderListItem>
-                                        </motion.div>
-                                    ))}
-                                </OrderList>
-                                <StyledDiv1>
-                                    <Fab variant="extended" onClick={() => ModifiyOrder(order.id, order.order_details)} style={{
-                                        backgroundColor: theme.colors.primary,
-                                        color: theme.colors.white,
-                                        fontFamily: 'Roboto, sans-serif',
-                                        textTransform: 'capitalize',
-                                        marginTop: '10px',
-                                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-                                    }}><EditNoteIcon sx={{ mr: 1 }} />
-                                        Modify
-                                    </Fab>
-                                    <Button variant="outlined" color="primary" onClick={() => markAsComplete(order.id)} startIcon={<CurrencyRupeeIcon />} style={{
-                                        marginTop: '10px',
-                                        fontFamily: 'Roboto, sans-serif',
-                                        textTransform: 'capitalize',
-                                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                                        ))}
+                                    </OrderList>
+                                    <Typography variant="h3" style={{
+                                        marginBottom: '10px',
+                                        fontSize: '1.1rem',
+                                        color: theme.colors.gray
+                                    }}>Incomplete</Typography>
+                                    <OrderList>
+                                        {order.order_details.filter((item) => !item.is_completed).map((item) => (
+                                            <motion.div key={item.id} style={{ width: '100%' }} exit={{ opacity: 0, scale: 0 }}>
+                                                <OrderListItem key={item.id}>
+                                                    <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total} `} secondaryTypographyProps={{
+                                                        style: {
+                                                            color: theme.colors.gray
+                                                        }
+                                                    }} />
+                                                    <Button variant="outlined" color="primary" onClick={() => markAsPartial(order.id, item.id)} startIcon={<TaskAltIcon />} ></Button>
+                                                </OrderListItem>
+                                            </motion.div>
+                                        ))}
+                                    </OrderList>
+                                    <StyledDiv1>
+                                        <Fab variant="extended" onClick={() => ModifiyOrder(order.id, order.order_details)} style={{
+                                            backgroundColor: theme.colors.primary,
+                                            color: theme.colors.white,
+                                            fontFamily: 'Roboto, sans-serif',
+                                            textTransform: 'capitalize',
+                                            marginTop: '10px',
+                                            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                                        }}><EditNoteIcon sx={{ mr: 1 }} />
+                                            Modify
+                                        </Fab>
+                                        <Button variant="outlined" color="success" onClick={() => markAsComplete(order.id)} startIcon={<CurrencyRupeeIcon />} style={{
+                                            marginTop: '10px',
+                                            fontFamily: 'Roboto, sans-serif',
+                                            textTransform: 'capitalize',
+                                            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
 
-                                    }}>Record Payment</Button>
-                                </StyledDiv1>
-                            </motion.div>
-                        ))}
+                                        }}>Record Payment</Button>
+                                        {/* block User */}
+                                        {/* <Button variant="outlined" color="error" onClick={() => BlockTheIp(order.id)} style={{
+                                            marginTop: '10px',
+                                            fontFamily: 'Roboto, sans-serif',
+                                            textTransform: 'capitalize',
+                                            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+
+                                        }}><BlockIcon /></Button> */}
+                                    </StyledDiv1>
+                                </StyledDivmotiondiv>
+                            ))}
+                        </StyledAnimatePresence>
                     </AnimatePresence>
                 </AccordionDetails>
             </Accordion>
@@ -510,7 +633,7 @@ function Orders_view() {
                 order={orderDetails}
                 modify_order={Modify_order}
             />
-        </Container>
+        </Container >
     )
 }
 

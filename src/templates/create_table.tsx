@@ -10,7 +10,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SimpleAlert from "./components/succes_aleart";
-
+import Switch from '@mui/material/Switch';
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
@@ -129,7 +129,7 @@ function create_table() {
 
     useEffect(() => {
         let yourToken = localStorage.getItem('token');
-        fetch(url + '/categories?restorant_id=' + id, {
+        fetch(url + '/categories?restorant_id=' + id + '&is_restorant=' + 0, {
             method: 'GET',
             headers: {
                 'Authorization': `Token ${yourToken}`
@@ -156,6 +156,97 @@ function create_table() {
             });
     }
         , []);
+
+    function Activate_manu_category(categoryId: any, is_active: any) {
+        let yourToken = localStorage.getItem('token');
+        fetch(API_HOST + '/api/restorant/activate_category/', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${yourToken}`
+            },
+            body: JSON.stringify({
+                category_id: categoryId,
+                active: is_active
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.message === "Category updated") {
+                    let new_manu_category_list: any = manu_category_list.map((category: any) => {
+                        if (category.id === categoryId) {
+                            category.active = is_active
+                        }
+                        return category
+                    })
+
+                    setManu_category_list(new_manu_category_list)
+                    // alert
+                    setMessage('Category Updated Successfully');
+                    setType('success');
+                    setOpen(true);
+                } else {
+                    // alert
+                    setMessage('Failed to Update Category, Try again later.');
+                    setType('error');
+                    setOpen(true);
+                }
+            })
+            .catch((e) => {
+                console.log(e)
+                // alert
+                setMessage('Failed to create Category, Try again later.');
+                setType('error');
+                setOpen(true);
+            });
+    }
+
+    function Activate_manu_category_item(categoryId: any, is_active: any) {
+        let yourToken = localStorage.getItem('token');
+        fetch(API_HOST + '/api/restorant/activate_item/', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${yourToken}`
+            },
+            body: JSON.stringify({
+                item_id: categoryId,
+                active: is_active
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.message === "Item updated") {
+                    let new_manu_items: any = manu_items.map((item: any) => {
+                        if (item.id === categoryId) {
+                            item.active = is_active
+                        }
+                        return item
+                    })
+                    setManu_items(new_manu_items)
+                    // alert
+                    setMessage('Item Updated Successfully');
+                    setType('success');
+                    setOpen(true);
+                } else {
+                    // alert
+                    setMessage('Failed to Update Category, Try again later.');
+                    setType('error');
+                    setOpen(true);
+                }
+            })
+            .catch((e) => {
+                console.log(e)
+                // alert
+                setMessage('Failed to create Category, Try again later.');
+                setType('error');
+                setOpen(true);
+            });
+    }
+
+
     function submit_manu_category() {
         // e.preventDefault();
         let yourToken = localStorage.getItem('token');
@@ -173,7 +264,7 @@ function create_table() {
         })
             .then(response => response.json())
             .then(data => {
-                setManu_category_list([...manu_category_list, data])
+                setManu_category_list([...manu_category_list, data] as any)
                 // reset form
                 setManu_category('');
                 setManu_description('');
@@ -251,7 +342,7 @@ function create_table() {
                 return response.json();
             })
             .then(data => {
-                settables([...tables, data])
+                settables([...tables, data] as any)
                 // reset form
                 setTable_name('');
                 setTable_number('');
@@ -328,6 +419,7 @@ function create_table() {
     // manu item create, delete, show
     const [manu_item, setManu_item] = useState('');
     const [manu_price, setManu_price] = useState('');
+    const [is_veg, setIs_veg] = useState(true);
     // const [manu_description, setManu_description] = useState('');
     const [manu_items, setManu_items] = useState([]);
     const [showmanuitemform, setShowmanuitemform] = useState(false);
@@ -344,6 +436,7 @@ function create_table() {
         form_data_manu_item.append('price', manu_price);
         form_data_manu_item.append('description', manu_description);
         form_data_manu_item.append('category', manu_category_1);
+        form_data_manu_item.append('veg', is_veg.toString());
         if (item_image) {
             form_data_manu_item.append('image', item_image);
         }
@@ -502,6 +595,23 @@ function create_table() {
                                 }}>
                                     <StyledListItem>{category.name}</StyledListItem>
                                     <StyledListItem>{category.description}</StyledListItem>
+                                    <label htmlFor={`switch${category.id}`}>Active</label>
+                                    <Switch id={`switch${category.id}`} name={'Active'} checked={category.active} onChange={() => Activate_manu_category(category.id, !category.active)} style={{
+                                        color: theme.colors.text,
+                                    }}
+                                        sx={{
+                                            '& .MuiSwitch-switchBase': {
+                                                color: theme.colors.text,
+                                            },
+                                            '& .Mui-checked': {
+                                                color: theme.colors.text,
+                                            },
+                                            '& .MuiSwitch-track': {
+                                                backgroundColor: theme.colors.gray,
+                                            },
+
+                                        }}
+                                    />
                                     <StyledButton onClick={() => { delete_category(category.id) }} startIcon={<DeleteIcon />}>Delete</StyledButton>
                                 </div>
                             ))}
@@ -547,7 +657,7 @@ function create_table() {
                                 backgroundColor: theme.colors.white,
                                 color: theme.colors.text
                             }}>Select Category</InputLabel>
-                            <StyledSelect name="manu_category" id="manu_category" value={manu_category_2} onChange={e => setManu_category_2(e.target.value)} style={{
+                            <StyledSelect name="manu_category" id="manu_category" value={manu_category_2} onChange={e => setManu_category_2(e.target.value as any)} style={{
                                 color: theme.colors.text,
                                 backgroundColor: theme.colors.white,
                             }} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }}>
@@ -562,8 +672,26 @@ function create_table() {
                                 fontFamily: 'Roboto, sans-serif',
                             }}>
                                 <StyledListItem>{item.name}</StyledListItem>
-                                <StyledListItem key={item.id}>{item.price}</StyledListItem>
-                                <StyledListItem key={item.id}>{item.description}</StyledListItem>
+                                <StyledListItem >{item.price}</StyledListItem>
+                                <StyledListItem >{item.description}</StyledListItem>
+                                <StyledListItem >{item.veg ? 'Veg' : 'Non-veg'}</StyledListItem>
+                                <label htmlFor={`switch${item.id}`}>Active</label>
+                                <Switch id={`switch${item.id}`} name={'Active'} checked={item.active} onChange={() => Activate_manu_category_item(item.id, !item.active)} style={{
+                                    color: theme.colors.text,
+                                }}
+                                    sx={{
+                                        '& .MuiSwitch-switchBase': {
+                                            color: theme.colors.text,
+                                        },
+                                        '& .Mui-checked': {
+                                            color: theme.colors.text,
+                                        },
+                                        '& .MuiSwitch-track': {
+                                            backgroundColor: theme.colors.gray,
+                                        },
+
+                                    }}
+                                />
                                 <StyledButton onClick={() => { delete_manu_item(item.id) }} startIcon={<DeleteIcon />}>Delete</StyledButton>
                             </div>
                         ))}
@@ -590,6 +718,18 @@ function create_table() {
                                 <StyledTextField type="text" placeholder="Manu Item" value={manu_item} onChange={e => setManu_item(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
                                 <StyledTextField type="text" placeholder="Manu Price" value={manu_price} onChange={e => setManu_price(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
                                 <StyledTextField type="text" placeholder="Manu Description" value={manu_description} onChange={e => setManu_description(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
+                                {/* veg or non-vet */}
+                                <InputLabel id="manu_category_label_1" style={{
+                                    backgroundColor: theme.colors.white,
+                                    color: theme.colors.text
+                                }}>Type</InputLabel>
+                                <Select name="manu_category" id="manu_category" value={is_veg ? 'true' : 'false'} onChange={e => setIs_veg(e.target.value == 'true' ? true : false)} style={{
+                                    width: '50vw',
+                                }} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }}>
+                                    {/* <MenuItem value="" style={{ backgroundColor: theme.colors.white, color: theme.colors.text }}><em>None</em></MenuItem> */}
+                                    <MenuItem value="true" style={{ backgroundColor: theme.colors.white, color: theme.colors.text }}>Veg</MenuItem>
+                                    <MenuItem value="false" style={{ backgroundColor: theme.colors.white, color: theme.colors.text }}>Non-Veg</MenuItem>
+                                </Select>
                                 <input type="file" onChange={e => setItem_image(e.target.files ? e.target.files[0] : null)} />
                                 <StyledButton style={{
                                     backgroundColor: theme.colors.background,

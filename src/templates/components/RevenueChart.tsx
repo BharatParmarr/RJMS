@@ -3,16 +3,16 @@ import { Bar } from 'react-chartjs-2';
 import styled from 'styled-components';
 import { useTheme } from '../styles/theme';
 import { Chart, registerables } from 'chart.js';
-import { color } from 'framer-motion';
 
 Chart.register(...registerables);
 
 const Container = styled.div`
-  
-  padding: 20px;
+  padding: 40px;
   margin-bottom: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: ${props => props.theme.colors.text};
+    background-color: ${props => props.theme.colors.white};
 `;
 
 
@@ -34,8 +34,8 @@ const RevenueChart = ({ revenueData }: any) => {
                         {
                             label: 'Revenue',
                             data: chunk.map((item: { revenue: any; }) => item.revenue),
-                            backgroundColor: (props: { theme: { colors: { primary: any; }; }; }) => theme.colors.primary,
-                            borderColor: (props: { theme: { colors: { primary: any; }; }; }) => theme.colors.primary,
+                            backgroundColor: theme.colors.primary,
+                            borderColor: theme.colors.primary,
                             borderWidth: 1
                         }
                     ]
@@ -69,7 +69,7 @@ const RevenueChart = ({ revenueData }: any) => {
                 };
 
                 return (
-                    <Container key={index}>
+                    <Container key={index} >
                         <h2 style={{ fontFamily: 'Roboto', color: theme.colors.text }}>Item Revenue</h2>
                         <Bar data={data} options={options} color={theme.colors.text} style={{
                             backgroundColor: theme.colors.background,

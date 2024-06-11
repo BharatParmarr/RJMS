@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useSpring, animated } from 'react-spring';
 import { Badge, Button, List, ListItem, ListItemText, SwipeableDrawer, Typography } from '@mui/material';
 import styled from "styled-components";
@@ -12,19 +12,26 @@ import { useTheme } from "./styles/theme";
 import React from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import useWebSocket from 'react-use-websocket';
-
+import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 const Wrapper = styled(animated.div)`
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   padding: 20px;
   min-height: 100vh;
+  .selected {
+    background-color: ${({ theme }) => theme.colors.black};
+    color: ${({ theme }) => theme.colors.white};
+  }
 `;
 
 const StyledButton = styled.div` 
-  background-color: transparent;
+  background-color: ${({ theme }) => theme.colors.white};
   color: ${({ theme }) => theme.colors.text};
-  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.gray};
+    border-radius: 50%;
 `;
 
 const StyledListItem = styled(ListItem)`
@@ -40,12 +47,12 @@ const StyledListItem = styled(ListItem)`
 `;
 
 const StyledListItemText = styled(ListItemText)`
-  color: ${({ theme }) => theme.colors.secondary};
+  color: ${({ theme }) => theme.colors.text};
   margin-right: 10px;
   font-size: 1.5rem;
 
   .MuiListItemText-secondary {
-    color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.gray};
   }
 `;
 
@@ -53,9 +60,9 @@ function Restroant_view() {
     const springProps = useSpring({ opacity: 1, from: { opacity: 0 } });
     const { id, table_id } = useParams();
     const { theme } = useTheme();
-    // const [tables, settables] = useState([]);
-    // navigtation
-    const navigate = useNavigate();
+
+    const [tableName, setTableName] = useState('Table');
+    const [restorantName, setRestorantName] = useState('Restorant');
     type ManuCategotyList = {
         id: number;
         name: string;
@@ -64,16 +71,16 @@ function Restroant_view() {
     let url = API_HOST
 
     useEffect(() => {
-        let yourToken = localStorage.getItem('token');
+        // let yourToken = localStorage.getItem('token');
         fetch(url + '/categories?restorant_id=' + id, {
             method: 'GET',
             headers: {
-                'Authorization': `Token ${yourToken}`
+                // 'Authorization': `Token ${yourToken}`
             }
         })
             .then(response => {
                 if (response.status === 401) {
-                    navigate('/login')
+                    // navigate('/login')
                 } else {
                     return response.json()
                 }
@@ -84,6 +91,12 @@ function Restroant_view() {
                 }
             })
             .catch((error) => console.error('Error:', error));
+
+        fetch(url + '/api/restorant/tabledetails?table_id=' + table_id,).then(response => response.json()).then(data => {
+            console.log(data)
+            setTableName(data.table_name)
+            setRestorantName(data.restorant_name)
+        }).catch((error) => console.error('Error:', error));
     }, []);
 
 
@@ -109,22 +122,42 @@ function Restroant_view() {
         name: string;
         price: number;
         description: string;
+        veg: boolean;
     };
+    type Savemanu = {
+        [key: string]: ManuItem[];
+    }
     const [manu_items, setManu_items] = useState<ManuItem[]>();
     const [manu_category_2, setManu_category_2] = useState('')
-
+    const [savedManu, setSavedManu] = useState<Savemanu>();
 
     useEffect(() => {
-        let yourToken = localStorage.getItem('token');
+        if (!manu_category_2) return;
+        console.log('manu_category_2', manu_category_2, savedManu);
+        if (savedManu && savedManu[manu_category_2]) {
+            setManu_items(savedManu[manu_category_2]);
+            return;
+        }
+        // let yourToken = localStorage.getItem('token');
         fetch(url + '/items?category_id=' + manu_category_2, {
             method: 'GET',
             headers: {
-                'Authorization': `Token ${yourToken}`
+                // 'Authorization': `Token ${yourToken}`
             },
         })
             .then(response => response.json())
             .then(data => {
                 setManu_items(data.results);
+                // set saved manu
+                if (savedManu) {
+                    let newSavedManu = savedManu;
+                    newSavedManu[manu_category_2] = data.results;
+                    setSavedManu(newSavedManu);
+                } else {
+                    let newSavedManu: any = {};
+                    newSavedManu[manu_category_2] = data.results;
+                    setSavedManu(newSavedManu);
+                }
             })
             .catch((error) => console.error('Error:', error));
     }, [manu_category_2]);
@@ -183,11 +216,9 @@ function Restroant_view() {
     // Create WebSocket connection.
     const { sendMessage, lastMessage, readyState } = useWebSocket('ws://' + API_HOST_Websocket + '/ws/orders/0/');
 
-    const [LastOrdersent, setLastOrdersent] = useState('');
     useEffect(() => {
         if (lastMessage !== null) {
             console.log('Received a message', lastMessage.data);
-            setLastOrdersent(lastMessage.data);
             if (lastMessage.data.message) {
                 return;
             }
@@ -201,43 +232,44 @@ function Restroant_view() {
         const message = cart.map((item) => ({ item: item.id, quantity: item.quantity }));
 
         // Check if WebSocket is connected before sending message.
-
-        console.log('sending message');
         if (readyState === WebSocket.OPEN) {
             // let yourToken = localStorage.getItem('token');
             sendMessage(JSON.stringify({
                 items: message,
                 table: table_id,
             }));
+        } else {
+            // console.log('WebSocket is not connected:', readyState);
+            fetch(url + '/order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    items: message,
+                    table: table_id,
+                })
+            })
+                .then(response => {
+                    if (response.status === 400) {
+                        alert('Please select items to order')
+                    }
+                    return response.json()
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    alert('Order placed successfully');
+                    setCart([]);
+                })
+                .catch((error) => console.error('Error:', error));
         }
     }
 
-    // fetch(url + '/order/', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Token ${localStorage.getItem('token')}`
-    //     },
-    //     body: JSON.stringify({
-    //         items: message,
-    //         table: table_id,
-    //     })
-    // })
-    //     .then(response => {
-    //         if (response.status === 400) {
-    //             alert('Please select items to order')
-    //         }
-    //         return response.json()
-    //     })
-    //     .then(data => {
-    //         if (data.error) {
-    //             alert(data.error);
-    //             return;
-    //         }
-    //         alert('Order placed successfully');
-    //         setCart([]);
-    //     })
-    //     .catch((error) => console.error('Error:', error));
+
 
 
     const increase_quantity = (item_id: any) => {
@@ -300,13 +332,14 @@ function Restroant_view() {
     return (
         <Wrapper style={springProps}>
             <Typography variant="h1" component="div" style={{
-                fontSize: '1.7rem'
+                fontSize: restorantName.length > 0 ? (restorantName.length * 0.11) + 'rem' : '2rem',
             }}>
-                <RestaurantMenuIcon /> Restorant
+                <RestaurantMenuIcon /> {restorantName.length > 0 ? <>{restorantName.length > 14 ?
+                    restorantName.slice(0, 14) + '...' : restorantName}</> : 'Restorant'}
             </Typography>
-            <Typography variant="h3" component="div" style={{
+            {/* <Typography variant="h3" component="div" style={{
                 fontSize: '1.1rem'
-            }}>Details</Typography>
+            }}>Details</Typography> */}
             {/* <Typography variant="h4" component="div" style={{
                 fontSize: '1.1rem'
             }}>Tables</Typography>
@@ -319,20 +352,26 @@ function Restroant_view() {
                 </StyledButton>
             ))} */}
             <Typography variant="h4" component="div" style={{
-                fontSize: '1.1rem',
-                marginBottom: '9px'
-            }}>Menu Items</Typography>
+                fontSize: '1.2rem',
+                marginBottom: '9px',
+                marginTop: '20px'
+            }}>Menu <span style={{
+                color: `${({ theme }: any) => theme.colors.gray}`,
+                fontSize: '0.8rem'
+            }}> ({tableName.length > 0 ? <>
+                {tableName.length > 11 ? tableName.slice(0, 11) + '...' : tableName}
+            </> : 'Table'})</span></Typography>
             {manu_category_list && manu_category_list.map((category) => (
-                <StyledButton onClick={() => setManu_category_2(category.id.toString())} key={category.id} style={{
+                <StyledButton className={(manu_category_2 == category.id.toString()) ? 'selected' : ''} onClick={() => setManu_category_2(category.id.toString())} key={category.id} style={{
                     marginRight: '10px',
-                    borderRadius: '5px',
+                    borderRadius: '30px',
                     padding: '5px 12px',
                     fontFamily: 'Roboto, serif',
                     alignItems: 'center',
                     justifyContent: 'center',
                     position: 'relative',
                     display: 'inline-block',
-                    fontSize: '1.35rem',
+                    fontSize: '1.05rem',
                 }}>
                     {category.name}
                 </StyledButton>
@@ -341,10 +380,17 @@ function Restroant_view() {
             <List>
                 {manu_items && manu_items.map((item) => (
                     <StyledListItem key={item.id}>
-                        <StyledListItemText primary={item.name} secondary={`Price: ${item.price}, Description: ${item.description}`} style={{
+                        {item.veg ? <CircleRoundedIcon style={{
+                            fontSize: '0.79rem', border: '1px solid #01800c', padding: '1.9px',
+                            color: '#01800c', borderRadius: '8%', position: 'absolute', left: '2px', top: '2px'
+                        }} /> : <CircleRoundedIcon style={{
+                            fontSize: '0.79rem', border: '1px solid #8c0015', padding: '1.9px',
+                            color: '#8c0015', borderRadius: '8%', position: 'absolute', top: '2px', left: '2px'
+                        }} />}
+                        <StyledListItemText primary={item.name} secondary={`Price: ${item.price}`} style={{
                             fontSize: '2.1rem'
                         }} />
-                        <StyledButton onClick={add_to_cart(item.id)} style={{
+                        <StyledButton style={{
                             border: '0px',
                             fontSize: '1rem',
                             fontFamily: 'Roboto, serif',
@@ -354,7 +400,31 @@ function Restroant_view() {
                             display: 'flex',
                             flexDirection: 'column',
                         }}>
-                            <AddShoppingCartIcon /> Add
+                            {cart.find((cartItem: any) => cartItem.id === item.id) ? <div style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+
+                                fontSize: '1rem',
+                                fontFamily: 'Roboto, serif',
+                                position: 'relative',
+                                backgroundColor: theme.colors.background,
+                                color: theme.colors.text,
+                                padding: '4px 15px',
+                                borderRadius: '10px',
+                                gap: '8px',
+                            }}><RemoveIcon style={{
+                                fontSize: '1.1rem',
+                                color: theme.colors.primary,
+                                marginRight: '5px',
+                            }}
+                                onClick={reduce_quantity(item.id)}
+                                />{cart.find((cartItem: any) => cartItem.id === item.id).quantity}<AddIcon style={{
+                                    fontSize: '1rem',
+                                    color: theme.colors.primary,
+                                    marginLeft: '5px',
+                                }}
+                                    onClick={increase_quantity(item.id)} /></div> : <AddShoppingCartIcon onClick={add_to_cart(item.id)} />}
                         </StyledButton>
                     </StyledListItem>
                 ))}
@@ -368,7 +438,9 @@ function Restroant_view() {
                     color: theme.colors.white,
                     padding: '10px 0px',
                     position: 'fixed',
-                }}><Badge badgeContent={cart.length} color="secondary"><ShoppingCartIcon /></Badge></Button>
+                }}><Badge badgeContent={cart.length} sx={{
+                    color: 'white',
+                }}><ShoppingCartIcon /></Badge></Button>
                 <SwipeableDrawer
                     anchor={'bottom'}
                     open={state['bottom']}
@@ -395,8 +467,8 @@ function Restroant_view() {
                     color: theme.colors.white,
                     padding: '10px',
                 }}>Cart is empty</Typography>}
-                    {cart.length > 0 && <Button onClick={make_order} style={{ border: '0px', backgroundColor: theme.colors.primary, color: theme.colors.white, borderRadius: '0px' }}>
-                        Order
+                    {cart.length > 0 && <Button onClick={make_order} style={{ border: '0px', backgroundColor: theme.colors.primary, color: 'white', borderRadius: '0px' }}>
+                        Place Order
                     </Button>}
                 </SwipeableDrawer>
             </React.Fragment>
@@ -409,12 +481,10 @@ function Restroant_view() {
                 right: '20px',
 
             }}
-            >Total: {cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</Typography>
-            {/* <StyledButton onClick={make_order} style={{
-                border: '0px'
-            }}>
-                <ShoppingCartIcon />Order
-            </StyledButton> */}
+            ><span style={{
+                color: `${({ theme }: any) => theme.colors.gray}`,
+                fontSize: '0.7rem'
+            }}>TOTAL:</span> ₹{cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</Typography>
         </Wrapper >
     )
 }

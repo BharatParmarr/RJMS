@@ -27,7 +27,8 @@ import PaymentsHistory from "./templates/PaymentsHistory";
 import Meals_list from "./templates/Meals_list";
 import Notice_bord from "./templates/Notice_bord";
 import Settings from "./templates/Settings";
-
+import Settings_restorant from "./templates/Settings_restorant";
+import Oauth from './templates/components/Oauth_consent_screen'
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider>
@@ -35,6 +36,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/app" element={<App />} />
+          <Route path="/auth" element={<Oauth />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/verify-otp" element={<Otp_verification />} />
@@ -47,6 +49,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/pricing" element={<Pricing_page />} />
           <Route path="/order-history/:id" element={<Order_history />} />
           <Route path="/inventory/:id" element={<Inventory />} />
+          <Route path="/restorant/Settings/:id" element={<Settings_restorant />} />
           <Route path="/hostels" element={<HostelList />} />
           <Route path="/hostels/create" element={<HostelForm />} />
           <Route path="/hostels/room/:id/:roomid/:room_name" element={<Room_view />} />

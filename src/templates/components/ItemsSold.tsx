@@ -2,8 +2,8 @@
 import styled from 'styled-components';
 
 const Container = styled.div`
-  background-color: ${props => props.theme.colors.primary};
-  color: ${props => props.theme.colors.white};
+  background-color: ${props => props.theme.colors.white};
+  color: ${props => props.theme.colors.text};
   padding: 20px;
   margin-bottom: 20px;
   text-align: center;
@@ -11,10 +11,10 @@ const Container = styled.div`
 `;
 
 const ItemsSold = ({ itemsSold }: any) => (
-    <Container>
-        <h2 style={{ fontFamily: 'Roboto' }}>Items Sold</h2>
-        <p style={{ fontFamily: 'Roboto' }}>{itemsSold}</p>
-    </Container>
+  <Container>
+    <h2 style={{ fontFamily: 'Roboto' }}>Items Sold</h2>
+    <p style={{ fontFamily: 'Roboto' }}>{itemsSold}</p>
+  </Container>
 );
 
 export default ItemsSold;

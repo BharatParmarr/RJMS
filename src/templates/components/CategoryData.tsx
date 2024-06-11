@@ -5,8 +5,8 @@ import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
 const Container = styled.div`
-  background-color: ${props => props.theme.colors.secondary};
-  color: ${props => props.theme.colors.white};
+  background-color: ${props => props.theme.colors.white};
+  color: ${props => props.theme.colors.text};
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 8px;
@@ -28,7 +28,7 @@ const CategoryData: React.FC<CategoryDataProps> = ({ categoryData }) => (
         <ul style={{ fontFamily: 'Roboto', listStyle: 'none' }}>
             {categoryData.map((category: Category) => (
                 <li key={category.item__category__name}>
-                    {category.item__category__name}: {category.total_orders} orders, ${category.total_revenue} revenue
+                    {category.item__category__name}: {category.total_orders} orders, {category.total_revenue} revenue
                 </li>
             ))}
         </ul>

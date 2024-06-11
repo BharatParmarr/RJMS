@@ -140,8 +140,11 @@ function Restorant_table_list() {
                     <span>
                         <StyledButton onClick={() => navigate(`/Orders_view/${id}`)}>Orders</StyledButton>
                         <StyledButton onClick={() => navigate(`/restorant/Manage/${id}`)}>Manage</StyledButton>
-                        <StyledButton onClick={() => navigate(`/data-analysis/${id}`)}>Data Analysis</StyledButton>
+                        <StyledButton onClick={() =>
+                            window.location.href = `/data-analysis/${id}`
+                        }>Data Analysis</StyledButton>
                         <StyledButton onClick={() => navigate(`/inventory/${id}`)}>Inventory</StyledButton>
+                        <StyledButton onClick={() => navigate(`/restorant/Settings/${id}`)}>Settings</StyledButton>
                     </span>
                 </div>
             </Typography>

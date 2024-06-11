@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PaletteMode } from '@mui/material';
+import { Badge, PaletteMode } from '@mui/material';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,6 +9,7 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
+import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import ToggleColorMode from './ToggleColorMode';
@@ -17,6 +18,114 @@ import API_HOST from '../../config';
 import { useTheme } from '../styles/theme';
 import '../css/style.css'
 import Logo from '../../assets/Static/logo.jpg'
+import { useNavigate } from 'react-router-dom';
+import { BadgeProps } from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -30,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+    opacity: 1,
+    animation: 'blinker 1.6s linear 2 alternate-reverse',
+  },
+
+  // animation
+  '@keyframes blinker': {
+    from: { opacity: 1 },
+    to: { opacity: 0 },
+  },
+  '@keyframes border': {
+    from: { border: `2px solid red` },
+    to: { border: `2px solid ${theme.palette.background.paper}` },
+  },
+}));
+function PositionedMenu() {
+  const { theme } = useTheme();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
+  return (
+    <div>
+      <Button
+        id="basic-button"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+        style={{ display: 'flex', gap: 0.5, justifyContent: 'space-between', color: 'black' }}
+      >
+        Dashboard
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+          style: {
+            backgroundColor: theme.colors.background,
+            color: theme.colors.text,
+          },
+        }}
+      >
+        <MenuItem onClick={() => {
+          navigate('/create-restaurant/')
+          handleClose()
+        }} style={{
+          color: theme.colors.text,
+          backgroundColor: theme.colors.background,
+          minWidth: '300px',
+        }}>Restorant Management</MenuItem>
+        <Divider variant="middle" component="li" />
+        <MenuItem onClick={() => {
+          navigate('/hostels')
+          handleClose()
+        }} style={{
+          color: theme.colors.text,
+          backgroundColor: theme.colors.background
+        }}>Hotels Management</MenuItem>
+        <Divider variant="middle" component="li" />
+        <MenuItem onClick={() => {
+          window.open('https://fitwayn.com', 'new')
+        }} style={{
+          color: theme.colors.text,
+          backgroundColor: theme.colors.background,
+          marginRight: '60px',
+        }}>
+          <StyledBadge color="secondary" badgeContent="app">
+            Gym Mangment & Workout Planner
+          </StyledBadge>
+        </MenuItem>
+        <Divider variant="middle" component="li" />
+        <MenuItem onClick={() => {
+          window.open('https://fitwayn.com', 'new')
+        }} style={{
+          color: theme.colors.text,
+          backgroundColor: theme.colors.background,
+          marginRight: '60px'
+        }}>
+          <StyledBadge color="secondary" badgeContent="coming soon">
+            New Tools  . .
+          </StyledBadge>
+        </MenuItem>
+      </Menu>
+    </div>
+  );
+}
+
+
 
 const logoStyle = {
   width: '50px',
@@ -139,7 +248,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                 Bizztrow
               </Typography>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <MenuItem
+                {/* <MenuItem
                   onClick={() => window.open('/create-restaurant/', '_self')}
                   sx={{ py: '6px', px: '12px' }}
                 >
@@ -153,14 +262,8 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                 ><Typography variant="body2" color="text.primary">
                     Hostels
                   </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => scrollToSection('highlights')}
-                  sx={{ py: '6px', px: '12px' }}
-                ><Typography variant="body2" color="text.primary">
-                    Highlights
-                  </Typography>
-                </MenuItem>
+                </MenuItem> */}
+                <PositionedMenu />
                 <MenuItem
                   onClick={() => window.open('/pricing/', '_self')}
                   sx={{ py: '6px', px: '12px' }}

@@ -12,7 +12,7 @@ const ThemeProvider = ({ children }: any) => {
         colors: themeMode === 'light' ? {
             primary: '#0063e1', // Blue
             secondary: '#108700', // Green
-            background: '#f5f5f5', // Light grey
+            background: '#eaeaea', // Light grey
             objectBg: '#fff', // White
             text: '#202124', // Dark grey
             footerBg: '#202124',

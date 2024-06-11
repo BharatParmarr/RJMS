@@ -1,4 +1,4 @@
-import api from "../api"
+import api from "../apirestorant"
 import styled from "styled-components"
 import { useTheme } from "./styles/theme"
 import {
@@ -7,11 +7,12 @@ import {
     InputLabel,
 } from '@mui/material';
 import { useParams, useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import PersonRemoveAlt1RoundedIcon from '@mui/icons-material/PersonRemoveAlt1Rounded';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
+import API_HOST from "../config";
 
 const StyledDiv = styled.div`
     padding: 20px;
@@ -38,7 +39,7 @@ const StyledTypography = styled.h1`
     gap: 9px;
     margin-top: 20px;
 
-     @media (max-width: 768px) {
+    @media (max-width: 768px) {
         font-size: 16px;
         flex-direction: column;
     }
@@ -105,7 +106,7 @@ const StyledDivHolder = styled.div`
     color: ${({ theme }) => theme.colors.text};
     padding-bottom: 10px;
 
-     @media (max-width: 768px) {
+    @media (max-width: 768px) {
         flex-direction: column;
     }
     `;
@@ -124,7 +125,7 @@ function Hostel_info_change({ hosteldata }: any) {
         email: hosteldata.email,
         website: hosteldata.website,
     });
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState(hosteldata.logo);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
@@ -147,12 +148,18 @@ function Hostel_info_change({ hosteldata }: any) {
         formData.append('phone', hostelDetails.phone);
         formData.append('email', hostelDetails.email);
         formData.append('website', hostelDetails.website);
-        if (id) { formData.append('hostel_id', id); } else {
-            navigate('/hostels')
+        if (id) { formData.append('restorant_id', id); } else {
+            navigate('create-restaurant')
         }
-        if (image) formData.append('logo', image);
+        if (image) {
+            if (typeof (image) === 'string') {
+                // do nothing
+            } else {
+                formData.append('logo', image);
+            }
+        }
 
-        api.put(`/hostels/`, formData).then((response) => {
+        api.put(`/restorant`, formData).then((response) => {
             if (response.status === 200) {
                 setIsOpen(false)
             }
@@ -160,6 +167,8 @@ function Hostel_info_change({ hosteldata }: any) {
             console.log(error)
         })
     };
+
+
     return (
         <StyledDivcontainer style={{
             backgroundColor: theme.colors.white,
@@ -228,9 +237,14 @@ function Hostel_info_change({ hosteldata }: any) {
                 <Container style={{
                     display: 'flex',
                     flexDirection: 'column',
+                    gap: 20,
+
                 }}>
-                    <img src={image ? URL.createObjectURL(image) : ''} alt="Hostel" style={{ width: '100%' }} />
-                    <InputLabel htmlFor="upload-photo">
+                    {/* {image start with /media thenAPI_HOST + image :  URL.createObjectURL(image)} */}
+                    <InputLabel htmlFor="upload-photo" style={{
+                        color: theme.colors.text,
+                    }}>
+                        {typeof (image) === 'string' ? <img src={image.startsWith('/media') ? API_HOST + image : URL.createObjectURL(image)} alt="Hostel" style={{ width: '100%' }} /> : <img src={URL.createObjectURL(image)} alt="Hostel" style={{ width: '100%' }} />}
                         Upload Hostel Image
                     </InputLabel>
                     <HiddenInput
@@ -267,7 +281,7 @@ function Settings_component() {
     const [hostels, setHostels] = useState<Hostel>();
 
     useEffect(() => {
-        api.get(`/hostels?hostel_id=${id}`).then((response) => {
+        api.get(`/restorant?restorant_id=${id}`).then((response) => {
             if (response.status === 200) {
                 setHostels(response.data);
             }
@@ -280,7 +294,7 @@ function Settings_component() {
     const [Manager, setManager] = useState<string>();
     const [Staff, setStaff] = useState<string[]>();
     useEffect(() => {
-        api.get(`/hostels/SetManager?hostel_id=` + id).then((response) => {
+        api.get(`/restorant/SetManager?restorant_id=` + id).then((response) => {
             console.log(response, 'response');
             if (response.status === 200) {
                 setManager(response.data.manager);
@@ -294,14 +308,14 @@ function Settings_component() {
     const handleSubmit = (e: any) => {
         e.preventDefault();
         let data = {
-            hostel_id: id,
+            restorant_id: id,
             username: Manager_name
         }
         if (!Manager_name) {
             alert('Please enter manager name')
             return
         }
-        api.put(`/hostels/SetManager`, data).then((response) => {
+        api.put(`/restorant/SetManager`, data).then((response) => {
             if (response.status === 200) {
                 setManager(Manager_name)
                 setManager_name('')
@@ -317,7 +331,7 @@ function Settings_component() {
     };
 
     const removeManger = () => {
-        api.delete(`/hostels/SetManager?hostel_id=${id}&manager=1&manager_name=${Manager}`).then((response) => {
+        api.delete(`/restorant/SetManager?restorant_id=${id}&manager=1&manager_name=${Manager}`).then((response) => {
             if (response.status === 200) {
                 setManager('')
             }
@@ -326,7 +340,7 @@ function Settings_component() {
         })
     };
     const removeStaff = (staff: any) => {
-        api.delete(`/hostels/SetManager?hostel_id=${id}&manager=0&manager_name=${staff}`).then((response) => {
+        api.delete(`/restorant/SetManager?restorant_id=${id}&manager=0&manager_name=${staff}`).then((response) => {
             if (response.status === 200) {
                 setStaff(Staff?.filter((item) => item !== staff))
             }
@@ -340,7 +354,7 @@ function Settings_component() {
             alert('Please enter staff name')
             return
         }
-        api.post(`/hostels/SetManager`, { hostel_id: id, username: Staff_name }).then((response) => {
+        api.post(`/restorant/SetManager`, { restorant_id: id, username: Staff_name }).then((response) => {
             console.log(response.status, 'response');
             if (response.status === 200) {
                 setStaff([...Staff!, Staff_name])
@@ -365,7 +379,7 @@ function Settings_component() {
                 padding: '14px',
                 color: theme.colors.gray,
                 borderRadius: 10,
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)'
+                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
             }}>
                 Manager
                 {Manager && <StyledDivHolder>
@@ -447,7 +461,7 @@ type SettingsProps = {
     Settings?: any
 }
 
-function Settings({ For = "hostel", Settings = Settings_component }: SettingsProps) {
+function Settings_restorant({ For = "Restorant", Settings = Settings_component }: SettingsProps) {
     const { theme } = useTheme()
 
     return (
@@ -456,9 +470,7 @@ function Settings({ For = "hostel", Settings = Settings_component }: SettingsPro
                 display: 'flex',
                 gap: 10,
                 alignItems: 'center',
-
                 color: theme.colors.text
-
             }}>Settings<SettingsRoundedIcon style={{
                 fontSize: 30
             }} /><h5 style={{
@@ -470,4 +482,4 @@ function Settings({ For = "hostel", Settings = Settings_component }: SettingsPro
     )
 }
 
-export default Settings
+export default Settings_restorant

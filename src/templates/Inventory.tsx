@@ -278,7 +278,6 @@ function Inventory() {
     return (
         <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Title variant="h4">Inventory</Title>
-            <Typography variant="h5">Products</Typography>
             <ProductList>
                 {products && products.map((product, index) => (
                     <ProductItem key={index}>

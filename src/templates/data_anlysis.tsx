@@ -2,10 +2,12 @@ import React, { useEffect } from 'react'
 import API_HOST from '../config';
 import { useParams } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
+import { useTheme } from './styles/theme';
 
 function Data_anlysis() {
     const { id } = useParams();
     const [data, setData] = React.useState(null);
+    const { theme } = useTheme();
     useEffect(() => {
         fetch(API_HOST + '/api/Analysis?restorant_id=' + id, {
             method: 'GET',
@@ -23,8 +25,10 @@ function Data_anlysis() {
     }, []);
     return (
         // <Dashboard data={data} />
-        <div>
-            <h1 style={{ fontFamily: 'Roboto' }}>data analysis</h1>
+        <div style={{
+            backgroundColor: theme.colors.background,
+            padding: '20px'
+        }}>
             {data && <Dashboard data={data} />}
         </div>
     )
