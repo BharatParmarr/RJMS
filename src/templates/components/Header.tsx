@@ -42,7 +42,7 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     to: { border: `2px solid ${theme.palette.background.paper}` },
   },
 }));
-function PositionedMenu() {
+function PositionedMenu({ subscription }: { subscription?: boolean }) {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -65,7 +65,7 @@ function PositionedMenu() {
         onClick={handleClick}
         style={{ display: 'flex', gap: 0.5, justifyContent: 'space-between', color: 'black' }}
       >
-        Dashboard
+        Services
       </Button>
       <Menu
         id="basic-menu"
@@ -81,7 +81,11 @@ function PositionedMenu() {
         }}
       >
         <MenuItem onClick={() => {
-          navigate('/create-restaurant/')
+          if (subscription) {
+            navigate('/create-restaurant/')
+          } else {
+            navigate('/pricing/')
+          }
           handleClose()
         }} style={{
           color: theme.colors.text,
@@ -90,7 +94,11 @@ function PositionedMenu() {
         }}>Restorant Management</MenuItem>
         <Divider variant="middle" component="li" />
         <MenuItem onClick={() => {
-          navigate('/hostels')
+          if (subscription) {
+            navigate('/hostels')
+          } else {
+            navigate('/pricing/')
+          }
           handleClose()
         }} style={{
           color: theme.colors.text,
@@ -142,9 +150,11 @@ interface AppAppBarProps {
 function Header({ mode, toggleColorMode }: AppAppBarProps) {
 
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [showLogin, setShowLogin] = useState(false);
+  const [subscription, setSubscription] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -162,7 +172,10 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
           },
         });
         const data = await response.json();
+        console.log(data);
         setUsername(data.username);
+        setSubscription(data.subscription);
+        console.log(data.subscription, 'subscription');
       } catch (error) {
         console.error('There was an error!', error);
         setShowLogin(true);
@@ -263,7 +276,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                     Hostels
                   </Typography>
                 </MenuItem> */}
-                <PositionedMenu />
+                <PositionedMenu subscription={subscription} />
                 <MenuItem
                   onClick={() => window.open('/pricing/', '_self')}
                   sx={{ py: '6px', px: '12px' }}
@@ -272,7 +285,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   </Typography>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => scrollToSection('faq')}
+                  onClick={() => navigate('/F&Q/')}
                   sx={{ py: '6px', px: '12px' }}
                 >
                   <Typography variant="body2" color="text.primary">
@@ -289,16 +302,6 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
               }}
             >
               <ToggleColorMode mode={theme.colors.white == '#fff' ? 'light' : 'dark'} toggleColorMode={toggleColorMode} />
-              {/* <Button
-                color="primary"
-                variant="text"
-                size="small"
-                component="a"
-                href="/material-ui/getting-started/templates/sign-in/"
-                target="_blank"
-              >
-                Sign in
-              </Button> */}
               {showLogin ? <Button
                 color="primary"
                 variant="contained"
@@ -363,13 +366,12 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   <MenuItem onClick={() => window.open('/hostels', '_self')}>
                     Hostels
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('highlights')}>
-                    Highlights
-                  </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('pricing')}>
+                  <MenuItem onClick={() => navigate('/pricing/')} >
                     Pricing
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
+                  <MenuItem onClick={() => navigate('/F&Q/')}>
+                    F & Q
+                  </MenuItem>
                   <Divider />
                   <MenuItem>
                     {showLogin ? <Button

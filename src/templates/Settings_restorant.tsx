@@ -119,13 +119,13 @@ function Hostel_info_change({ hosteldata }: any) {
     // let For = "hostel"
 
     const [hostelDetails, setHostelDetails] = useState({
-        name: hosteldata.name,
-        address: hosteldata.address,
-        phone: hosteldata.phone,
-        email: hosteldata.email,
-        website: hosteldata.website,
+        name: hosteldata.name ? hosteldata.name : '',
+        address: hosteldata.address ? hosteldata.address : '',
+        phone: hosteldata.phone ? hosteldata.phone : '',
+        email: hosteldata.email ? hosteldata.email : '',
+        website: hosteldata.website ? hosteldata.website : '',
     });
-    const [image, setImage] = useState(hosteldata.logo);
+    const [image, setImage] = useState<Blob | MediaSource | null>(hosteldata.logo ? hosteldata.logo : null);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
@@ -152,9 +152,7 @@ function Hostel_info_change({ hosteldata }: any) {
             navigate('create-restaurant')
         }
         if (image) {
-            if (typeof (image) === 'string') {
-                // do nothing
-            } else {
+            if (image instanceof Blob) {
                 formData.append('logo', image);
             }
         }
@@ -244,7 +242,12 @@ function Hostel_info_change({ hosteldata }: any) {
                     <InputLabel htmlFor="upload-photo" style={{
                         color: theme.colors.text,
                     }}>
-                        {typeof (image) === 'string' ? <img src={image.startsWith('/media') ? API_HOST + image : URL.createObjectURL(image)} alt="Hostel" style={{ width: '100%' }} /> : <img src={URL.createObjectURL(image)} alt="Hostel" style={{ width: '100%' }} />}
+                        {image ? <img src={image instanceof Blob ? URL.createObjectURL(image) : API_HOST + image} alt="hostel" style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: 10
+                        }} /> : 'Upload Hostel Image'}
                         Upload Hostel Image
                     </InputLabel>
                     <HiddenInput

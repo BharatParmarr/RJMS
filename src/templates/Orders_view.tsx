@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import API_HOST from "../config";
+import API_HOST, { API_HOST_Websocket } from "../config";
 import styled from 'styled-components';
-import { Button, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Button, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { useTheme } from './styles/theme';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
@@ -23,7 +23,6 @@ import Fab from '@mui/material/Fab';
 import FullScreenDialog from "./order_modify_dilog";
 import HistoryIcon from '@mui/icons-material/History';
 // import AnimatedButton from "./components/Button_with_animationText";
-import BlockIcon from '@mui/icons-material/Block';
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
@@ -35,19 +34,10 @@ const Container = styled.div`
   align-items: center;
 `;
 
-// const OrderDetails = styled.div`
-//   width: 80%;
-//   margin: 20px auto;
-//   border-radius: 5px;
-//   background-color: ${({ theme }) => theme.colors.background};
-//   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-//   padding: 20px;
-// `;
-
 const OrderList = styled(List)`
   background-color: transparent; /* Remove unnecessary background color */
   color: ${({ theme }) => theme.colors.text};
-  padding: 0;
+  padding: 10px 15px;
   margin-bottom: 20px;
   display: flex;
   flex-direction: row;
@@ -229,12 +219,18 @@ function Orders_view() {
     }, [selectedTable, orders]);
 
     const { id } = useParams<{ id: string }>();
-    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://192.168.181.82:8000/ws/orders/' + id + '/');
+    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://' + API_HOST_Websocket + '/ws/orders/' + id + '/?token=' + localStorage.getItem('token'), {
+        shouldReconnect: () => false,
+        reconnectAttempts: 1,
+        reconnectInterval: 3000,
+    });
 
     // modify order
     const [showOrderModify, setShowOrderModify] = useState(false);
     const [orderDetails, setOrderDetails] = useState<any>(null);
     const [orderId, setOrderId] = useState<number | null>(null);
+    const [page, setPage] = useState(1);
+    const [is_page, setIs_page] = useState(true);
     function ModifiyOrder(order_id: number, order_details: any) {
         setOrderId(order_id);
         setOrderDetails(order_details);
@@ -246,9 +242,8 @@ function Orders_view() {
         if (readyState == WebSocket.OPEN) {
             if (lastMessage !== null) {
                 const data = JSON.parse(lastMessage.data);
-                // console.log(data);
                 if (data.incomplete_orders) {
-                    setOrders(oldOrders => [...(oldOrders || []), ...data.incomplete_orders]);
+                    setOrders(oldOrders => [...(oldOrders || []), ...(data.incomplete_orders || [])]);
                     let tables_list_id: number[] = []
                     let tables_list: string[] = []
                     data.incomplete_orders.map((order: any) => {
@@ -260,6 +255,12 @@ function Orders_view() {
                     setTables(oldTables => [...oldTables, ...tables_list]);
                     setTablesId(oldTablesId => [...oldTablesId, ...tables_list_id]);
                 } else if (data.order) {
+                    console.log(data.order, 'data');
+                    // check if the order is already in the list
+                    if (orders && orders.find((order) => order.id === data.order.id)) {
+                        // remove the order from the list
+                        setOrders(oldOrders => oldOrders?.filter((order) => order.id !== data.order.id));
+                    }
                     setOrders(oldOrders => [data.order, ...(oldOrders || [])]);
                     if (data.order.table_id) {
                         if (!tablesId.includes(data.order.table_id)) {
@@ -270,7 +271,7 @@ function Orders_view() {
                 }
             }
         } else {
-            fetch(url + '/orders?restorant_id=' + id, {
+            fetch(url + '/orders?restorant_id=' + id + '&page=1', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Token ${localStorage.getItem('token')} `
@@ -282,7 +283,6 @@ function Orders_view() {
                     throw new Error('Something went wrong');
                 }
             }).then(data => {
-                console.log(data.results);
                 if (data.results) {
                     setOrders(data.results);
                     let tables_list_id: number[] = []
@@ -299,6 +299,44 @@ function Orders_view() {
             }).catch((error) => console.error('Error:', error));
         }
     }, [lastMessage]);
+
+    useEffect(() => {
+        if (page == 1) return;
+        if (is_page) return;
+        fetch(url + '/orders?restorant_id=' + id + '&page=' + page, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Token ${localStorage.getItem('token')} `
+            },
+        }).then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                setIs_page(false);
+                throw new Error('Something went wrong');
+            }
+        }).then(data => {
+            if (data.results) {
+                if (data.results.length == 0) {
+                    setIs_page(false);
+                }
+                else if (data.results.length < 40) {
+                    setIs_page(false);
+                }
+                setOrders(oldOrders => [...(oldOrders || []), ...(data.results || [])]);
+                let tables_list_id: number[] = tablesId
+                let tables_list: string[] = tables
+                data.results.map((order: any) => {
+                    if (!tables_list_id.includes(order.table_id)) {
+                        tables_list_id.push(order.table_id);
+                        tables_list.push(order.table_name);
+                    }
+                });
+                setTables(oldTables => [...oldTables, ...tables_list]);
+                setTablesId(oldTablesId => [...oldTablesId, ...tables_list_id]);
+            }
+        }).catch((error) => console.error('Error:', error));
+    }, [page]);
 
 
     const markAsPartial = (orderId: number, itemId: number) => {
@@ -323,7 +361,6 @@ function Orders_view() {
                 }
             })
             .then(data => {
-                console.log(data);
                 if (itemIndex !== -1) {
                     // Change the status of the item
                     newOrders[orderIndex].order_details[itemIndex].is_completed = !newOrders[orderIndex].order_details[itemIndex].is_completed;
@@ -358,7 +395,6 @@ function Orders_view() {
                 }
             })
             .then(data => {
-                console.log(data);
                 if (orderIndex !== -1) {
                     // Change the status of the order
                     newOrders[orderIndex].status = !newOrders[orderIndex].status;
@@ -415,7 +451,6 @@ function Orders_view() {
     // Block the ip
     function BlockTheIp(orderId: number) {
         if (window.confirm('Are you sure you want to block this user?')) {
-            // console.log('Block the user')
             handleOpen()
             // Create a new copy of the orders
             let newOrders = orders ? [...orders] : [];
@@ -431,7 +466,6 @@ function Orders_view() {
                 body: JSON.stringify({ 'order_id': orderId, reason: 'Block by restorant', for: 'restorant' }),
             })
                 .then(response => {
-                    console.log(response)
                     if (response.status === 200) {
                         return response.json();
                     } else {
@@ -439,7 +473,6 @@ function Orders_view() {
                     }
                 })
                 .then(data => {
-                    console.log(data);
                     if (orderIndex !== -1) {
                         // Change the status of the order
                         newOrders[orderIndex].status = !newOrders[orderIndex].status;
@@ -529,29 +562,58 @@ function Orders_view() {
                                     whileHover={{ boxShadow: '0px 4px 8px ' + theme.colors.primary + '80' }}
                                     exit={{ opacity: 0, scale: 0 }}
                                     animate={{ opacity: 1, scale: 1 }}
+                                    style={{
+                                        borderRadius: '0px',
+                                        padding: '0px',
+                                    }}
                                 >
-                                    <OrderList>
-                                        <OrderListItem>
+                                    <OrderList style={{
+                                        paddingTop: '0px',
+                                    }}>
+                                        <OrderListItem style={{
+                                            backgroundColor: theme.colors.primary + '59',
+                                            borderRadius: '0px',
+                                            justifyContent: 'space-between',
+                                            padding: '0px 15px',
+                                        }}>
                                             <ListItemText
                                                 primary={order.table_name}
                                                 secondary={new Date(order.order_time).toLocaleString('en-US', {
                                                     hour: 'numeric',
                                                     minute: 'numeric',
-                                                })} secondaryTypographyProps={{
+                                                })}
+                                                secondaryTypographyProps={{
                                                     style: {
-                                                        color: theme.colors.gray
+                                                        color: theme.colors.gray,
                                                     }
-                                                }} />
-                                            <ListItemText primary={'Total: ₹' + order.order_details.reduce((acc, item) => acc + item.total, 0)} />
-                                            <ListItemText primary={order.status ? <DoneAllIcon /> : <PendingActionsIcon />} />
+                                                }}
+                                                style={{
+                                                    color: theme.colors.text,
+                                                }}
+                                            />
+                                            <ListItemText primary={<span style={{
+                                                backgroundColor: theme.colors.white,
+                                                border: '1px solid ' + theme.colors.gray,
+                                                borderRadius: '5px',
+                                                color: theme.colors.text,
+                                                right: '0',
+                                                float: 'right',
+                                                padding: '5px 18px',
+                                                boxShadow: 'rgba(50, 50, 93, 0.25) 0px 30px 60px -6px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset',
+                                            }}>₹ {(order.order_details.reduce((acc, item) => acc + item.total, 0)).toFixed(0)}</span>} />
+                                            {/* <ListItemText primary={order.status ? <DoneAllIcon /> : <PendingActionsIcon />} /> */}
                                         </OrderListItem>
                                     </OrderList>
-                                    <Typography variant="h3" style={{
-                                        marginBottom: '20px',
-                                        fontSize: '1.1rem',
-                                        color: theme.colors.gray
-                                    }}>Completed</Typography>
-                                    <OrderList>
+                                    {/* <Typography variant="h3" style={{
+                                        fontSize: '0.8rem',
+                                        color: theme.colors.gray,
+                                        padding: '10px 15px',
+                                    }}>Completed</Typography> */}
+                                    <OrderList style={{
+                                        border: '1px solid #00ff0033',
+                                        borderRadius: '5px',
+                                        backgroundColor: '#00ff0015',
+                                    }}>
                                         {order.order_details.filter((item) => item.is_completed).map((item) => (
                                             <OrderListItem key={item.id}>
                                                 <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total} `}
@@ -565,45 +627,77 @@ function Orders_view() {
                                                             color: theme.colors.gray
                                                         }
                                                     }} />
+                                                <Divider />
                                             </OrderListItem>
                                         ))}
+                                        {order.order_details.filter((item) => item.is_completed).length === 0 && <Typography variant="h3" style={{ fontSize: '0.9rem', padding: '10px 15px' }}>empty</Typography>}
                                     </OrderList>
-                                    <Typography variant="h3" style={{
-                                        marginBottom: '10px',
-                                        fontSize: '1.1rem',
-                                        color: theme.colors.gray
-                                    }}>Incomplete</Typography>
-                                    <OrderList>
+                                    {/* <Typography variant="h3" style={{
+                                        fontSize: '0.8rem',
+                                        color: theme.colors.gray,
+                                        padding: '10px 15px',
+                                    }}>Incomplete</Typography> */}
+                                    <OrderList style={{
+                                        marginBottom: '15px',
+                                        paddingBottom: '0px',
+                                        border: '1px solid #ff000033',
+                                        borderRadius: '5px',
+                                        backgroundColor: '#ff000012',
+                                        minHeight: '22px',
+                                    }}>
                                         {order.order_details.filter((item) => !item.is_completed).map((item) => (
-                                            <motion.div key={item.id} style={{ width: '100%' }} exit={{ opacity: 0, scale: 0 }}>
-                                                <OrderListItem key={item.id}>
-                                                    <ListItemText primary={item.item_name} secondary={`Quantity: ${item.quantity}, Price: ${item.price}, Total: ${item.total} `} secondaryTypographyProps={{
+                                            <motion.div key={item.id} style={{ width: '100%', padding: '10px' }} exit={{ opacity: 0, scale: 0 }}>
+                                                <OrderListItem key={item.id} onClick={() => markAsPartial(order.id, item.id)}>
+                                                    <ListItemText primary={`${item.item_name}`} secondary={`Price: ${item.price} - (${item.total}) `} secondaryTypographyProps={{
                                                         style: {
                                                             color: theme.colors.gray
                                                         }
                                                     }} />
-                                                    <Button variant="outlined" color="primary" onClick={() => markAsPartial(order.id, item.id)} startIcon={<TaskAltIcon />} ></Button>
+                                                    {/* quantity */}
+                                                    <ListItemText primary={<><span style={{
+                                                        color: theme.colors.text,
+                                                        fontSize: '0.8rem',
+                                                    }} ></span> {item.quantity}</>}
+                                                        primaryTypographyProps={{
+                                                            style: {
+                                                                color: theme.colors.text,
+                                                                fontSize: '1rem',
+                                                            }
+                                                        }}
+                                                    />
+                                                    <Button variant="text" color="primary"><PendingActionsIcon /></Button>
                                                 </OrderListItem>
+                                                <Divider />
                                             </motion.div>
                                         ))}
+                                        {order.order_details.filter((item) => !item.is_completed).length === 0 && <Typography variant="h3" style={{ fontSize: '0.9rem', padding: '10px 15px' }}>empty</Typography>}
                                     </OrderList>
-                                    <StyledDiv1>
+                                    <StyledDiv1 style={{
+                                        backgroundColor: theme.colors.primary + '45',
+                                        borderRadius: '0px',
+                                        padding: '0px',
+                                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0)',
+                                        margin: '0px',
+                                    }}>
                                         <Fab variant="extended" onClick={() => ModifiyOrder(order.id, order.order_details)} style={{
-                                            backgroundColor: theme.colors.primary,
-                                            color: theme.colors.white,
+                                            backgroundColor: theme.colors.primary + '00',
+                                            color: theme.colors.text,
                                             fontFamily: 'Roboto, sans-serif',
                                             textTransform: 'capitalize',
-                                            marginTop: '10px',
-                                            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                                            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.0)',
+                                            width: '50%',
+                                            borderRight: '1px solid ' + theme.colors.text,
+                                            borderRadius: '0px',
                                         }}><EditNoteIcon sx={{ mr: 1 }} />
                                             Modify
                                         </Fab>
-                                        <Button variant="outlined" color="success" onClick={() => markAsComplete(order.id)} startIcon={<CurrencyRupeeIcon />} style={{
-                                            marginTop: '10px',
+                                        <Button variant="text" onClick={() => markAsComplete(order.id)} startIcon={<CurrencyRupeeIcon />} style={{
+                                            marginTop: '0px',
                                             fontFamily: 'Roboto, sans-serif',
                                             textTransform: 'capitalize',
-                                            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-
+                                            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.0)',
+                                            width: '50%',
+                                            color: theme.colors.text,
                                         }}>Record Payment</Button>
                                         {/* block User */}
                                         {/* <Button variant="outlined" color="error" onClick={() => BlockTheIp(order.id)} style={{
@@ -616,6 +710,12 @@ function Orders_view() {
                                     </StyledDiv1>
                                 </StyledDivmotiondiv>
                             ))}
+                            {!is_page ? <Typography variant="h3" style={{ fontSize: '1.5rem' }}>No more orders found</Typography> : <Button variant="outlined" color="primary" onClick={() => setPage(page + 1)} style={{
+                                marginTop: '10px',
+                                fontFamily: 'Roboto, sans-serif',
+                                textTransform: 'capitalize',
+                                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                            }}>Load More</Button>}
                         </StyledAnimatePresence>
                     </AnimatePresence>
                 </AccordionDetails>

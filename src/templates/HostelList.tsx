@@ -4,8 +4,11 @@ import { ListItem, ListItemText, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import API_HOST from '../config';
+import { useNavigate } from 'react-router-dom';
 
 const HostelList = () => {
+    const navigate = useNavigate();
+
     type Hostel = {
         id: number;
         name: string;
@@ -30,7 +33,7 @@ const HostelList = () => {
         <StyledList initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {hostels && hostels.map((hostel) => (
                 <StyledListItem onClick={() => {
-                    window.location.href = `/hostels/${hostel.id}`;
+                    navigate(`/hostels/${hostel.id}`);
                 }} key={hostel.id}>
                     <ListItemText primary={hostel.name} />
                     <ListItemText primary={hostel.address} />
@@ -39,7 +42,7 @@ const HostelList = () => {
             ))}
             <Button variant="contained" color="primary"
                 onClick={() => {
-                    window.location.href = '/hostels/create';
+                    navigate('/hostels/create');
                 }}
             >New Hostel</Button>
         </StyledList>

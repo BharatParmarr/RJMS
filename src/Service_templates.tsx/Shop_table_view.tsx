@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { json, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useSpring, animated } from 'react-spring';
 import { Badge, Button, List, ListItem, ListItemText, SwipeableDrawer, Typography } from '@mui/material';
 import styled from "styled-components";
@@ -8,7 +8,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import API_HOST, { API_HOST_Websocket } from "../config";
-import { useTheme } from "./styles/theme";
+import { useTheme } from "../templates/styles/theme";
 import React from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import useWebSocket from 'react-use-websocket';
@@ -56,7 +56,7 @@ const StyledListItemText = styled(ListItemText)`
   }
 `;
 
-function Restroant_view() {
+function Restroant_view_shop() {
     const springProps = useSpring({ opacity: 1, from: { opacity: 0 } });
     const { id, table_id } = useParams();
     const { theme } = useTheme();
@@ -70,97 +70,31 @@ function Restroant_view() {
     const [manu_category_list, setManu_category_list] = useState<ManuCategotyList[]>();
     let url = API_HOST
 
-    useEffect(() => {
-        // let yourToken = localStorage.getItem('token');
-        fetch(url + '/categories?restorant_id=' + id, {
-            method: 'GET',
-            headers: {
-                // 'Authorization': `Token ${yourToken}`
-            }
-        })
-            .then(response => {
-                if (response.status === 401) {
-                    // navigate('/login')
-                } else {
-                    return response.json()
-                }
-            })
-            .then(data => {
-                if (data) {
-                    setManu_category_list(data.results);
-                }
-            })
-            .catch((error) => console.error('Error:', error));
 
-        fetch(url + '/api/restorant/tabledetails?table_id=' + table_id,).then(response => response.json()).then(data => {
-            console.log(data)
-            setTableName(data.table_name)
-            setRestorantName(data.restorant_name)
-        }).catch((error) => console.error('Error:', error));
-    }, []);
-
-
-    // useEffect(() => {
-    //     let yourToken = localStorage.getItem('token');
-    //     fetch(url + '/tables?restorant_id=' + id, {
-    //         method: 'GET',
-    //         headers: {
-    //             'Authorization': `Token ${yourToken}`
-    //         }
-    //     })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             settables(data.results);
-    //         })
-    //         .catch((error) => console.error('Error:', error));
-    // }, []);
-
-
-    // manu item create, delete, show
     type ManuItem = {
         id: number;
         name: string;
         price: number;
         description: string;
-        veg: boolean;
     };
     type Savemanu = {
         [key: string]: ManuItem[];
     }
     const [manu_items, setManu_items] = useState<ManuItem[]>();
     const [manu_category_2, setManu_category_2] = useState('')
-    const [savedManu, setSavedManu] = useState<Savemanu>();
 
     useEffect(() => {
-        if (!manu_category_2) return;
-        console.log('manu_category_2', manu_category_2, savedManu);
-        if (savedManu && savedManu[manu_category_2]) {
-            setManu_items(savedManu[manu_category_2]);
-            return;
-        }
-        // let yourToken = localStorage.getItem('token');
-        fetch(url + '/items?category_id=' + manu_category_2, {
+        fetch(url + '/api/service-shop/services?service_table_id=' + table_id, {
             method: 'GET',
-            headers: {
-                // 'Authorization': `Token ${yourToken}`
-            },
         })
             .then(response => response.json())
             .then(data => {
-                setManu_items(data.results);
-                // set saved manu
-                if (savedManu) {
-                    let newSavedManu = savedManu;
-                    newSavedManu[manu_category_2] = data.results;
-                    setSavedManu(newSavedManu);
-                } else {
-                    let newSavedManu: any = {};
-                    newSavedManu[manu_category_2] = data.results;
-                    setSavedManu(newSavedManu);
-                }
+                console.log(data, 'dat')
+                setManu_items(data);
+
             })
             .catch((error) => console.error('Error:', error));
-    }, [manu_category_2]);
+    }, []);
 
     // cart
     const [cart, setCart] = useState<any[]>([]);
@@ -183,41 +117,10 @@ function Restroant_view() {
         }
     }
 
-    // function make_order() {
-    //     console.log(cart.map((item) => ({ item: item.id, quantity: item.quantity })))
-    //     fetch(url + '/order/', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': `Token ${localStorage.getItem('token')}`
-    //         },
-    //         body: JSON.stringify({
-    //             items: cart.map((item) => ({ item: item.id, quantity: item.quantity })),
-    //             table: table_id,
-    //         })
-    //     })
-    //         .then(response => {
-    //             if (response.status === 400) {
-    //                 alert('Please select items to order')
-    //             }
-    //             return response.json()
-    //         })
-    //         .then(data => {
-    //             if (data.error) {
-    //                 alert(data.error);
-    //                 return;
-    //             }
-    //             alert('Order placed successfully');
-    //             // setCart([]);
-    //         })
-    //         .catch((error) => console.error('Error:', error));
-    // }
+
 
     // Create WebSocket connection.
-    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://' + API_HOST_Websocket + '/ws/orders/' + id + '/', {
-        shouldReconnect: () => false,
-        reconnectAttempts: 1, reconnectInterval: 3000
-    });
+    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://' + API_HOST_Websocket + '/ws/orders/0/');
 
     useEffect(() => {
         if (lastMessage !== null) {
@@ -317,14 +220,6 @@ function Restroant_view() {
         }
     }
 
-    // const [cart_show, setCart_show] = useState(false);
-
-    // const cartSpring = useSpring({
-    //     from: { transform: 'translate3d(0, 100%, 0)' },
-    //     to: { transform: 'translate3d(0, 0, 0)' },
-    //     reverse: !cart_show,
-    //     config: { tension: 210, friction: 20 },
-    // });
 
     // drwaer
     const [state, setState] = React.useState({
@@ -355,6 +250,29 @@ function Restroant_view() {
             };
         }
     }, [state['bottom']]);
+
+
+    // time in que calculation 
+    const [min_time, setMinTime] = useState(0);
+    const [max_time, setMaxTime] = useState(0);
+    useEffect(() => {
+        fetch(url + '/api/service-shop/tables/time?table_id=' + table_id, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                let min = data['min_time'] * 60 * 1000;
+                let max = data['max_time'] * 60 * 1000;
+                min = new Date().getTime() + min;
+                setMinTime(min);
+                max = new Date().getTime() + max;
+                setMaxTime(max);
+            })
+            .catch((error) => console.error('Error:', error));
+    }, []);
     return (
         <Wrapper style={springProps}>
             <Typography variant="h1" component="div" style={{
@@ -363,20 +281,6 @@ function Restroant_view() {
                 <RestaurantMenuIcon /> {restorantName.length > 0 ? <>{restorantName.length > 14 ?
                     restorantName.slice(0, 14) + '...' : restorantName}</> : 'Restorant'}
             </Typography>
-            {/* <Typography variant="h3" component="div" style={{
-                fontSize: '1.1rem'
-            }}>Details</Typography> */}
-            {/* <Typography variant="h4" component="div" style={{
-                fontSize: '1.1rem'
-            }}>Tables</Typography>
-            {tables && tables.map((table: any) => (
-                <StyledButton key={table.id} variant="contained" style={{
-                    marginRight: '10px',
-                    backgroundColor: `${({ theme }: any) => theme.colors.primary}`
-                }}>
-                    {table.name}
-                </StyledButton>
-            ))} */}
             <Typography variant="h4" component="div" style={{
                 fontSize: '1.2rem',
                 marginBottom: '9px',
@@ -406,13 +310,7 @@ function Restroant_view() {
             <List>
                 {manu_items && manu_items.map((item) => (
                     <StyledListItem key={item.id}>
-                        {item.veg ? <CircleRoundedIcon style={{
-                            fontSize: '0.79rem', border: '1px solid #01800c', padding: '1.9px',
-                            color: '#01800c', borderRadius: '8%', position: 'absolute', left: '2px', top: '2px'
-                        }} /> : <CircleRoundedIcon style={{
-                            fontSize: '0.79rem', border: '1px solid #8c0015', padding: '1.9px',
-                            color: '#8c0015', borderRadius: '8%', position: 'absolute', top: '2px', left: '2px'
-                        }} />}
+
                         <StyledListItemText primary={item.name} secondary={`Price: ${item.price}`} style={{
                             fontSize: '2.1rem'
                         }} />
@@ -494,7 +392,7 @@ function Restroant_view() {
                     padding: '10px',
                 }}>Cart is empty</Typography>}
                     {cart.length > 0 && <Button onClick={make_order} style={{ border: '0px', backgroundColor: theme.colors.primary, color: 'white', borderRadius: '0px' }}>
-                        Place Order
+                        Book
                     </Button>}
                 </SwipeableDrawer>
             </React.Fragment>
@@ -511,63 +409,32 @@ function Restroant_view() {
                 color: `${({ theme }: any) => theme.colors.gray}`,
                 fontSize: '0.7rem'
             }}>TOTAL:</span> ₹{cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</Typography>
+            <Typography variant="h4" component="div" style={{
+                fontSize: '1.1rem',
+                marginBottom: '20px',
+                position: 'absolute',
+                top: '50px',
+                backgroundColor: `${({ theme }: any) => theme.colors.primary}`,
+                right: '20px',
+
+            }}
+            ><span style={{
+                color: `${({ theme }: any) => theme.colors.gray}`,
+                fontSize: '0.7rem'
+            }}>Your Turn:</span>{new Date(min_time).toLocaleString('en-GB')} to {new Date(max_time).toLocaleString('en-GB')}</Typography>
         </Wrapper >
     )
 }
 
-export default Restroant_view
+// let options = {
+//     year: 'numeric',
+//     month: '2-digit',
+//     day: '2-digit',
+//     hour: '2-digit',
+//     minute: '2-digit',
+//     second: '2-digit',
+//     hour12: false // Use 24-hour time
+// };
 
-// <div style={{ backgroundColor: 'black', color: 'white' }} id="wrapper">
-//     <h1>Restorant</h1>
-//     <h3>Details</h3>
-//     <h2>Manu Items</h2>
-//     <select name="manu_category" id="manu_category" value={manu_category_2} onChange={e => setManu_category_2(e.target.value)}>
-//         <option value="">Select Category</option>
-//         {manu_category_list && manu_category_list.map((category: any) => (
-//             <option key={category.id} value={category.id}>{category.name}</option>
-//         ))}
-//     </select>
-//     {manu_items && manu_items.map((item: any) => (
-//         <div key={item.id}>
-//             <li >{item.name}</li>
-//             <li key={item.id}>{item.price}</li>
-//             <li key={item.id}>{item.description}</li>
-//             <button onClick={add_to_cart(item.id)}>
-//                 Add to cart
-//             </button>
-//         </div>
-//     ))}
-//     <h2>Cart</h2>
-//     {cart && cart.map((item: any) => (
-//         <div key={item.id}>
-//             <li >{item.name}</li>
-//             <li key={item.id}>{item.price}</li>
-//             <li key={item.id}>{item.quantity}</li>
-//             {/* increase quantity button */}
-//             <button onClick={() => {
-//                 let updatedCart = cart.map((cartItem: any) =>
-//                     cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
-//                 );
-//                 setCart(updatedCart);
-//             }}> + </button>
-//             {/* reduce quantity button */}
-//             <button onClick={() => {
-//                 if (item.quantity === 1) {
-//                     let updatedCart = cart.filter((cartItem: any) => cartItem.id !== item.id);
-//                     setCart(updatedCart);
-//                     return;
-//                 }
-//                 let updatedCart = cart.map((cartItem: any) =>
-//                     cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity - 1 } : cartItem
-//                 );
-//                 setCart(updatedCart);
-//             }}>
-//                 -
-//             </button>
-//             {/* make order button */}
-//         </div>
-//     ))}
-//     <h4>total</h4>
-//     {cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}
-//     <button onClick={make_order}>Make Order</button>
-// </div>
+
+export default Restroant_view_shop

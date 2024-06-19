@@ -21,6 +21,7 @@ const AvgCreationTimeChart = ({ creationTimeData }: any) => {
     for (let i = 0; i < creationTimeData.length; i += 12) {
         chunks.push(creationTimeData.slice(i, i + 12));
     }
+    console.log(chunks, 'creationTimeData');
 
     return (
         <div>
@@ -31,13 +32,12 @@ const AvgCreationTimeChart = ({ creationTimeData }: any) => {
                         {
                             label: 'Avg Creation Time (ms)',
                             data: chunk.map((item: { avg_creation_time: any; }) => item.avg_creation_time),
-                            backgroundColor: (props: { theme: { colors: { secondary: any; }; }; }) => theme.colors.secondary,
-                            borderColor: (props: { theme: { colors: { secondary: any; }; }; }) => theme.colors.secondary,
+                            backgroundColor: theme.colors.secondary,
+                            borderColor: theme.colors.secondary,
                             borderWidth: 1
                         }
                     ]
                 };
-
                 const options = {
                     scales: {
                         y: {

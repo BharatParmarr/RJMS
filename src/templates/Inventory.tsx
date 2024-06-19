@@ -11,6 +11,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 import { useTheme } from "./styles/theme";
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
+import ProductTable from "./components/Table_inventory";
 
 const Container = styled(motion.div)`
   padding: 20px;
@@ -246,11 +249,15 @@ function Inventory() {
     }
 
     const [products, setProducts] = useState<Product[]>();
-
+    const [page, setPage] = useState<number>(1);
+    const [isPageRemaining, setIsPageRemaining] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
     useEffect(() => {
+        if (!isPageRemaining) return;
         // Get Product List
+        setLoading(true);
         const getProductList = async () => {
-            const response = await fetch(`${API_HOST}/api/product?restorant_id=${id}`, {
+            const response = await fetch(`${API_HOST}/api/product?restorant_id=${id}&page=${page}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Token ${token}`
@@ -260,12 +267,16 @@ function Inventory() {
         }
 
         getProductList().then(data => {
-            console.log(data, token);
+            // console.log(data, token);
             if (data.length > 0) {
-                setProducts(data);
+                setProducts(products ? [...products, ...data] : data)
+            } else {
+                setIsPageRemaining(false);
             }
+        }).finally(() => {
+            setLoading(false);
         });
-    }, [])
+    }, [page])
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -292,6 +303,14 @@ function Inventory() {
                         <Button onClick={() => deleteProduct({ productId: product.id, token })}>Delete</Button>
                     </ProductItem>
                 ))}
+                {/* <ProductTable
+                    products={products}
+                    deleteProduct={deleteProduct}
+                    token={token}
+                    id={id}
+                    setProducts={setProducts}
+                /> */}
+                {isPageRemaining && <Button onClick={() => setPage(page + 1)}>Load More</Button>}
             </ProductList>
             {/* product create form */}
             <br />
@@ -339,6 +358,11 @@ function Inventory() {
                     </DialogActions>
                 </BootstrapDialog>
             </React.Fragment>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading}
+            ><CircularProgress color="inherit" />
+            </Backdrop>
         </Container>
     )
 }

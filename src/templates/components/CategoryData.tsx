@@ -9,8 +9,62 @@ const Container = styled.div`
   color: ${props => props.theme.colors.text};
   padding: 20px;
   margin-bottom: 20px;
+  text-align: center;
   border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
+
+const Styledh2 = styled.h2`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${props => props.theme.colors.primary};
+  gap: 15px;
+`;
+
+const StyledUl = styled.ul`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    gap: 30px;
+`;
+
+const Styledliholder = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    background-color: ${props => props.theme.colors.primary}39;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    `;
+
+const Styledli = styled.li`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${props => props.theme.colors.text};
+  font-size: 14px;
+  font-weight: 600;
+`;
+
 
 interface Category {
     item__category__name: string;
@@ -24,14 +78,30 @@ interface CategoryDataProps {
 
 const CategoryData: React.FC<CategoryDataProps> = ({ categoryData }) => (
     <Container>
-        <h2 style={{ fontFamily: 'Roboto' }}>Category Data</h2>
-        <ul style={{ fontFamily: 'Roboto', listStyle: 'none' }}>
-            {categoryData.map((category: Category) => (
-                <li key={category.item__category__name}>
-                    {category.item__category__name}: {category.total_orders} orders, {category.total_revenue} revenue
-                </li>
-            ))}
-        </ul>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            flexDirection: 'column',
+            width: '100%',
+
+        }}>
+            <Styledh2 style={{ fontFamily: 'Roboto' }}>Category Data</Styledh2>
+            <StyledUl style={{ fontFamily: 'Roboto', listStyle: 'none' }}>
+                {categoryData.map((category: Category) => (
+                    <Styledliholder key={category.item__category__name}>
+                        <Styledli >
+                            {category.item__category__name}
+                        </Styledli>
+                        <Styledli >
+                            {category.total_orders} orders,
+                        </Styledli>
+                        <Styledli>
+                            {category.total_revenue.toFixed(0)} revenue
+                        </Styledli>
+                    </Styledliholder>
+                ))}
+            </StyledUl>
+        </div>
     </Container>
 );
 

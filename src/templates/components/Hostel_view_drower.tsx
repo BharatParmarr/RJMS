@@ -28,7 +28,7 @@ export default function TemporaryDrawer() {
             <CustomizedDialogs Hostel_id={id} styleButton={{
                 backgroundColor: theme.colors.white,
                 padding: '14px',
-                color: '#fff'
+                color: theme.colors.text
             }} />
             <Divider sx={{
                 backgroundColor: theme.colors.gray + '99'
@@ -36,7 +36,7 @@ export default function TemporaryDrawer() {
             <Button startIcon={<HistorySharpIcon />} variant="contained" color="primary" onClick={() => navigate(`/hostels/pyments/${id}`)} style={{
                 backgroundColor: theme.colors.white,
                 padding: '14px',
-                color: '#fff'
+                color: theme.colors.text
             }}>
                 Payments
             </Button>
@@ -45,7 +45,7 @@ export default function TemporaryDrawer() {
             }} />
             <Button startIcon={<LocalDiningRoundedIcon />} variant="contained" color="primary" onClick={() => navigate(`/hostels/Meals/${id}`)} style={{
                 backgroundColor: theme.colors.white,
-                color: '#fff',
+                color: theme.colors.text,
                 padding: '14px',
             }}>
                 Meals
@@ -55,7 +55,7 @@ export default function TemporaryDrawer() {
             }} />
             <Button startIcon={<ChecklistRoundedIcon />} variant="contained" color="primary" onClick={() => navigate(`/hostels/NoticeBord/${id}`)} style={{
                 backgroundColor: theme.colors.white,
-                color: '#fff',
+                color: theme.colors.text,
                 padding: '14px',
             }}>
                 Notice Board
@@ -65,7 +65,7 @@ export default function TemporaryDrawer() {
             }} />
             <Button startIcon={<SettingsIcon />} variant="contained" color="primary" onClick={() => navigate(`/hostels/Settings/${id}`)} style={{
                 backgroundColor: theme.colors.white,
-                color: '#fff',
+                color: theme.colors.text,
                 padding: '14px',
             }}>
                 Settings

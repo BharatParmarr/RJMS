@@ -12,7 +12,7 @@ const ThemeProvider = ({ children }: any) => {
         colors: themeMode === 'light' ? {
             primary: '#0063e1', // Blue
             secondary: '#108700', // Green
-            background: '#eaeaea', // Light grey
+            background: '#edf0ee', // Light grey
             objectBg: '#fff', // White
             text: '#202124', // Dark grey
             footerBg: '#202124',
@@ -24,14 +24,14 @@ const ThemeProvider = ({ children }: any) => {
         } : {
             primary: '#0063e1',
             secondary: '#04db3e',
-            background: '#141414',
+            background: '#000',
             objectBg: '#000',
             text: '#f5f5f5',
-            footerBg: '#000',
+            footerBg: '#141414',
             footerText: '#f5f5f5',
             shadow: '0 0 10px rgba(255, 255, 255, 0.1)',
             black: '#fff',
-            white: '#000',
+            white: '#141414',
             gray: '#828282',
         },
     };

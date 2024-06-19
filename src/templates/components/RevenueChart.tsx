@@ -71,6 +71,7 @@ const RevenueChart = ({ revenueData }: any) => {
                 return (
                     <Container key={index} >
                         <h2 style={{ fontFamily: 'Roboto', color: theme.colors.text }}>Item Revenue</h2>
+                        {revenueData.length === 0 && <p style={{ fontFamily: 'Roboto', color: theme.colors.text }}>No data available</p>}
                         <Bar data={data} options={options} color={theme.colors.text} style={{
                             backgroundColor: theme.colors.background,
                             borderRadius: 8,

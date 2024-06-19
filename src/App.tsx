@@ -4,6 +4,7 @@ import API_HOST from './config';
 import styled from 'styled-components';
 import Edit from '@mui/icons-material/Edit';
 import { Button } from '@mui/material';
+import { a } from 'react-spring';
 
 // Container for the entire application
 const Container = styled.div`
@@ -93,9 +94,58 @@ const InputField = styled.input`
   @media (max-width: 480px) {
     padding: 8px; // Less padding on mobile
   }
-
-  
 `;
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: ${({ theme }) => theme.colors.white};
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  gap: 20px;
+  @media (max-width: 768px) {
+    width: 90%;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+`;
+
+const StyledSubscriptioncontainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+`;
+
+const Styled_subscription = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px ${({ theme }) => theme.colors.black};
+  border-radius: 5px;
+
+  @media (max-width: 768px) {
+    width: 90%;
+    flex-direction: column;
+  }
+`;
+
+const Styledp = styled.p`
+  padding: 10px;
+  border-radius: 5px;
+  box-sizing: border-box;
+`;
+
 
 
 function EditForm({ user, show, setShow, setUserdata }: { user: any, show: boolean, setShow: any, setUserdata: any }) {
@@ -181,9 +231,10 @@ function RegisterRestaurant() {
   };
   const [usrData, setUsrData] = useState<UsrData>();
   const [show, setShow] = useState<boolean>(false);
+  const [last_date, setLast_date] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
 
-
-  console.log(usrData, 'UserData11')
+  const [subscription, setSubscription] = useState<any>();
 
   useEffect(() => {
     try {
@@ -192,12 +243,29 @@ function RegisterRestaurant() {
           'Authorization': 'Token ' + localStorage.getItem('token')
         }
       }).then((response) => {
-        console.log(response.data, 'UserData14');
+        // console.log(response.data, 'UserData14');
         setUsrData(response.data);
       });
     } catch (error) {
       console.error('There was an error!', error);
     }
+    axios.get(API_HOST + '/api/subscription', {
+      headers: {
+        'Authorization': 'Token ' + localStorage.getItem('token')
+      }
+    }).then((response) => {
+      console.log(response.data, 'UserData14');
+      let last_data = 0;
+      console.log(response.data, 'Length');
+      if (response.data.length > 0) {
+        setSubscription(response.data);
+
+      } else {
+        setMessage('No Subscription found');
+      }
+    }).catch((error) => {
+      console.error('There was an error!', error);
+    });
   }, []);
 
 
@@ -213,6 +281,18 @@ function RegisterRestaurant() {
         }}>Edit</EditButton>
         <EditForm user={usrData} show={show} setShow={setShow} setUserdata={setUsrData} />
       </UserData>
+      <StyledContainer>
+        <h2>Subscription</h2>
+        <StyledSubscriptioncontainer>
+          {subscription && subscription.map((item: any) => {
+            return (<Styled_subscription>
+              <Styledp>{item.subscription_time}</Styledp>
+              <Styledp>{item.subscription_start_time}</Styledp>
+              <Styledp>{item.type}</Styledp>
+            </Styled_subscription>);
+          })}
+        </StyledSubscriptioncontainer>
+      </StyledContainer>
     </UserDataSection>
   </Container>);
 }
