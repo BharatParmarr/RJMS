@@ -11,8 +11,8 @@ import API_HOST, { API_HOST_Websocket } from "../config";
 import { useTheme } from "../templates/styles/theme";
 import React from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import useWebSocket from 'react-use-websocket';
-import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
+// import useWebSocket from 'react-use-websocket';
+// import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
@@ -77,9 +77,7 @@ function Restroant_view_shop() {
         price: number;
         description: string;
     };
-    type Savemanu = {
-        [key: string]: ManuItem[];
-    }
+
     const [manu_items, setManu_items] = useState<ManuItem[]>();
     const [manu_category_2, setManu_category_2] = useState('')
 
@@ -118,26 +116,10 @@ function Restroant_view_shop() {
     }
 
 
-
-    // Create WebSocket connection.
-    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://' + API_HOST_Websocket + '/ws/orders/0/');
-
-    useEffect(() => {
-        if (lastMessage !== null) {
-            console.log('Received a message', lastMessage.data);
-            if (lastMessage.data.message) {
-                return;
-            }
-            if (lastMessage.data && cart.length > 0) {
-                alert('Order placed successfully');
-                setCart([]);
-            }
-        }
-    }, [lastMessage]);
     async function make_order() {
-        const message = cart.map((item) => ({ item: item.id, quantity: item.quantity }));
+        const message = cart.map((item) => ({ service: item.id, quantity: item.quantity }));
         // get order key from localStorage and generate a new one if it doesn't exist and check if it's expired
-        const order_key = localStorage.getItem('order_key');
+        const order_key = localStorage.getItem('service_order_key');
         let key = '';
         if (order_key) {
             const orderKeyObj = JSON.parse(order_key);
@@ -146,56 +128,46 @@ function Restroant_view_shop() {
                 key = orderKeyObj['value'];
             } else {
                 // create new order key
-                const expirationTime = new Date().getTime() + (10 * 60 * 1000); // 2 minutes in milliseconds
+                const expirationTime = new Date().getTime() + (10 * 60 * 1000); // 10 minutes in milliseconds
                 key = Math.random().toString(36).substring(7);
                 const valueToStore = JSON.stringify({ value: key, expires: expirationTime });
-                localStorage.setItem('order_key', valueToStore);
+                localStorage.setItem('service_order_key', valueToStore);
             }
         } else {
             // create new order key
-            const expirationTime = new Date().getTime() + (10 * 60 * 1000); // 2 minutes in milliseconds
+            const expirationTime = new Date().getTime() + (10 * 60 * 1000); // 10 minutes in milliseconds
             key = Math.random().toString(36).substring(7);
             const valueToStore = JSON.stringify({ value: key, expires: expirationTime });
-            localStorage.setItem('order_key', valueToStore);
+            localStorage.setItem('service_order_key', valueToStore);
         }
-        // Check if WebSocket is connected before sending message.
-        if (readyState === WebSocket.OPEN) {
-            // set loacl storage order_key 
-            sendMessage(JSON.stringify({
-                items: message,
+
+        fetch(url + '/api/service-shop/Book', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                service: message,
                 table: table_id,
                 order_key: key,
-            }));
-        } else {
-            // console.log('WebSocket is not connected:', readyState);
-            fetch(url + '/order/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    items: message,
-                    table: table_id,
-                    order_key: key,
-                })
             })
-                .then(response => {
-                    if (response.status === 400) {
-                        alert('Please select items to order')
-                    }
-                    return response.json()
-                })
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
-                    alert('Order placed successfully');
-                    setCart([]);
-                })
-                .catch((error) => console.error('Error:', error));
-        }
+        })
+            .then(response => {
+                if (response.status === 400) {
+                    alert('Please select items to order')
+                }
+                return response.json()
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                alert('Order placed successfully');
+                setCart([]);
+            })
+            .catch((error) => console.error('Error:', error));
     }
 
 
@@ -421,20 +393,18 @@ function Restroant_view_shop() {
             ><span style={{
                 color: `${({ theme }: any) => theme.colors.gray}`,
                 fontSize: '0.7rem'
-            }}>Your Turn:</span>{new Date(min_time).toLocaleString('en-GB')} to {new Date(max_time).toLocaleString('en-GB')}</Typography>
+            }}>Your Turn:</span>{new Date(min_time).toLocaleString('en-GB', options)} to {new Date(max_time).toLocaleString('en-GB', options)}</Typography>
         </Wrapper >
     )
 }
 
-// let options = {
-//     year: 'numeric',
-//     month: '2-digit',
-//     day: '2-digit',
-//     hour: '2-digit',
-//     minute: '2-digit',
-//     second: '2-digit',
-//     hour12: false // Use 24-hour time
-// };
+let options = {
+    hour: '2-digit',
+    minute: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+    hour12: false // Use 24-hour time
+};
 
 
 export default Restroant_view_shop

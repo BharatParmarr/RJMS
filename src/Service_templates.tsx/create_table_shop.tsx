@@ -24,7 +24,7 @@ const StyledButton = styled(Button)`
 margin: 10px 0;
 backgroundColor: ${({ theme }) => theme.colors.background};
 color: ${({ theme }) => theme.colors.text};
-  width: 70%;
+  width: 100%;
 
     @media (max-width: 768px) {
         width: 100%;
@@ -54,10 +54,8 @@ const StyledGrid = styled.div`
 
 const SectionStyled = styled.section`
     margin-bottom: 20px;
-    padding: 20px;
-    background-color: ${({ theme }) => theme.colors.white};
-    box-shadow: ${({ theme }) => theme.colors.shadow};
     border-radius: 5px;
+    margin-top: 20px;
     `;
 
 const StyledSelect = styled(Select)`
@@ -77,6 +75,7 @@ const StyledAccordion = styled(Accordion)`
     width: 100%;
     background-color: ${({ theme }) => theme.colors.white};
     color: ${({ theme }) => theme.colors.text};
+    border-radius: 8px;
     `;
 
 const StyledTextField = styled(TextField)`
@@ -103,6 +102,7 @@ const StyledForm = styled.div`
     color: ${({ theme }) => theme.colors.text};
     padding: 20px;
     border-radius: 8px;
+    transition: all 3s ease;
     @media (max-width: 768px) {
         min-width: 100%;
     }
@@ -374,7 +374,16 @@ function create_table_shop() {
     }, [manu_category_2]);
     return (
         <Wrapper id="wrapper">
-            <h1>Manage Shop <RoomPreferencesRoundedIcon /></h1>
+            <h1 style={{
+                fontSize: '1.7rem',
+                alignItems: 'center',
+                marginBottom: '20px',
+                display: 'flex',
+                color: theme.colors.primary
+            }}><RoomPreferencesRoundedIcon style={{
+                fontSize: '1.9rem',
+                marginRight: '12px',
+            }} /> Manage Shop </h1>
             <SectionStyled>
                 <StyledAccordion>
                     <AccordionSummary
@@ -389,7 +398,7 @@ function create_table_shop() {
                         <span style={{
                             fontFamily: 'Roboto, sans-serif',
 
-                        }}>Table's</span>
+                        }}>Platform's</span>
                     </AccordionSummary>
                     <AccordionDetails style={{
                         backgroundColor: theme.colors.white,
@@ -399,7 +408,7 @@ function create_table_shop() {
                             <StyledGrid>
                                 {tables && tables.map((table: any) => (
                                     <div key={table.id}>
-                                        <StyledButton onClick={() => navigate(`/table/${table.id}`, { state: { table } })}>
+                                        <StyledButton>
                                             <StyledListItem>{table.name}</StyledListItem>
                                             <StyledListItem key={table.id}>{table.capacity}</StyledListItem>
                                         </StyledButton>
@@ -407,12 +416,9 @@ function create_table_shop() {
                                     </div>
                                 ))}
                             </StyledGrid>
-                            <StyledButton onClick={open_creat_table_form} style={{
-                                backgroundColor: theme.colors.background,
-                                color: theme.colors.text
-                            }}>create table</StyledButton>
+                            <StyledButton variant="outlined" onClick={open_creat_table_form} >create Platform</StyledButton>
                             {showform ? (
-                                <StyledForm>
+                                <StyledForm >
                                     <StyledTextField type="text" placeholder="Table Name" value={tabel_name} onChange={e => setTable_name(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
                                     <StyledTextField type="text" placeholder="Table Number" value={table_number} onChange={e => setTable_number(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
                                     <StyledTextField type="text" placeholder="Table Capacity" value={table_capacity} onChange={e => setTable_capacity(e.target.value)} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }} />
@@ -439,7 +445,7 @@ function create_table_shop() {
                     >
                         <span style={{
                             fontFamily: 'Roboto, sans-serif',
-                        }}>Manu Items</span>
+                        }}>Service</span>
                     </AccordionSummary>
                     <AccordionDetails style={{
                         backgroundColor: theme.colors.white,
@@ -449,7 +455,7 @@ function create_table_shop() {
                             <InputLabel id="manu_category_label" style={{
                                 backgroundColor: theme.colors.white,
                                 color: theme.colors.text
-                            }}>Select Category</InputLabel>
+                            }}>Select Platform</InputLabel>
                             <StyledSelect name="manu_category" id="manu_category" value={manu_category_2} onChange={e => setManu_category_2(e.target.value as any)} style={{
                                 color: theme.colors.text,
                                 backgroundColor: theme.colors.white,
@@ -491,14 +497,14 @@ function create_table_shop() {
                         <StyledButton onClick={open_creat_manu_item_form} style={{
                             backgroundColor: theme.colors.background,
                             color: theme.colors.text
-                        }}>create manu item</StyledButton>
+                        }}>Create Service</StyledButton>
                         {showmanuitemform ? (
                             <StyledForm>
                                 <FormControl>
                                     <InputLabel id="manu_category_label_1" style={{
                                         backgroundColor: theme.colors.white,
                                         color: theme.colors.text
-                                    }}>Select Category</InputLabel>
+                                    }}>Select Platform</InputLabel>
                                     <Select name="manu_category" id="manu_category" value={manu_category_1} onChange={e => setManu_category_1(e.target.value)} style={{
                                         width: '50vw',
                                     }} sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text }, border: `1px solid ${theme.colors.gray}` }}>

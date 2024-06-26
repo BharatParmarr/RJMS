@@ -290,7 +290,7 @@ function Inventory() {
         <Container initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Title variant="h4">Inventory</Title>
             <ProductList>
-                {products && products.map((product, index) => (
+                {/* {products && products.map((product, index) => (
                     <ProductItem key={index}>
                         {product.image && <ImageProduct src={API_HOST + product.image} alt={product.name} />}
                         <ListItemText primary={`${product.name}`} />
@@ -302,14 +302,14 @@ function Inventory() {
                         <Product_quntity_update token={token} product={product} id={id} products={products} setProducts={setProducts} />
                         <Button onClick={() => deleteProduct({ productId: product.id, token })}>Delete</Button>
                     </ProductItem>
-                ))}
-                {/* <ProductTable
+                ))} */}
+                {products && products?.length > 0 && <ProductTable
                     products={products}
-                    deleteProduct={deleteProduct}
-                    token={token}
-                    id={id}
+                    // deleteProduct={deleteProduct}
+                    // token={token}
+                    // id={id}
                     setProducts={setProducts}
-                /> */}
+                />}
                 {isPageRemaining && <Button onClick={() => setPage(page + 1)}>Load More</Button>}
             </ProductList>
             {/* product create form */}

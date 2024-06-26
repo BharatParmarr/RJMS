@@ -28,6 +28,7 @@ import Meals_list from "./templates/Meals_list";
 import Notice_bord from "./templates/Notice_bord";
 import Settings from "./templates/Settings";
 import Settings_restorant from "./templates/Settings_restorant";
+import Settings_shop from "./Service_templates.tsx/Service_settings";
 import Oauth from './templates/components/Oauth_consent_screen'
 import Fandq from "./templates/FandQ";
 import Service_home from "./Service_templates.tsx/Service_home";
@@ -35,6 +36,10 @@ import Service_shop_create from "./Service_templates.tsx/Service_shop_create";
 import Shop_view from "./Service_templates.tsx/shop_view";
 import Create_table_shop from "./Service_templates.tsx/create_table_shop";
 import Restroant_view_shop from "./Service_templates.tsx/Shop_table_view";
+import Services_Orders_view from "./Service_templates.tsx/Service_Orders";
+import NotFound from "./Static/404";
+import Coustemer_view_Home from "./Coustemer_view/Coustemer_view_Home";
+import Restorant_home_view from "./templates/Restoratn_home_view";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider>
@@ -48,16 +53,19 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/verify-otp" element={<Otp_verification />} />
           <Route path="/create-restaurant" element={<Create_restorant />} />
           <Route path="/restorant/:id" element={<Restorant_table_list />} />
+          <Route path="/restorant/home/:id" element={<Restorant_home_view />} />
           <Route path="/restorant/table/:id/:table_id" element={<Restroant_view />} />
           <Route path="/Shop/table/:id/:table_id" element={<Restroant_view_shop />} />
           <Route path="/restorant/Manage/:id" element={<Create_table />} />
           <Route path="/Shop/Manage/:id" element={<Create_table_shop />} />
           <Route path="/Orders_view/:id" element={<Orders_view />} />
+          <Route path="/Shop/Orders/:id" element={<Services_Orders_view />} />
           <Route path="/data-analysis/:id" element={<Data_anlysis />} />
           <Route path="/pricing" element={<Pricing_page />} />
           <Route path="/order-history/:id" element={<Order_history />} />
           <Route path="/inventory/:id" element={<Inventory />} />
           <Route path="/restorant/Settings/:id" element={<Settings_restorant />} />
+          <Route path="/Shop/Settings/:id" element={<Settings_shop />} />
           <Route path="/hostels" element={<HostelList />} />
           <Route path="/hostels/create" element={<HostelForm />} />
           <Route path="/hostels/room/:id/:roomid/:room_name" element={<Room_view />} />
@@ -70,12 +78,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/hostels/Meals/:id" element={<Meals_list />} />
           <Route path="/hostels/NoticeBord/:id" element={<Notice_bord />} />
           <Route path="/hostels/Settings/:id" element={<Settings />} />
-          <Route path="/F&Q" element={<Fandq />} />
           <Route path="/Service-shop" element={<Service_home />} />
           <Route path="/Service-shop/:id" element={<Shop_view />} />
           <Route path="/Service-shop/create" element={<Service_shop_create />} />
-          <Route path="/404" element={<div>404</div>} />
-          <Route path="*" element={<div>404</div>} />
+          {/* coustemer views */}
+          <Route path="/Coustemer" element={<Coustemer_view_Home />} />
+          {/* pages */}
+          <Route path="/F&Q" element={<Fandq />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </ThemeProvider>

@@ -3,10 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import API_HOST, { API_HOST_Websocket } from "../config";
 import styled from 'styled-components';
 import { Button, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import { useTheme } from './styles/theme';
+import { useTheme } from '../templates/styles/theme';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -20,7 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import Fab from '@mui/material/Fab';
-import FullScreenDialog from "./order_modify_dilog";
+import FullScreenDialog from "./components/Service_order_modify_dilog";
 import HistoryIcon from '@mui/icons-material/History';
 // import AnimatedButton from "./components/Button_with_animationText";
 
@@ -162,7 +160,25 @@ const StyledAnimatePresence = styled.div`
             flex-direction: column;
     }
     `
-const StyledDivmotiondiv = styled(motion.div)`
+type Order = {
+    table: number,
+    status: boolean,
+    order_time: string,
+    order_number: number,
+    id: number,
+    table_name: string,
+    table_id: number,
+    order_details: {
+        item: number,
+        quantity: number,
+        price: number,
+        total: number,
+        item_name: string,
+        is_completed: boolean,
+        id: number
+    }[]
+};
+const StyledDivmotiondiv = styled(motion.div) <{ filteredOrders: Order[] }>`
     width: ${props => props.filteredOrders.length > 2 ? '29%' : '100%'};
     marginBottom: 10px;
     padding: 10px;
@@ -179,28 +195,11 @@ const StyledDivmotiondiv = styled(motion.div)`
         margin: 0%;
     }
   `;
-function Orders_view() {
+function Services_Orders_view() {
     const { theme } = useTheme();
     let url = API_HOST
 
-    type Order = {
-        table: number,
-        status: boolean,
-        order_time: string,
-        order_number: number,
-        id: number,
-        table_name: string,
-        table_id?: number,
-        order_details: {
-            item: number,
-            quantity: number,
-            price: number,
-            total: number,
-            item_name: string,
-            is_completed: boolean,
-            id: number
-        }[]
-    };
+
 
     // Initialize states
     const [orders, setOrders] = useState<Order[]>([]);
@@ -219,7 +218,7 @@ function Orders_view() {
     }, [selectedTable, orders]);
 
     const { id } = useParams<{ id: string }>();
-    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://' + API_HOST_Websocket + '/ws/orders/' + id + '/?token=' + localStorage.getItem('token'), {
+    const { lastMessage, readyState } = useWebSocket('ws://' + API_HOST_Websocket + '/ws/Shop/orders/' + id + '/?token=' + localStorage.getItem('token'), {
         shouldReconnect: () => false,
         reconnectAttempts: 1,
         reconnectInterval: 3000,
@@ -229,11 +228,13 @@ function Orders_view() {
     const [showOrderModify, setShowOrderModify] = useState(false);
     const [orderDetails, setOrderDetails] = useState<any>(null);
     const [orderId, setOrderId] = useState<number | null>(null);
+    const [tablesid, setTablesid] = useState<number | null>(null);
     const [page, setPage] = useState(1);
     const [is_page, setIs_page] = useState(true);
-    function ModifiyOrder(order_id: number, order_details: any) {
+    function ModifiyOrder(order_id: number, order_details: any, table_id: number) {
         setOrderId(order_id);
         setOrderDetails(order_details);
+        setTablesid(table_id);
         setShowOrderModify(true);
     };
     // count the number of items
@@ -271,7 +272,7 @@ function Orders_view() {
                 }
             }
         } else {
-            fetch(url + '/orders?restorant_id=' + id + '&page=1', {
+            fetch(url + '/api/service-shop/Bookings?service_shop_id=' + id + '&page=1', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Token ${localStorage.getItem('token')} `
@@ -283,16 +284,17 @@ function Orders_view() {
                     throw new Error('Something went wrong');
                 }
             }).then(data => {
-                if (data.results) {
-                    setOrders(data.results);
+                if (data) {
+                    setOrders(data);
                     let tables_list_id: number[] = []
                     let tables_list: string[] = []
-                    data.results.map((order: any) => {
+                    data.map((order: any) => {
                         if (!tables_list_id.includes(order.table_id)) {
                             tables_list_id.push(order.table_id);
                             tables_list.push(order.table_name);
                         }
                     });
+                    console.log(tables_list, 'data');
                     setTables(tables_list);
                     setTablesId(tables_list_id);
                 }
@@ -302,8 +304,8 @@ function Orders_view() {
 
     useEffect(() => {
         if (page == 1) return;
-        if (!is_page) return;
-        fetch(url + '/orders?restorant_id=' + id + '&page=' + page, {
+        if (is_page) return;
+        fetch(url + '/api/service-shop/Bookings?service_shop_id=' + id + '&page=' + page, {
             method: 'GET',
             headers: {
                 'Authorization': `Token ${localStorage.getItem('token')} `
@@ -316,17 +318,17 @@ function Orders_view() {
                 throw new Error('Something went wrong');
             }
         }).then(data => {
-            if (data.results) {
-                if (data.results.length == 0) {
+            if (data) {
+                if (data.length == 0) {
                     setIs_page(false);
                 }
-                else if (data.results.length < 40) {
+                else if (data.length < 40) {
                     setIs_page(false);
                 }
-                setOrders(oldOrders => [...(oldOrders || []), ...(data.results || [])]);
+                setOrders(oldOrders => [...(oldOrders || []), ...(data || [])]);
                 let tables_list_id: number[] = tablesId
                 let tables_list: string[] = tables
-                data.results.map((order: any) => {
+                data.map((order: any) => {
                     if (!tables_list_id.includes(order.table_id)) {
                         tables_list_id.push(order.table_id);
                         tables_list.push(order.table_name);
@@ -347,7 +349,7 @@ function Orders_view() {
         let itemIndex = newOrders[orderIndex].order_details.findIndex((item: any) => item.id === itemId);
 
         // Send a get request to the server
-        fetch(url + '/order_complete/order_details/' + itemId, {
+        fetch(url + '/api/service-shop/Bookings/completed?service_id=' + itemId + '&service_shop_id=' + id, {
             method: 'GET',
             headers: {
                 'Authorization': `Token ${localStorage.getItem('token')} `
@@ -360,7 +362,7 @@ function Orders_view() {
                     throw new Error('Something went wrong');
                 }
             })
-            .then(data => {
+            .then(() => {
                 if (itemIndex !== -1) {
                     // Change the status of the item
                     newOrders[orderIndex].order_details[itemIndex].is_completed = !newOrders[orderIndex].order_details[itemIndex].is_completed;
@@ -381,11 +383,13 @@ function Orders_view() {
         let orderIndex = newOrders.findIndex((order: any) => order.id === orderId);
 
         // Send a get request to the server
-        fetch(url + '/order_complete/record_payment/' + orderId, {
-            method: 'GET',
+        fetch(url + '/api/service-shop/Bookings/completed', {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Token ${localStorage.getItem('token')}`
             },
+            body: JSON.stringify({ 'service_order': orderId }),
         })
             .then(response => {
                 if (response.status === 200) {
@@ -394,7 +398,7 @@ function Orders_view() {
                     throw new Error('Something went wrong');
                 }
             })
-            .then(data => {
+            .then(() => {
                 if (orderIndex !== -1) {
                     // Change the status of the order
                     newOrders[orderIndex].status = !newOrders[orderIndex].status;
@@ -417,8 +421,9 @@ function Orders_view() {
         let newOrders = orders ? [...orders] : [];
         let orderIndex = newOrders.findIndex((order: any) => order.id === order_id);
         let newOrderdetails = newOrders[orderIndex].order_details;
+        console.log(newOrderdetails, 'newOrderdetails');
         newOrders[orderIndex].order_details = newOrderdetails.map((item: any) => {
-            let newItem = order_details.items.find((newItem: any) => newItem.item === item.item);
+            let newItem = order_details.items.find((newItem: any) => newItem.item === item.service);
             if (newItem) {
                 return {
                     ...item,
@@ -449,45 +454,45 @@ function Orders_view() {
     }
 
     // Block the ip
-    function BlockTheIp(orderId: number) {
-        if (window.confirm('Are you sure you want to block this user?')) {
-            handleOpen()
-            // Create a new copy of the orders
-            let newOrders = orders ? [...orders] : [];
-            let orderIndex = newOrders.findIndex((order: any) => order.id === orderId);
+    // function BlockTheIp(orderId: number) {
+    //     if (window.confirm('Are you sure you want to block this user?')) {
+    //         handleOpen()
+    //         // Create a new copy of the orders
+    //         let newOrders = orders ? [...orders] : [];
+    //         let orderIndex = newOrders.findIndex((order: any) => order.id === orderId);
 
-            // Send a get request to the server
-            fetch(url + '/api/block_ip?for=restorant&restorant_id=' + id, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 'order_id': orderId, reason: 'Block by restorant', for: 'restorant' }),
-            })
-                .then(response => {
-                    if (response.status === 200) {
-                        return response.json();
-                    } else {
-                        throw new Error('Something went wrong');
-                    }
-                })
-                .then(data => {
-                    if (orderIndex !== -1) {
-                        // Change the status of the order
-                        newOrders[orderIndex].status = !newOrders[orderIndex].status;
-                        // Update the state with the new orders
-                        // remove the order from the list 
-                        newOrders.splice(orderIndex, 1);
-                        setOrders(newOrders);
-                    }
-                })
-                .catch((error) => console.error('Error:', error))
-                .finally(() => {
-                    handleClose()
-                });
-        }
-    }
+    //         // Send a get request to the server
+    //         fetch(url + '/api/block_ip?for=restorant&restorant_id=' + id, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Authorization': `Token ${localStorage.getItem('token')}`,
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({ 'order_id': orderId, reason: 'Block by restorant', for: 'restorant' }),
+    //         })
+    //             .then(response => {
+    //                 if (response.status === 200) {
+    //                     return response.json();
+    //                 } else {
+    //                     throw new Error('Something went wrong');
+    //                 }
+    //             })
+    //             .then(() => {
+    //                 if (orderIndex !== -1) {
+    //                     // Change the status of the order
+    //                     newOrders[orderIndex].status = !newOrders[orderIndex].status;
+    //                     // Update the state with the new orders
+    //                     // remove the order from the list 
+    //                     newOrders.splice(orderIndex, 1);
+    //                     setOrders(newOrders);
+    //                 }
+    //             })
+    //             .catch((error) => console.error('Error:', error))
+    //             .finally(() => {
+    //                 handleClose()
+    //             });
+    //     }
+    // }
 
     const [open, setOpen] = React.useState(false);
     const handleClose = () => {
@@ -679,7 +684,7 @@ function Orders_view() {
                                         boxShadow: '0px 2px 4px rgba(0, 0, 0, 0)',
                                         margin: '0px',
                                     }}>
-                                        <Fab variant="extended" onClick={() => ModifiyOrder(order.id, order.order_details)} style={{
+                                        <Fab variant="extended" onClick={() => ModifiyOrder(order.id, order.order_details, order.table_id)} style={{
                                             backgroundColor: theme.colors.primary + '00',
                                             color: theme.colors.text,
                                             fontFamily: 'Roboto, sans-serif',
@@ -710,7 +715,7 @@ function Orders_view() {
                                     </StyledDiv1>
                                 </StyledDivmotiondiv>
                             ))}
-                            {!is_page ? <Typography variant="h3" style={{ fontSize: '1.1rem', display: 'block', width: '100%', textAlign: 'center', marginTop: 10 }}>End of the list.</Typography> : <Button variant="outlined" color="primary" onClick={() => setPage(page + 1)} style={{
+                            {!is_page ? <Typography variant="h3" style={{ fontSize: '1.5rem' }}>No more orders found</Typography> : <Button variant="outlined" color="primary" onClick={() => setPage(page + 1)} style={{
                                 marginTop: '10px',
                                 fontFamily: 'Roboto, sans-serif',
                                 textTransform: 'capitalize',
@@ -732,9 +737,10 @@ function Orders_view() {
                 id={id}
                 order={orderDetails}
                 modify_order={Modify_order}
+                table_id={tablesid}
             />
         </Container >
     )
 }
 
-export default Orders_view
+export default Services_Orders_view

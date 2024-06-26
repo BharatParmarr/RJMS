@@ -106,6 +106,18 @@ function PositionedMenu({ subscription }: { subscription?: boolean }) {
         }}>Hotels Management</MenuItem>
         <Divider variant="middle" component="li" />
         <MenuItem onClick={() => {
+          if (subscription) {
+            navigate('/service-shop')
+          } else {
+            navigate('/pricing/')
+          }
+          handleClose()
+        }} style={{
+          color: theme.colors.text,
+          backgroundColor: theme.colors.background
+        }}>Service Shop</MenuItem>
+        <Divider variant="middle" component="li" />
+        <MenuItem onClick={() => {
           window.open('https://fitwayn.com', 'new')
         }} style={{
           color: theme.colors.text,

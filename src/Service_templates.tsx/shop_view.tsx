@@ -141,13 +141,13 @@ function Shop_view() {
                 }}>
                     <span><StoreRoundedIcon style={{ marginRight: '12px' }} />Shop</span>
                     <span>
-                        <StyledButton onClick={() => navigate(`/Orders_view/${id}`)}>Bookings</StyledButton>
+                        <StyledButton onClick={() => navigate(`/Shop/Orders/${id}`)}>Bookings</StyledButton>
                         <StyledButton onClick={() => navigate(`/Shop/Manage/${id}`)}>Manage</StyledButton>
                         <StyledButton onClick={() =>
                             window.location.href = `/data-analysis/${id}`
                         }>Data Analysis</StyledButton>
                         <StyledButton onClick={() => navigate(`/inventory/${id}`)}>Inventory</StyledButton>
-                        <StyledButton onClick={() => navigate(`/restorant/Settings/${id}`)}>Settings</StyledButton>
+                        <StyledButton onClick={() => navigate(`/Shop/Settings/${id}`)}>Settings</StyledButton>
                     </span>
                 </div>
             </Typography>
