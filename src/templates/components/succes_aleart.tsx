@@ -1,11 +1,9 @@
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
-import { useTheme } from '../styles/theme';
 import { useEffect } from 'react';
 import '../css/animation.css';
 
 export default function SimpleAlert({ message, type, open, setOpen }: any) {
-    const { theme } = useTheme();
 
     useEffect(() => {
         if (open) {

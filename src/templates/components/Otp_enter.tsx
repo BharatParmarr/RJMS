@@ -108,6 +108,7 @@ function OTP({
         event: React.MouseEvent<HTMLInputElement, MouseEvent>,
         currentIndex: number,
     ) => {
+        console.log(event.target);
         selectInput(currentIndex);
     };
 

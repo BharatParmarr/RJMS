@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTheme } from './styles/theme';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './styles/GlobalStyle';
@@ -11,7 +11,7 @@ const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   type Theme = 'light' | 'dark';
-  const [colorMode, setColorMode] = useState<Theme>('light');
+  // const [colorMode, setColorMode] = useState<Theme>('light');
   // change theme localstorage value
   // const toggleColorMode = () => {
   //   if (colorMode === 'light') {
@@ -23,6 +23,7 @@ const App: React.FC = () => {
   //   }
   // };
 
+  let colorMode = 'light' as Theme;
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />

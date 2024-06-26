@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { useTheme } from "./styles/theme"
+// import { useTheme } from "./styles/theme"
 // import { ListItem, ListItemText, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
@@ -17,7 +17,7 @@ const StyledList = styled(motion.div)`
 
 function Room_view() {
     const { id, roomid, room_name } = useParams()
-    const { theme } = useTheme()
+    // const { theme } = useTheme()
     const room = [{ id: roomid, name: room_name, capacity: 4, number: 1 }]
     return (
         <StyledList initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

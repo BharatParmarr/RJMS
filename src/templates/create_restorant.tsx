@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Button, Grid, Paper, TextField, Typography, ListItem, ListItemText } from '@mui/material';
+import { Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { styled } from 'styled-components';
 import { useSpring, animated } from 'react-spring';
 import API_HOST from '../config';
@@ -187,9 +187,6 @@ export default function Create_restorant() {
                     alert('Error: ' + response.statusText);
                 }
                 return response.json();
-            })
-            .then(data => {
-                // setRestorants(data);
             })
             .catch((error) => console.error('Error:', error));
     }

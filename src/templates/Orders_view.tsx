@@ -3,10 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import API_HOST, { API_HOST_Websocket } from "../config";
 import styled from 'styled-components';
 import { Button, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
+// import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { useTheme } from './styles/theme';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
+// import DoneAllIcon from '@mui/icons-material/DoneAll';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -225,6 +225,9 @@ function Orders_view() {
         reconnectInterval: 3000,
     });
 
+    useEffect(() => {
+        console.log(sendMessage);
+    }, []);
     // modify order
     const [showOrderModify, setShowOrderModify] = useState(false);
     const [orderDetails, setOrderDetails] = useState<any>(null);
@@ -360,7 +363,7 @@ function Orders_view() {
                     throw new Error('Something went wrong');
                 }
             })
-            .then(data => {
+            .then(() => {
                 if (itemIndex !== -1) {
                     // Change the status of the item
                     newOrders[orderIndex].order_details[itemIndex].is_completed = !newOrders[orderIndex].order_details[itemIndex].is_completed;
@@ -394,7 +397,7 @@ function Orders_view() {
                     throw new Error('Something went wrong');
                 }
             })
-            .then(data => {
+            .then(() => {
                 if (orderIndex !== -1) {
                     // Change the status of the order
                     newOrders[orderIndex].status = !newOrders[orderIndex].status;
@@ -449,45 +452,45 @@ function Orders_view() {
     }
 
     // Block the ip
-    function BlockTheIp(orderId: number) {
-        if (window.confirm('Are you sure you want to block this user?')) {
-            handleOpen()
-            // Create a new copy of the orders
-            let newOrders = orders ? [...orders] : [];
-            let orderIndex = newOrders.findIndex((order: any) => order.id === orderId);
+    // function BlockTheIp(orderId: number) {
+    //     if (window.confirm('Are you sure you want to block this user?')) {
+    //         handleOpen()
+    //         // Create a new copy of the orders
+    //         let newOrders = orders ? [...orders] : [];
+    //         let orderIndex = newOrders.findIndex((order: any) => order.id === orderId);
 
-            // Send a get request to the server
-            fetch(url + '/api/block_ip?for=restorant&restorant_id=' + id, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 'order_id': orderId, reason: 'Block by restorant', for: 'restorant' }),
-            })
-                .then(response => {
-                    if (response.status === 200) {
-                        return response.json();
-                    } else {
-                        throw new Error('Something went wrong');
-                    }
-                })
-                .then(data => {
-                    if (orderIndex !== -1) {
-                        // Change the status of the order
-                        newOrders[orderIndex].status = !newOrders[orderIndex].status;
-                        // Update the state with the new orders
-                        // remove the order from the list 
-                        newOrders.splice(orderIndex, 1);
-                        setOrders(newOrders);
-                    }
-                })
-                .catch((error) => console.error('Error:', error))
-                .finally(() => {
-                    handleClose()
-                });
-        }
-    }
+    //         // Send a get request to the server
+    //         fetch(url + '/api/block_ip?for=restorant&restorant_id=' + id, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Authorization': `Token ${localStorage.getItem('token')}`,
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({ 'order_id': orderId, reason: 'Block by restorant', for: 'restorant' }),
+    //         })
+    //             .then(response => {
+    //                 if (response.status === 200) {
+    //                     return response.json();
+    //                 } else {
+    //                     throw new Error('Something went wrong');
+    //                 }
+    //             })
+    //             .then(data => {
+    //                 if (orderIndex !== -1) {
+    //                     // Change the status of the order
+    //                     newOrders[orderIndex].status = !newOrders[orderIndex].status;
+    //                     // Update the state with the new orders
+    //                     // remove the order from the list 
+    //                     newOrders.splice(orderIndex, 1);
+    //                     setOrders(newOrders);
+    //                 }
+    //             })
+    //             .catch((error) => console.error('Error:', error))
+    //             .finally(() => {
+    //                 handleClose()
+    //             });
+    //     }
+    // }
 
     const [open, setOpen] = React.useState(false);
     const handleClose = () => {

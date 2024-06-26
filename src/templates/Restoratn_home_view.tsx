@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSpring, animated } from 'react-spring';
-import { Button, List, ListItem, Typography } from '@mui/material';
+import { List, Typography } from '@mui/material';
 import styled from 'styled-components';
 import API_HOST from "../config";
 import { useTheme } from "./styles/theme";
@@ -18,17 +18,6 @@ const Wrapper = styled(animated.div)`
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   min-height: 100vh;
-`;
-
-const StyledListItem = styled(ListItem)`
-    color: ${({ theme }) => theme.colors.text};
-    border-radius: 5px;
-    margin: 10px 0;
-    width: 28.0%;
-
-    @media (max-width: 768px) {
-        width: 100%;
-    }
 `;
 
 
@@ -105,50 +94,6 @@ const ContactDetails = styled.div`
     flex-direction: column;
 `;
 
-const Contectlist = styled.ul`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    list-style-type: none;
-    padding: 0;
-    gap: 10px;
-    font-size: 1.5rem;
-    color: ${({ theme }) => theme.colors.black};
-    font-family: "Lato", sans-serif;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: ${({ theme }) => theme.colors.white};
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 10px 0;
-    transition: 0.3s all;
-    min-width: 300px;
-    @media (max-width: 768px) {
-        width: 95.0%;
-    }
-        
-    & li{
-        padding: 10px;
-        border-radius: 5px;
-        background-color: ${({ theme }) => theme.colors.white};
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        margin: 10px 0;
-        transition: 0.3s all;
-        align-items: center;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        text-decoration: underline;
-
-
-        @media (max-width: 768px) {
-            width: 95.0%;
-        }
-    
-    }
-`;
-
 const Herodiv = styled.div`
     display: flex;
     justify-content: center;
@@ -193,7 +138,7 @@ const StyledImage = styled.img`
 
 
 function MySideNav() {
-    const { theme } = useTheme();
+    // const { theme } = useTheme();
 
     window.onclick = function (event: any) {
         const target = event.target as HTMLElement;
@@ -300,7 +245,7 @@ function NavBarRestorant(
 }
 
 
-function HeroSection({ restorantname, restorantLogo }: any) {
+function HeroSection({ restorantLogo }: any) {
     const { theme } = useTheme();
     const quotes = [
         "People who love to eat are always the best people.",
@@ -396,7 +341,7 @@ function Restorant_home_view() {
     return (
         <Wrapper style={springProps}>
             <NavBarRestorant restorantname={RestrontDetails.name} />
-            <HeroSection restorantname={RestrontDetails.name} restorantLogo={RestrontDetails.logo} />
+            <HeroSection restorantLogo={RestrontDetails.logo} />
             <ContactDetails id='contact' >
                 <Typography variant="h3" component="div" style={{
                     display: 'flex',

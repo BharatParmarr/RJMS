@@ -3,7 +3,7 @@ import api from '../api';
 import { ListItem, ListItemText, Button, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import RoomDetails from './components/RoomDetails';
+// import RoomDetails from './components/RoomDetails';
 import Payment_form from './components/Pyment_form';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from './styles/theme';
@@ -101,9 +101,5 @@ const StyledListItemText = styled(ListItemText)`
     font-size: 18px;
 `;
 
-const StyledSecondaryTypograpy = styled.p`
-    color: ${({ theme }) => theme.colors.gray};
-    font-size: 14px;
-`;
 
 export default StudentList;

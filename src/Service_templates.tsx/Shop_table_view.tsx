@@ -7,7 +7,7 @@ import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import API_HOST, { API_HOST_Websocket } from "../config";
+import API_HOST from "../config";
 import { useTheme } from "../templates/styles/theme";
 import React from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -58,16 +58,16 @@ const StyledListItemText = styled(ListItemText)`
 
 function Restroant_view_shop() {
     const springProps = useSpring({ opacity: 1, from: { opacity: 0 } });
-    const { id, table_id } = useParams();
+    const { table_id } = useParams();
     const { theme } = useTheme();
 
-    const [tableName, setTableName] = useState('Table');
-    const [restorantName, setRestorantName] = useState('Restorant');
+    const tableName = 'Table';
+    const restorantName = 'Restorant';
     type ManuCategotyList = {
         id: number;
         name: string;
     };
-    const [manu_category_list, setManu_category_list] = useState<ManuCategotyList[]>();
+    const manu_category_list = [] as ManuCategotyList[];
     let url = API_HOST
 
 

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
-import API_HOST from "../config"
 import { Button } from "@mui/material"
 import CustomizedDialogs from "./components/CustomizedDialogs"
 import styled from "styled-components"

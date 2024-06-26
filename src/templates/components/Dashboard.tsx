@@ -139,7 +139,7 @@ color: ${props => props.theme.colors.gray};
 `;
 
 const variants = {
-    enter: (direction) => ({
+    enter: (direction: number) => ({
         x: direction > 0 ? 1000 : -1000,
         opacity: 0,
     }),
@@ -148,7 +148,7 @@ const variants = {
         x: 0,
         opacity: 1,
     },
-    exit: (direction) => ({
+    exit: (direction: number) => ({
         zIndex: 0,
         x: direction < 0 ? 1000 : -1000,
         opacity: 0,

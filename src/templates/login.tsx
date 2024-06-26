@@ -65,7 +65,7 @@ padding: 20px;
 
 
 const Signup = () => {
-    const { theme, toggleTheme } = useTheme();
+    const { theme } = useTheme();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -238,7 +238,7 @@ const Signup = () => {
 
 
 const Login = () => {
-    const { theme, toggleTheme } = useTheme();
+    const { theme } = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     // const history = useHistory();

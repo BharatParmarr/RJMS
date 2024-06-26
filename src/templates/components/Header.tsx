@@ -82,6 +82,19 @@ function PositionedMenu({ subscription }: { subscription?: boolean }) {
       >
         <MenuItem onClick={() => {
           if (subscription) {
+            navigate('/coustemer/')
+          } else {
+            navigate('/pricing/')
+          }
+          handleClose()
+        }} style={{
+          color: theme.colors.text,
+          backgroundColor: theme.colors.background,
+          minWidth: '300px',
+        }}>Coustemer</MenuItem>
+        <Divider variant="middle" component="li" />
+        <MenuItem onClick={() => {
+          if (subscription) {
             navigate('/create-restaurant/')
           } else {
             navigate('/pricing/')

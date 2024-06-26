@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../api'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useTheme } from './styles/theme'
 import Form_dilog from './components/Form_Body'
 import styled from 'styled-components'
@@ -111,8 +111,8 @@ function Notice_bord_form({ setOpen, setData, Data }: any) {
 
 function Notice_bord() {
     const { id } = useParams()
-    const { theme } = useTheme()
-    const navigate = useNavigate()
+    // const { theme } = useTheme()
+    // const navigate = useNavigate()
     type Notice = {
         title: string,
         description: string,

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import api from "../api"
 import { useParams } from "react-router-dom"
 import styled from "styled-components";
-import { Button } from "@mui/material";
 import FullScreenDialog from "./components/Full_screen_dilog_create_manu";
 
 const StyledDiv = styled.div`
@@ -15,9 +14,7 @@ const StyledDiv = styled.div`
     width: 100%;
 `
 
-const StyledButton = styled(Button)`
-    margin: 20px;
-`
+
 
 const StyledBox = styled.div`
     display: flex;

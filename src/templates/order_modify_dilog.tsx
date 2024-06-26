@@ -153,13 +153,13 @@ export default function FullScreenDialog({ open, setOpen, orderId, order, id, mo
             .catch((error) => console.error('Error:', error));
     }, [manu_category_2]);
 
-    type cartType = {
-        id: number;
-        name?: string;
-        price: number;
-        quantity: number;
-        item_name?: string;
-    }
+    // type cartType = {
+    //     id: number;
+    //     name?: string;
+    //     price: number;
+    //     quantity: number;
+    //     item_name?: string;
+    // }
     const [cart, setCart] = useState<any[]>(order);
     useEffect(() => {
         setCart(order && order.map((item: any) => ({ id: item.item, name: item.item_name, price: item.price, quantity: item.quantity })))
