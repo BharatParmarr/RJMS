@@ -12,6 +12,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import contect_ilustration from './svg/contact_ilustration.svg';
 
 const Wrapper = styled(animated.div)`
   background-color: ${({ theme }) => theme.colors.background};
@@ -30,27 +31,6 @@ const StyledListItem = styled(ListItem)`
     }
 `;
 
-const StyledButton = styled(Button)`
-  color: ${({ theme }) => theme.colors.white};
-  margin: 10px 0;
-    background-color: ${({ theme }) => theme.colors.secondary};
-`;
-
-const TableHolder = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  color: ${({ theme }) => theme.colors.text};
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-    }
-    svg {
-        margin-right: 10px;
-    }
-`;
-
 
 const NavA = styled.a`
     text-decoration: none;
@@ -60,7 +40,7 @@ const NavA = styled.a`
     transition: 0.3s;
     font-family: "Lato", sans-serif;
     border-bottom: 1px solid ${({ theme }) => theme.colors.gray};
-    color: ${({ theme }) => theme.colors.text};
+    color: '#ffffff';
     // first element border top
     &:first-child {
         margin-top: 20px;
@@ -169,6 +149,49 @@ const Contectlist = styled.ul`
     }
 `;
 
+const Herodiv = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 5px;
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    @media (max-width: 768px) {
+        width: 100%;
+        height: 50vh;
+        margin-top: 50px;
+    }
+`;
+
+const StyledTableItem = styled.li`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: ${({ theme }) => theme.colors.white};
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 30%;
+    list-style-type: none;
+    @media (max-width: 768px) {
+        width: 100vw;
+    }
+`;
+
+const StyledImage = styled.img`
+    width: 120px;
+    object-fit: cover;
+`;
+
+
+
 function MySideNav() {
     const { theme } = useTheme();
 
@@ -198,12 +221,12 @@ function MySideNav() {
             gap: '20px',
             padding: 0,
             textDecoration: 'none',
-            color: theme.colors.black,
+            color: '#fff',
         }}>
             <NavA href="#timing"> </NavA>
             <NavA href="#timing">Timing</NavA>
             <NavA href="#tables">Tables</NavA>
-            <NavA href="#">contects</NavA>
+            <NavA href="#contecs">contects</NavA>
             <NavA href="#">Home</NavA>
         </div >
     )
@@ -238,14 +261,15 @@ function NavBarRestorant(
 
     return (
         <nav className="mask nav" style={{
-            color: theme.colors.black,
             zIndex: 10,
+            backgroundColor: theme.colors.white,
+            color: theme.colors.text,
         }}>
             <a>{restorantname}</a>
             <ul className="list">
                 <li><a href="#timing">Timing</a></li>
                 <li><a href="#tables">Tables</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="#contecs">Contact</a></li>
                 <li><a href="#">Home</a></li>
             </ul>
             <button className="search" style={{
@@ -278,18 +302,22 @@ function NavBarRestorant(
 
 function HeroSection({ restorantname, restorantLogo }: any) {
     const { theme } = useTheme();
+    const quotes = [
+        "People who love to eat are always the best people.",
+        "The secret of success in life is to eat what you like and let the food fight it out inside.",
+        "A restaurant is a fantasy—a kind of living fantasy in which diners are the most important members of the cast.",
+        "Food is symbolic of love when words are inadequate.",
+        "Cooking is an art, but all art requires knowing something about the techniques and materials.",
+        "One cannot think well, love well, sleep well, if one has not dined well.",
+        "Good food is the foundation of genuine happiness.",
+        "A recipe has no soul. You, as the cook, must bring soul to the recipe.",
+        "Dining is and always was a great artistic opportunity.",
+        "You don’t need a silver fork to eat good food.",
+        "Food is our common ground, a universal experience.",
+        "Life is uncertain. Eat dessert first."
+    ];
     return (
-        <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '20px',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            width: '100vw',
-            height: '100vh',
-            alignContent: 'center',
+        <Herodiv style={{
             backgroundImage: `url(${API_HOST + '/' + restorantLogo})`
         }}>
             <Typography variant="h3" component="div" style={{
@@ -298,18 +326,22 @@ function HeroSection({ restorantname, restorantLogo }: any) {
                 textAlign: 'center',
                 width: '60%',
                 padding: '10px',
-                backgroundColor: theme.colors.gray + '19',
+                backgroundColor: theme.colors.gray + '69',
                 borderRadius: '5px',
                 margin: 'auto'
-            }}>{restorantname}</Typography>
-        </div>
+            }}>{
+                    quotes[Math.floor(Math.random() * quotes.length)]
+
+                }</Typography>
+        </Herodiv>
     )
 }
 
 
 
-function Restorant_home_view() {
 
+
+function Restorant_home_view() {
     const springProps = useSpring({ opacity: 1, from: { opacity: 0 } });
 
     const { id } = useParams();
@@ -321,6 +353,7 @@ function Restorant_home_view() {
     const [tables, settables] = useState<Table[]>();
     // navigtation
     const navigate = useNavigate();
+    const { theme } = useTheme();
 
     type RestorantDetailstype = {
         name: string;
@@ -343,6 +376,7 @@ function Restorant_home_view() {
         })
             .then(response => response.json())
             .then(data => {
+                console.log(data, 'data')
                 settables(data.results);
             })
             .catch((error) => console.error('Error:', error));
@@ -353,7 +387,6 @@ function Restorant_home_view() {
             .then(response => response.json())
             .then(data => {
                 UseRestrontDetails(data);
-                console.log(data, 'data')
             })
     }, []);
 
@@ -372,7 +405,7 @@ function Restorant_home_view() {
                     fontSize: '1.5rem',
                     height: '100%',
                 }}>Contact</Typography>
-                <Contectlist>
+                {/* <Contectlist>
                     <li style={{
                         color: 'blue'
                     }}><PhoneIcon />
@@ -388,7 +421,30 @@ function Restorant_home_view() {
                         textDecoration: 'none',
                         maxWidth: '60%',
                     }}><BusinessRoundedIcon />{RestrontDetails.address}</li>
-                </Contectlist>
+
+                </Contectlist> */}
+                <div id="contecs" className="gradient-cards">
+                    <div className="card" >
+                        <div className="container-card bg-green-box" style={{
+                            background: 'linear-gradient(90deg, ' + theme.colors.background + ' 0%, ' + theme.colors.white + ' 100%)',
+                            color: theme.colors.text,
+                            boxShadow: '0 0 10px ' + theme.colors.shadow,
+                        }}>
+                            <img src={contect_ilustration} alt="restorant image" style={{
+                                width: '100px',
+                                objectFit: 'cover',
+                                backgroundColor: 'linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%)'
+                            }} />
+                            <p className="card-title"><PhoneIcon />
+                                <a href={`tel:${RestrontDetails.phone}`}> Call us</a></p>
+                            <p className="card-title">
+                                <SendRoundedIcon /> <a href={`https://wa.me/${RestrontDetails.phone}`}>Whatsapp</a>
+                            </p>
+                            <p className="card-title"><EmailRoundedIcon /> <a href={`mailto:${RestrontDetails.email}`}>Mail us</a></p>
+                            <p className="card-description"><BusinessRoundedIcon />{RestrontDetails.address}</p>
+                        </div>
+                    </div>
+                </div>
             </ContactDetails>
             <ContainerSection id="timing" >
                 <img src={open_svg} alt="restorant image" style={{
@@ -411,34 +467,30 @@ function Restorant_home_view() {
             <List style={{
                 display: 'flex',
                 flexDirection: 'row',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
                 gap: '20px',
-                margin: '20px',
                 padding: '20px',
-                borderRadius: '10px',
-
+                listStyleType: 'none',
+                margin: '0',
             }}>
                 {tables && tables.map((table) => (
-                    <StyledListItem key={table.id} >
-                        <TableHolder style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            padding: '20px',
-                        }}>
-                            <img src={table_icon} alt="table icon" style={{
-                                width: '100%',
-                                objectFit: 'cover',
-                            }} />
-                            <StyledButton onClick={() => navigate(`/restorant/table/${id}/${table.id}`)}
-                                style={{ border: '1px solid #000', backgroundColor: '#fff', color: '#000', position: 'absolute', bottom: '40px' }}
-                            >
-                                {table.name}
-                            </StyledButton>
-                        </TableHolder>
-                    </StyledListItem>
+                    <StyledTableItem key={table.id}
+                        onClick={() => navigate(`/restorant/table/${id}/${table.id}`)} >
+                        <Typography variant="h3" component="div" style={{
+                            fontSize: '1.2rem',
+                            textAlign: 'center',
+                            padding: '10px',
+                            color: theme.colors.text,
+                            borderRadius: '5px',
+                        }}>{table.name}</Typography>
+                        <StyledImage src={table_icon} alt="table icon" />
+                    </StyledTableItem>
                 ))}
             </List>
         </Wrapper>
     )
 }
+
 
 export default Restorant_home_view
