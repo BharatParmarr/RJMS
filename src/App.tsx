@@ -4,7 +4,7 @@ import API_HOST from './config';
 import styled from 'styled-components';
 import Edit from '@mui/icons-material/Edit';
 import { Button } from '@mui/material';
-import { a } from 'react-spring';
+
 
 // Container for the entire application
 const Container = styled.div`
@@ -231,8 +231,6 @@ function RegisterRestaurant() {
   };
   const [usrData, setUsrData] = useState<UsrData>();
   const [show, setShow] = useState<boolean>(false);
-  const [last_date, setLast_date] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
 
   const [subscription, setSubscription] = useState<any>();
 
@@ -255,13 +253,10 @@ function RegisterRestaurant() {
       }
     }).then((response) => {
       console.log(response.data, 'UserData14');
-      let last_data = 0;
       console.log(response.data, 'Length');
       if (response.data.length > 0) {
         setSubscription(response.data);
 
-      } else {
-        setMessage('No Subscription found');
       }
     }).catch((error) => {
       console.error('There was an error!', error);
