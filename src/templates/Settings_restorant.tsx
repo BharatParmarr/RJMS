@@ -178,7 +178,7 @@ function Hostel_info_change({ hosteldata }: any) {
                 backgroundColor: theme.colors.primary,
                 color: 'white',
             }} startIcon={<CreateRoundedIcon />} variant="contained" onClick={() => setIsOpen(!isOpen)} >
-                Hostel Information
+                Restaurant Information
             </StyledButton>
             {isOpen && <StyledTypography>
                 Change Hostel Information

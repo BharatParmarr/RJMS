@@ -238,7 +238,7 @@ function Restroant_view() {
         let key = '';
         if (order_key) {
             const orderKeyObj = JSON.parse(order_key);
-            console.log(orderKeyObj['expires']);
+            // console.log(orderKeyObj['expires']);
             if (orderKeyObj['expires'] > new Date().getTime()) {
                 key = orderKeyObj['value'];
             } else {
@@ -358,7 +358,7 @@ function Restroant_view() {
     return (
         <Wrapper style={springProps}>
             <Typography variant="h1" component="div" style={{
-                fontSize: restorantName.length > 0 ? (restorantName.length * 0.11) + 'rem' : '2rem',
+                fontSize: restorantName.length > 0 ? '1.5rem' : '2rem',
             }}>
                 <RestaurantMenuIcon /> {restorantName.length > 0 ? <>{restorantName.length > 14 ?
                     restorantName.slice(0, 14) + '...' : restorantName}</> : 'Restorant'}

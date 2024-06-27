@@ -47,6 +47,36 @@ const StyledTypograpy = styled(Typography)`
   color: ${({ theme }) => theme.colors.gray};
 `;
 
+const StyledList = styled(List)`
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 10px;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+    `;
+
+const StyledListItem = styled(ListItem)`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: ${({ theme }) => theme.colors.white};
+    color: ${({ theme }) => theme.colors.text};
+    width: 26%;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+    `
+
 
 function DownloadableQRCode({ value }: any) {
 
@@ -157,26 +187,14 @@ function Shop_view() {
                 marginBottom: '20px',
                 fontSize: '1.5rem'
             }}>Platforms</Typography>
-            <List style={{
+            <StyledList style={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'space-around',
                 gap: '10px',
             }}>
                 {tables && tables.map((table) => (
-                    <ListItem key={table.id} button style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '10px',
-                        margin: '10px 0',
-                        borderRadius: '10px',
-                        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                        backgroundColor: theme.colors.white,
-                        color: '#000',
-                        width: '26%',
-                    }}>
+                    <StyledListItem key={table.id} >
                         <TableHolder>
                             <div style={{
                                 display: 'flex',
@@ -202,9 +220,9 @@ function Shop_view() {
                                 <PeopleIcon /> View Table
                             </StyledButton>
                         </TableHolder>
-                    </ListItem>
+                    </StyledListItem>
                 ))}
-            </List>
+            </StyledList>
         </Wrapper>
     )
 }

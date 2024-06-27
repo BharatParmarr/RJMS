@@ -143,7 +143,7 @@ function PositionedMenu({ subscription }: { subscription?: boolean }) {
         </MenuItem>
         <Divider variant="middle" component="li" />
         <MenuItem onClick={() => {
-          window.open('https://fitwayn.com', 'new')
+          alert('New tools cooming soon.')
         }} style={{
           color: theme.colors.text,
           backgroundColor: theme.colors.background,
@@ -385,13 +385,46 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   >
                     <ToggleColorMode mode={theme.colors.white == '#fff' ? 'light' : 'dark'} toggleColorMode={toggleColorMode} />
                   </Box>
-                  <MenuItem onClick={() => window.open('/create-restaurant/', '_self')}>
+                  <MenuItem onClick={() => {
+                    navigate('/coustemer/')
+                  }}>
+                    Coustemer
+                  </MenuItem>
+                  <MenuItem onClick={() => {
+                    if (subscription) {
+                      navigate('/create-restaurant/')
+                    } else {
+                      navigate('/pricing/')
+                    }
+                  }}>
                     Restotant
                   </MenuItem>
-                  <MenuItem onClick={() => window.open('/hostels', '_self')}>
+                  <MenuItem onClick={() => {
+                    if (subscription) {
+                      navigate('/hostels')
+                    } else {
+                      navigate('/pricing/')
+                    }
+                  }}>
                     Hostels
                   </MenuItem>
-                  <MenuItem onClick={() => navigate('/pricing/')} >
+                  <MenuItem onClick={() => {
+                    if (subscription) {
+                      navigate('/service-shop')
+                    } else {
+                      navigate('/pricing/')
+                    }
+                  }}>
+                    Service Shop
+                  </MenuItem>
+                  <MenuItem onClick={() => {
+                    window.open('https://fitwayn.com', 'new')
+                  }}>
+                    Gym Mangment & Workout Planner
+                  </MenuItem>
+                  <MenuItem onClick={() => {
+                    navigate('/pricing/')
+                  }} >
                     Pricing
                   </MenuItem>
                   <MenuItem onClick={() => navigate('/F&Q/')}>
