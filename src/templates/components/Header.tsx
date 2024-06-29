@@ -17,10 +17,12 @@ import { useEffect, useState } from 'react';
 import API_HOST from '../../config';
 import { useTheme } from '../styles/theme';
 import '../css/style.css'
-import Logo from '../../assets/Static/logo.jpg'
+// import Logo from '../../assets/Static/logo.jpg'
+import Logo from '../../assets/Static/bizzwin.png'
 import { useNavigate } from 'react-router-dom';
 import { BadgeProps } from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -63,9 +65,11 @@ function PositionedMenu({ subscription }: { subscription?: boolean }) {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        style={{ display: 'flex', gap: 0.5, justifyContent: 'space-between', color: 'black' }}
+        style={{
+          display: 'flex', gap: 0.5, justifyContent: 'space-between', color: 'black',
+        }}
       >
-        Services
+        Services <ArrowDropDownIcon />
       </Button>
       <Menu
         id="basic-menu"
@@ -282,8 +286,14 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
               <Typography
                 color="text.primary"
                 sx={{ ml: 1, }}
+                style={{
+                  color: theme.colors.primary,
+                  cursor: 'pointer',
+                  fontSize: '1.7rem',
+                  marginRight: '20px',
+                }}
               >
-                Bizztrow
+                BizzWin
               </Typography>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 {/* <MenuItem
