@@ -140,7 +140,7 @@ function CardBuissnes({ item, index, type }: any) {
     return (
         <StyledLi key={index}
             style={{
-                backgroundImage: { item }.item.logo ? `url(${API_HOST + item.logo})` : `url(${defult_images[type]})`,
+                backgroundImage: { item }.item.logo ? `url(${item.logo})` : `url(${defult_images[type]})`,
             }}
             onClick={() => {
                 navigate('/' + link_type + '/home/' + item.id, { state: { item } })

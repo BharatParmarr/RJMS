@@ -17,7 +17,8 @@ import Backdrop from '@mui/material/Backdrop';
 import React from "react";
 import useWebSocket from 'react-use-websocket';
 import { motion, AnimatePresence } from 'framer-motion';
-import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
+import TableRestaurantRoundedIcon from '@mui/icons-material/TableRestaurantRounded';
+import DynamicFeedRoundedIcon from '@mui/icons-material/DynamicFeedRounded';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import Fab from '@mui/material/Fab';
 import FullScreenDialog from "./order_modify_dilog";
@@ -519,11 +520,23 @@ function Orders_view() {
                 <span className="text">Orders History</span>
             </StyledFab>
             <Tablesnamelist>
+                {/* button for reset the filter */}
+                <StyledButton onClick={() => setSelectedTable(null)} style={{
+                    border: selectedTable === null ? '2px solid ' + theme.colors.primary : '2px solid ' + theme.colors.white,
+                }}>
+                    <DynamicFeedRoundedIcon style={{ fontSize: '2.1rem', color: theme.colors.secondary }} />
+                    <Button variant="text" style={{
+                        fontSize: '0.75rem', color: theme.colors.text,
+                        fontFamily: 'Roboto, sans-serif',
+                        textTransform: 'capitalize',
+                    }} >All</Button>
+                </StyledButton>
+                {/* list all the tables which holds the orders and helps in filltering process */}
                 {tables && tables.map((table: any) => (
                     <StyledButton onClick={() => setSelectedTable(tablesId[tables.indexOf(table)])} key={table} style={{
                         border: selectedTable === tablesId[tables.indexOf(table)] ? '2px solid ' + theme.colors.primary : '2px solid ' + theme.colors.white,
                     }}>
-                        <TableRestaurantIcon style={{ fontSize: '2.1rem', color: theme.colors.secondary }} />
+                        <TableRestaurantRoundedIcon style={{ fontSize: '2.1rem', color: theme.colors.secondary }} />
                         <Button variant="text" style={{
                             fontSize: '0.75rem', color: theme.colors.text,
                             fontFamily: 'Roboto, sans-serif',
@@ -531,6 +544,7 @@ function Orders_view() {
                         }} >{table}</Button>
                     </StyledButton>
                 ))}
+
             </Tablesnamelist>
             <Accordion>
                 <AccordionSummary
@@ -539,7 +553,6 @@ function Orders_view() {
                     id="panel1-header"
                     style={{
                         backgroundColor: theme.colors.primary + '35',
-
                         fontFamily: 'Roboto, sans-serif',
                         borderRadius: '5px 5px 0 0',
                     }}

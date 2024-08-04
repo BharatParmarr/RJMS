@@ -40,6 +40,7 @@ import Services_Orders_view from "./Service_templates.tsx/Service_Orders";
 import NotFound from "./Static/404";
 import Coustemer_view_Home from "./Coustemer_view/Coustemer_view_Home";
 import Restorant_home_view from "./templates/Restoratn_home_view";
+import MenuBook from "./templates/components/MenuBook";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider>
@@ -83,6 +84,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/Service-shop/create" element={<Service_shop_create />} />
           {/* coustemer views */}
           <Route path="/Coustemer" element={<Coustemer_view_Home />} />
+          <Route path="/MenuPage" element={<MenuBook />} />
           {/* pages */}
           <Route path="/F&Q" element={<Fandq />} />
           <Route path="*" element={<NotFound />} />

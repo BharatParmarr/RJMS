@@ -13,11 +13,13 @@ import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import contect_ilustration from './svg/contact_ilustration.svg';
+import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded';
 
 const Wrapper = styled(animated.div)`
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   min-height: 100vh;
+  padding-bottom: 200px;
 `;
 
 
@@ -30,7 +32,6 @@ const NavA = styled.a`
     font-family: "Lato", sans-serif;
     border-bottom: 1px solid ${({ theme }) => theme.colors.gray};
     color: '#ffffff';
-    // first element border top
     &:first-child {
         margin-top: 20px;
     }
@@ -80,7 +81,8 @@ const SectionLi = styled.li`
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin: 10px 0;
     transition: 0.3s all;
-    min-width: 300px;
+    width: 42%;
+    text-align: center;
     @media (max-width: 768px) {
         width: 95.0%;
     }
@@ -209,13 +211,18 @@ function NavBarRestorant(
             zIndex: 10,
             backgroundColor: theme.colors.white,
             color: theme.colors.text,
+            height: '60px',
         }}>
-            <a>{restorantname}</a>
+            <a style={{
+                fontWeight: '800',
+                fontStyle: 'italic',
+                fontSize: '1.2rem',
+            }}>{restorantname}</a>
             <ul className="list">
-                <li><a href="#timing">Timing</a></li>
-                <li><a href="#tables">Tables</a></li>
-                <li><a href="#contecs">Contact</a></li>
-                <li><a href="#">Home</a></li>
+                <li><a className="mask_link_nav" href="#timing">Timing</a></li>
+                <li><a className="mask_link_nav" href="#tables">Tables</a></li>
+                <li><a className="mask_link_nav" href="#contecs">Contact</a></li>
+                <li><a className="mask_link_nav" href="#">Home</a></li>
             </ul>
             <button className="search" style={{
                 visibility: 'hidden'
@@ -262,22 +269,45 @@ function HeroSection({ restorantLogo }: any) {
         "Life is uncertain. Eat dessert first."
     ];
     return (
-        <Herodiv style={{
-            backgroundImage: `url(${API_HOST + '/' + restorantLogo})`
+        <Herodiv className="herodiv" style={{
+            // backgroundImage: `url(${API_HOST + '/' + restorantLogo})`,
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            flexDirection: 'row',
+            gap: '20px',
         }}>
             <Typography variant="h3" component="div" style={{
                 fontSize: '1.5rem',
                 color: theme.colors.black,
                 textAlign: 'center',
-                width: '60%',
+                width: '50%',
                 padding: '10px',
                 backgroundColor: theme.colors.gray + '69',
                 borderRadius: '5px',
-                margin: 'auto'
             }}>{
                     quotes[Math.floor(Math.random() * quotes.length)]
 
                 }</Typography>
+            <div style={{
+                width: '50%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '20px',
+            }}>
+                <img src={restorantLogo} alt="restorant image" style={{
+                    width: '90%',
+                    objectFit: 'cover',
+                    height: '84%',
+                    borderRadius: '5px',
+                    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                    alignSelf: 'center',
+                    justifySelf: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                }} />
+            </div>
         </Herodiv>
     )
 }
@@ -315,6 +345,8 @@ function Restorant_home_view() {
         logo: '',
     });
 
+    const [timeings, settimeings] = useState<any>();
+
     useEffect(() => {
         fetch(`${API_HOST}/tables?restorant_id=` + id, {
             method: 'GET',
@@ -333,9 +365,17 @@ function Restorant_home_view() {
             .then(data => {
                 UseRestrontDetails(data);
             })
+
+        fetch(`${API_HOST}/api/restorants/timeings/${id}`, {
+            method: 'GET',
+        }).then(response => response.json())
+            .then(data => {
+                settimeings(data);
+                console.log(data, 'timeings')
+            })
     }, []);
 
-    let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    let weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 
     return (
@@ -371,9 +411,9 @@ function Restorant_home_view() {
                 <div id="contecs" className="gradient-cards">
                     <div className="card" >
                         <div className="container-card bg-green-box" style={{
-                            background: 'linear-gradient(90deg, ' + theme.colors.background + ' 0%, ' + theme.colors.white + ' 100%)',
+                            background: 'linear-gradient(90deg, ' + theme.colors.white + ' 0%, ' + '#ffA500' + '40' + ' 100%)',
                             color: theme.colors.text,
-                            boxShadow: '0 0 10px ' + theme.colors.shadow,
+                            boxShadow: 'rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px'
                         }}>
                             <img src={contect_ilustration} alt="restorant image" style={{
                                 width: '100px',
@@ -398,7 +438,46 @@ function Restorant_home_view() {
                 }} />
                 <SectionUl>
                     {weekdays.map((day) => (
-                        <SectionLi key={day}>{day}</SectionLi>
+                        <SectionLi key={day}>
+                            {timeings && timeings[day] &&
+                                <div>
+                                    {timeings[day].is_open ?
+                                        <>
+
+                                            <Typography variant="h3" component="div" style={{
+                                                fontSize: '1.2rem',
+                                                textAlign: 'center',
+                                                padding: '10px',
+                                                color: theme.colors.text,
+                                                borderRadius: '5px',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                display: 'flex',
+                                            }}>{day[0].toUpperCase() +
+                                                day.slice(1)}<AccessTimeFilledRoundedIcon sx={{
+                                                    fontSize: '1.5rem',
+                                                    marginLeft: '10px',
+                                                    color: 'orange'
+                                                }} /></Typography>
+                                            <Typography variant="h3" component="div" style={{
+                                                fontSize: '1.2rem',
+                                                textAlign: 'center',
+                                                padding: '10px',
+                                                color: theme.colors.text,
+                                                borderRadius: '5px',
+                                            }}>{timeings[day].open_time} - {timeings[day].close_time}</Typography></> :
+                                        <Typography variant="h3" component="div" style={{
+                                            fontSize: '1.2rem',
+                                            textAlign: 'center',
+                                            padding: '10px',
+                                            color: theme.colors.text,
+                                            borderRadius: '5px',
+                                        }}>{day[0].toUpperCase() +
+                                            day.slice(1)} - Closed</Typography>
+                                    }
+                                </div>
+                            }
+                        </SectionLi>
                     ))}
                 </SectionUl>
             </ContainerSection>
@@ -406,7 +485,10 @@ function Restorant_home_view() {
                 display: 'flex',
                 alignItems: 'center',
                 marginBottom: '20px',
-                fontSize: '1.5rem'
+                fontSize: '1.5rem',
+                color: theme.colors.text,
+                justifyContent: 'center',
+                marginTop: '70px',
             }}>Tables</Typography>
             <MySideNav />
             <List style={{
@@ -432,6 +514,14 @@ function Restorant_home_view() {
                         <StyledImage src={table_icon} alt="table icon" />
                     </StyledTableItem>
                 ))}
+                {tables && tables.length === 0 && <Typography variant="h3" component="div" style={{
+                    fontSize: '1.2rem',
+                    textAlign: 'center',
+                    padding: '10px',
+                    color: theme.colors.gray,
+                    borderRadius: '5px',
+                }}>No tables available</Typography>
+                }
             </List>
         </Wrapper>
     )

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from './styles/theme';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './styles/GlobalStyle';
@@ -6,9 +6,14 @@ import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import ServicesSection from './components/ServicesSection';
 import Footer from './components/Footer';
+import SimpleAlert from './components/succes_aleart';
 
 const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
+  // alert stats
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('Loading...');
+  const [type, setType] = useState('success');
 
   type Theme = 'light' | 'dark';
   // const [colorMode, setColorMode] = useState<Theme>('light');
@@ -23,6 +28,17 @@ const App: React.FC = () => {
   //   }
   // };
 
+  // check for internet connection
+  useEffect(() => {
+    const isOnline = window.navigator.onLine;
+    if (!isOnline) {
+      setMessage('No internet connection');
+      setType('error');
+      setOpen(true);
+    }
+  }, []);
+
+
   let colorMode = 'light' as Theme;
   return (
     <ThemeProvider theme={theme}>
@@ -31,6 +47,20 @@ const App: React.FC = () => {
       <HeroSection />
       <ServicesSection />
       <Footer />
+      <div style={{
+        position: 'fixed',
+        bottom: 10,
+        right: 10,
+        minWidth: '300px',
+        zIndex: 1000,
+      }}>
+        <SimpleAlert
+          message={message}
+          type={type}
+          open={open}
+          setOpen={setOpen}
+        />
+      </div>
     </ThemeProvider>
   );
 };

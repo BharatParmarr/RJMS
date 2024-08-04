@@ -3,7 +3,7 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import API_HOST from '../../config';
-import GoogleIcon from '@mui/icons-material/Google';
+// import GoogleIcon from '@mui/icons-material/Google';
 import './component_styles.css';
 
 const GoogleLoginButton = () => {

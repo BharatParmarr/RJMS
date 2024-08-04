@@ -244,6 +244,7 @@ function ProductTable({ products, setProducts }: any) {
 
     return (
         <Container>
+            <meta name="viewport" content="width=1024"></meta>
             <SearchInput
                 type="text"
                 placeholder="Search Products..."
@@ -268,7 +269,7 @@ function ProductTable({ products, setProducts }: any) {
                 <StyledTbody>
                     {displayedProducts.map((product: { id: Key | null | undefined; image: string; name: string | undefined; quantity: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; price: any; updated_time: string | number | Date; }) => (
                         <StyledTr key={product.id}>
-                            <StyledTd>{product.image && <ImageProduct src={API_HOST + product.image} alt={product.name} />}</StyledTd>
+                            <StyledTd>{product.image && <ImageProduct src={product.image} alt={product.name} />}</StyledTd>
                             <StyledTd>
                                 {product.name && product.name.length > 20 ? <ListItemText primary={product.name.slice(0, 20) + '...'} /> : <ListItemText primary={`${product.name}`} />}
 

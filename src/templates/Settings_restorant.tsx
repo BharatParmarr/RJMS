@@ -13,13 +13,20 @@ import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import PersonRemoveAlt1RoundedIcon from '@mui/icons-material/PersonRemoveAlt1Rounded';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
 import API_HOST from "../config";
+import Side_pannel from "./components/Side_pannel";
 
 const StyledDiv = styled.div`
     padding: 20px;
     background-color: ${({ theme }) => theme.colors.background};
-    min-height: 100vh;
+    height: 100vh;
+    width: 85%;
+    overflow: auto;
     display: flex;
     flex-direction: column;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `
 const StyledDivcontainer = styled.div`
     padding: 20px;
@@ -109,6 +116,18 @@ const StyledDivHolder = styled.div`
     @media (max-width: 768px) {
         flex-direction: column;
     }
+    `;
+
+const ContainerHOlder = styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+
     `;
 
 
@@ -242,7 +261,7 @@ function Hostel_info_change({ hosteldata }: any) {
                     <InputLabel htmlFor="upload-photo" style={{
                         color: theme.colors.text,
                     }}>
-                        {image ? <img src={image instanceof Blob ? URL.createObjectURL(image) : API_HOST + image} alt="hostel" style={{
+                        {image ? <img src={image instanceof Blob ? URL.createObjectURL(image) : image} alt="hostel" style={{
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',
@@ -386,7 +405,13 @@ function Settings_component() {
             }}>
                 Manager
                 {Manager && <StyledDivHolder>
-                    Current Manager: {Manager}
+
+                    <div style={{
+                        display: 'flex',
+                        gap: 20,
+
+                    }}>{Manager}
+                    </div>
                     <StyldeButton startIcon={<PersonRemoveAlt1RoundedIcon />} variant="outlined" color="error" onClick={() => { removeManger() }}>Remove</StyldeButton>
                 </StyledDivHolder>}
                 <StyldeButton style={{
@@ -419,12 +444,12 @@ function Settings_component() {
                 boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
                 marginBottom: 20
             }}>
-                Asign Staff
+                Staff
                 <>
                     {Staff && Staff.map((staff) => {
                         return (
                             <StyledDivHolder>
-                                Current Staff: {staff}
+                                {staff}
                                 <StyldeButton startIcon={<PersonRemoveAlt1RoundedIcon />} variant="outlined" color="error" onClick={() => { removeStaff(staff) }}>Remove</StyldeButton>
                             </StyledDivHolder>
                         )
@@ -466,22 +491,27 @@ type SettingsProps = {
 
 function Settings_restorant({ For = "Restorant", Settings = Settings_component }: SettingsProps) {
     const { theme } = useTheme()
+    const { id } = useParams()
 
     return (
-        <StyledDiv>
-            <h1 style={{
-                display: 'flex',
-                gap: 10,
-                alignItems: 'center',
-                color: theme.colors.text
-            }}>Settings<SettingsRoundedIcon style={{
-                fontSize: 30
-            }} /><h5 style={{
-                fontSize: 14,
-                color: theme.colors.gray
-            }}>{For}</h5></h1>
-            <Settings />
-        </StyledDiv >
+        <ContainerHOlder>
+            <Side_pannel id={id} option={'Settings'} />
+
+            <StyledDiv>
+                <h1 style={{
+                    display: 'flex',
+                    gap: 10,
+                    alignItems: 'center',
+                    color: theme.colors.text
+                }}>Settings<SettingsRoundedIcon style={{
+                    fontSize: 30
+                }} /><h5 style={{
+                    fontSize: 14,
+                    color: theme.colors.gray
+                }}>{For}</h5></h1>
+                <Settings />
+            </StyledDiv >
+        </ContainerHOlder>
     )
 }
 

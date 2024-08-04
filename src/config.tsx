@@ -1,5 +1,5 @@
-// let API_HOST = "http://127.0.0.1:8000";
-let API_HOST = 'https://bharathosting.pythonanywhere.com';
+let API_HOST = "http://20.197.34.207";
+// let API_HOST = 'https://bharathosting.pythonanywhere.com';
 // let API_HOST = 'http://localhost:8000'
 
 let url = new URL(API_HOST);

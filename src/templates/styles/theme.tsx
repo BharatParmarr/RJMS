@@ -23,15 +23,15 @@ const ThemeProvider = ({ children }: any) => {
             gray: '#828282',
         } : {
             primary: '#0063e1',
-            secondary: '#04db3e',
-            background: '#000',
+            secondary: '#108700',
+            background: '#141414',
             objectBg: '#000',
             text: '#f5f5f5',
             footerBg: '#141414',
             footerText: '#f5f5f5',
             shadow: '0 0 10px rgba(255, 255, 255, 0.1)',
             black: '#fff',
-            white: '#141414',
+            white: '#000',
             gray: '#828282',
         },
     };

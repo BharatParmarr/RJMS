@@ -16,8 +16,29 @@ import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
+
+function getRandomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function getRandomAngle(): number {
+    return Math.floor(Math.random() * 360);
+}
+
+function getRandomLinearGradient(): string {
+    const angle = getRandomAngle();
+    const color1 = getRandomColor();
+    const color2 = getRandomColor();
+    return `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`;
+}
+
 const Wrapper = styled(animated.div)`
-  background-color: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   padding: 20px;
   min-height: 100vh;
@@ -123,6 +144,7 @@ function Restroant_view() {
         price: number;
         description: string;
         veg: boolean;
+        image?: string;
     };
     type Savemanu = {
         [key: string]: ManuItem[];
@@ -269,7 +291,7 @@ function Restroant_view() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('token')}`
+                    // 'Authorization': `Token ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify({
                     items: message,
@@ -280,16 +302,20 @@ function Restroant_view() {
                 .then(response => {
                     if (response.status === 400) {
                         alert('Please select items to order')
+                    } else if (response.status === 401) {
+                        // user is not authenticated
+                        alert('Please login to place order');
+                    } else if (response.status !== 201) {
+                        alert('Please try again later');
+                    } else {
+                        alert('Order placed successfully');
+                        setCart([]);
                     }
                     return response.json()
                 })
                 .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
-                    alert('Order placed successfully');
-                    setCart([]);
+                    // this is for the showing what user has orderd (*future use)
+
                 })
                 .catch((error) => console.error('Error:', error));
         }
@@ -391,13 +417,14 @@ function Restroant_view() {
                 <StyledButton className={(manu_category_2 == category.id.toString()) ? 'selected' : ''} onClick={() => setManu_category_2(category.id.toString())} key={category.id} style={{
                     marginRight: '10px',
                     borderRadius: '30px',
-                    padding: '5px 12px',
+                    padding: '8px 12px',
                     fontFamily: 'Roboto, serif',
                     alignItems: 'center',
                     justifyContent: 'center',
                     position: 'relative',
                     display: 'inline-block',
                     fontSize: '1.05rem',
+                    marginTop: '5px',
                 }}>
                     {category.name}
                 </StyledButton>
@@ -413,6 +440,8 @@ function Restroant_view() {
                             fontSize: '0.79rem', border: '1px solid #8c0015', padding: '1.9px',
                             color: '#8c0015', borderRadius: '8%', position: 'absolute', top: '2px', left: '2px'
                         }} />}
+
+
                         <StyledListItemText primary={item.name} secondary={`Price: ${item.price}`} style={{
                             fontSize: '2.1rem'
                         }} />
@@ -425,18 +454,32 @@ function Restroant_view() {
                             position: 'relative',
                             display: 'flex',
                             flexDirection: 'column',
-                        }}>
+                            maxWidth: '50%',
+                        }}>{item.image ? <img src={item.image} alt="item" style={{
+                            borderRadius: '4px',
+                            width: '140px',
+                            marginBottom: '10px',
+                            height: '130px',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                        }} /> : <img src={'https://images.unsplash.com/photo-1569779991530-9874b0f63665?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'} alt="item" style={{
+                            borderRadius: '4px',
+                            width: '140px',
+                            marginBottom: '10px',
+                            height: '130px',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                        }} />}
                             {cart.find((cartItem: any) => cartItem.id === item.id) ? <div style={{
                                 display: 'flex',
                                 flexDirection: 'row',
                                 alignItems: 'center',
-
                                 fontSize: '1rem',
                                 fontFamily: 'Roboto, serif',
                                 position: 'relative',
                                 backgroundColor: theme.colors.background,
                                 color: theme.colors.text,
-                                padding: '4px 15px',
+                                padding: '8px 15px',
                                 borderRadius: '10px',
                                 gap: '8px',
                             }}><RemoveIcon style={{
@@ -463,7 +506,7 @@ function Restroant_view() {
                     backgroundColor: theme.colors.primary,
                     color: theme.colors.white,
                     padding: '10px 0px',
-                    position: 'fixed',
+                    position: 'absolute',
                 }}><Badge badgeContent={cart.length} sx={{
                     color: 'white',
                 }}><ShoppingCartIcon /></Badge></Button>
@@ -510,7 +553,7 @@ function Restroant_view() {
             ><span style={{
                 color: `${({ theme }: any) => theme.colors.gray}`,
                 fontSize: '0.7rem'
-            }}>TOTAL:</span> ₹{cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</Typography>
+            }}>TOTAL:</span> ₹{(cart.reduce((acc, item) => acc + item.price * item.quantity, 0)).toFixed(2)}</Typography>
         </Wrapper >
     )
 }

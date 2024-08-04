@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Button, Grid, Paper, TextField, Typography } from '@mui/material';
+import { Button, Grid, Paper, Switch, TextField, Typography } from '@mui/material';
 import { styled } from 'styled-components';
 import { useSpring, animated } from 'react-spring';
 import API_HOST from '../config';
 import { useTheme } from './styles/theme';
 import EditIcon from '@mui/icons-material/Edit';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { MenuItem, Select } from '@mui/material';
+// import { JSX } from "react/jsx-runtime";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 const StyledPaper = styled(Paper)`
 background-color: ${({ theme }) => theme.colors.background};
@@ -91,6 +102,223 @@ object-fit: cover;
 border-radius: 12px;
 `;
 
+
+function TimeView({ settimedata }: { settimedata: any }) {
+    const { theme } = useTheme();
+    // start time and end time for each day
+    type Time = {
+        [key: string]: string,
+    }
+    type OpenRestoratn = {
+        [key: string]: boolean,
+    }
+    const [timestart, setTimestart] = useState<Time>({ 'monday': '', 'tuesday': '', 'wednesday': '', 'thursday': '', 'friday': '', 'saturday': '', 'sunday': '', });
+    const [timeend, setTimeend] = useState<Time>({ 'monday': '', 'tuesday': '', 'wednesday': '', 'thursday': '', 'friday': '', 'saturday': '', 'sunday': '', });
+    const [isOpen, setIsOpen] = useState<OpenRestoratn>({ 'monday': true, 'tuesday': true, 'wednesday': true, 'thursday': true, 'friday': true, 'saturday': true, 'sunday': true, });
+    // option for set time for each day or same time for all states
+    const [opetion, setOpetion] = useState(0);
+
+    function handleChangeopetion(event: any) {
+        setOpetion(event.target.value);
+    }
+
+    // set time for all days start and end
+    function setstarttime(newValue: any) {
+        newValue = newValue['$d'].toString();
+        console.log(newValue);
+        setTimestart({ 'monday': newValue, 'tuesday': newValue, 'wednesday': newValue, 'thursday': newValue, 'friday': newValue, 'saturday': newValue, 'sunday': newValue, });
+    }
+    function setendtime(newValue: any) {
+        newValue = newValue['$d'].toString();
+        setTimeend({ 'monday': newValue, 'tuesday': newValue, 'wednesday': newValue, 'thursday': newValue, 'friday': newValue, 'saturday': newValue, 'sunday': newValue, });
+
+    }
+
+
+    // set time for each day start and end sepratly
+    function setstarttime1(newValue: any, day: string) {
+        let newtime: { [key: string]: string } = { ...timestart };
+        newtime[day] = newValue['$d'].toString();
+        setTimestart(newtime);
+    }
+    function setendtime1(newValue: any, day: string) {
+        let newtime: { [key: string]: string } = { ...timeend };
+        newtime[day] = newValue['$d'].toString();
+        setTimeend(newtime);
+    }
+
+    useEffect(() => {
+        console.log(isOpen)
+        for (let day in timestart) {
+            if (timestart[day] === '') {
+                return;
+            }
+        }
+        for (let day in timeend) {
+            if (timeend[day] === '') {
+                return;
+            }
+        }
+
+        settimedata({ starttime: timestart, endtime: timeend, isOpen: isOpen })
+    }, [timestart, timeend, isOpen]);
+
+    const label_for_switch = { inputProps: { 'aria-label': 'Restoratn Closed' } };
+
+    // extract time from date string to show in table as only HH:MM
+    function extractTime(dateString: string): string {
+        const date = new Date(dateString);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+        return formattedHours == 'NaN' ? '-' : `${formattedHours}:${formattedMinutes}`;
+    }
+
+    let days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    return (
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+
+        }}>
+            <h2
+                style={{
+                    color: 'black',
+                    marginBottom: '20px',
+                    padding: '10px',
+                    fontFamily: ' Roboto, Lato, Arial, sans-serif',
+                }}
+            >Set Restorant Timings</h2>
+            <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={opetion}
+                label="Age"
+                onChange={handleChangeopetion}
+            >
+                <MenuItem value={0}>Same For All</MenuItem>
+                <MenuItem value={1}>Select Separately</MenuItem>
+            </Select>
+            <div>
+                {/* time show component */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: '10px',
+                    gap: '10px',
+                }}>
+                    <TableContainer component={Paper}>
+                        <Table aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Day</TableCell>
+                                    <TableCell align="right">Opening Time</TableCell>
+                                    <TableCell align="right">Closing Time</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    days.map((day) => (
+                                        <TableRow key={day}>
+                                            <TableCell component="th" scope="row">
+                                                {day}
+                                            </TableCell>
+                                            <TableCell align="right">{extractTime(timestart[day])}</TableCell>
+                                            <TableCell align="right">{extractTime(timeend[day])}</TableCell>
+                                        </TableRow>
+                                    ))
+                                }
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </div>
+            </div>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '20px',
+                width: '100%',
+            }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    {opetion === 0 ? <>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            padding: '10px',
+                            gap: '10px',
+                        }}>
+                            <TimePicker
+                                label="Opening Time"
+                                onChange={setstarttime}
+                            />
+                            <TimePicker
+                                label="Closing Time"
+                                onChange={setendtime}
+                            />
+                        </div>
+                    </> : <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        width: '100%',
+                        padding: '10px',
+                        marginTop: '20px',
+                    }}>
+                        {
+                            days.map((day) => (
+                                <div key={day} style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    padding: '10px',
+                                    backgroundColor: theme.colors.white,
+                                    borderRadius: '9px',
+                                    boxShadow: theme.colors.shadow,
+                                }}>
+                                    {isOpen[day] ? <> <Typography variant="h6" style={{
+                                        color: `${({ theme }: any) => theme.colors.primary}`,
+                                        fontSize: '1rem',
+                                    }}>{day}</Typography>
+                                        <TimePicker
+                                            label="Opening Time"
+                                            onChange={(newValue) => setstarttime1(newValue, day)}
+                                        />
+                                        <TimePicker
+                                            label="Closing Time"
+                                            onChange={(newValue) => setendtime1(newValue, day)}
+                                        />
+                                        <Switch defaultChecked onChange={() => setIsOpen({ ...isOpen, [day]: !isOpen[day] })} /></> :
+                                        <>
+                                            <Typography variant="h6" style={{
+                                                color: `${({ theme }: any) => theme.colors.primary}`,
+                                                fontSize: '1rem',
+                                            }}>{day}</Typography>
+                                            <Switch {...label_for_switch} onChange={() => setIsOpen({ ...isOpen, [day]: !isOpen[day] })} />
+                                        </>}
+                                </div>
+                            ))
+                        }
+                    </div>
+                    }
+                </LocalizationProvider>
+            </div>
+        </div>
+    )
+}
+
+
+
+
 export default function Create_restorant() {
 
     const { theme } = useTheme();
@@ -101,6 +329,7 @@ export default function Create_restorant() {
     const [website, setWebsite] = useState('');
     const [description, setDescription] = useState('');
     const [logo, setLogo] = useState<any>('');
+    const [timedata, setTimedata] = useState<any>(); // store time data for each day
 
     const [showForm, setShowForm] = useState(false);
     function show() {
@@ -174,6 +403,7 @@ export default function Create_restorant() {
         })
             .then(response => {
                 if (response.status === 201) {
+
                     alert('Congratulations! Restorant Is Online.');
                     setName('');
                     setAddress('');
@@ -183,12 +413,30 @@ export default function Create_restorant() {
                     setDescription('');
                     setLogo('');
                     setShowForm(false);
+
                 } else {
                     alert('Error: ' + response.statusText);
+                    return;
                 }
                 return response.json();
+            }).then((data) => {
+                fetch(`${API_HOST}/api/restorants/timeings/${data.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Token ${yourToken}`
+                    },
+                    body: JSON.stringify({
+                        'timedata': timedata
+                    }),
+
+                }).then(res => res.json()).then(data => {
+                    console.log(data)
+                }).catch(err => console.log(err))
             })
             .catch((error) => console.error('Error:', error));
+
+
     }
     return (
         <StyledDiv>
@@ -243,7 +491,7 @@ export default function Create_restorant() {
                             }} key={created_by.id}
                                 onClick={() => navigate(`/restorant/${created_by.id}`, { state: { created_by } })}
                             >
-                                <ListImage src={API_HOST + created_by.logo} alt={created_by.name} />
+                                <ListImage src={created_by.logo} alt={created_by.name} />
                                 <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${created_by.id}`, { state: { created_by } })} style={{
                                     color: theme.colors.primary,
                                     backgroundColor: `${({ theme }: any) => theme.colors.white}`,
@@ -347,8 +595,20 @@ export default function Create_restorant() {
                     {/* form */}
                     <StyledForm onSubmit={onSubmit} style={{
                         display: showForm ? 'block' : 'none',
-                        marginTop: '20px'
+                        paddingTop: '20px',
+                        position: 'fixed',
+                        overflow: 'auto',
+                        zIndex: 1,
+                        backgroundColor: theme.colors.white,
                     }}>
+                        <h2
+                            style={{
+                                color: theme.colors.primary,
+                                marginBottom: '20px',
+                                padding: '10px',
+                                fontFamily: ' Roboto, Lato, Arial, sans-serif',
+                            }}
+                        >Create Restaurant</h2>
                         <AnimatedTextField
                             fullWidth
                             margin="normal"
@@ -367,6 +627,7 @@ export default function Create_restorant() {
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
                                 width: '97%',
                                 marginLeft: '1.5%',
+
                             }}
                             sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
@@ -483,12 +744,16 @@ export default function Create_restorant() {
                             marginBottom: '20px',
                             display: 'block',
                         }} />}
+                        {/* set restorant opening and closing time */}
+                        {/* tow options for this set same time for every day or set diffrent time indivigualy for each day */}
+                        {/* if use is on second option set time for each weekday once user selcated first day in the ui to show user */}
+                        <TimeView settimedata={setTimedata} />
                         <StyledButton
                             fullWidth
                             type="submit"
                             variant="contained"
                             style={{
-                                backgroundColor: theme.colors.primary,
+                                backgroundColor: !(name && address && phone && email && website && description && timedata) ? theme.colors.gray : theme.colors.primary,
                                 borderRadius: '10px',
                                 padding: '10px',
                                 boxShadow: theme.colors.shadow,
@@ -497,6 +762,7 @@ export default function Create_restorant() {
                                 marginBottom: '20px',
                                 marginTop: '20px',
                             }}
+                            disabled={!(name && address && phone && email && website && description && timedata)}
                         >Create Restaurant
                         </StyledButton>
                     </StyledForm>
