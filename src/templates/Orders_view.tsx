@@ -163,7 +163,30 @@ const StyledAnimatePresence = styled.div`
             flex-direction: column;
     }
     `
-const StyledDivmotiondiv = styled(motion.div)`
+type Order = {
+    table: number,
+    status: boolean,
+    order_time: string,
+    order_number: number,
+    id: number,
+    table_name: string,
+    table_id?: number,
+    order_details: {
+        item: number,
+        quantity: number,
+        price: number,
+        total: number,
+        item_name: string,
+        is_completed: boolean,
+        id: number
+    }[]
+};
+
+type StyledDivmotiondivProps = {
+    filteredOrders: Order[];
+};
+
+const StyledDivmotiondiv = styled(motion.div) <StyledDivmotiondivProps>`
     width: ${props => props.filteredOrders.length > 2 ? '29%' : '100%'};
     marginBottom: 10px;
     padding: 10px;

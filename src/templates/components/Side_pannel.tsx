@@ -11,8 +11,7 @@ import PublicIcon from '@mui/icons-material/Public';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useState } from 'react';
-import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const NavigationWrap = styled.div`
     display: flex;

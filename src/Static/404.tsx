@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Button, Container } from '@mui/material';
+import { Typography, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import { motion } from 'framer-motion';
 import { useSpring, animated } from 'react-spring';

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { json, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useSpring, animated } from 'react-spring';
 import { Badge, Button, List, ListItem, ListItemText, SwipeableDrawer, Typography } from '@mui/material';
 import styled from "styled-components";
@@ -17,25 +17,25 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 
-function getRandomColor(): string {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
+// function getRandomColor(): string {
+//     const letters = '0123456789ABCDEF';
+//     let color = '#';
+//     for (let i = 0; i < 6; i++) {
+//         color += letters[Math.floor(Math.random() * 16)];
+//     }
+//     return color;
+// }
 
-function getRandomAngle(): number {
-    return Math.floor(Math.random() * 360);
-}
+// function getRandomAngle(): number {
+//     return Math.floor(Math.random() * 360);
+// }
 
-function getRandomLinearGradient(): string {
-    const angle = getRandomAngle();
-    const color1 = getRandomColor();
-    const color2 = getRandomColor();
-    return `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`;
-}
+// function getRandomLinearGradient(): string {
+//     const angle = getRandomAngle();
+//     const color1 = getRandomColor();
+//     const color2 = getRandomColor();
+//     return `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`;
+// }
 
 const Wrapper = styled(animated.div)`
   background: ${({ theme }) => theme.colors.background};
@@ -315,7 +315,7 @@ function Restroant_view() {
                 })
                 .then(data => {
                     // this is for the showing what user has orderd (*future use)
-
+                    console.log(data);
                 })
                 .catch((error) => console.error('Error:', error));
         }

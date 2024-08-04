@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import Accordion from '@mui/material/Accordion';
 // import AccordionActions from '@mui/material/AccordionActions';
@@ -27,7 +26,7 @@ const StyledAccordion = styled(Accordion)`
 function Fandq() {
     const { theme } = useTheme();
 
-    const [Quations, setQuations] = React.useState([
+    const Quations = [
         {
             id: 1,
             question: "What is the purpose of this website?",
@@ -58,7 +57,7 @@ function Fandq() {
             question: "How do I report a problem with a hostel room?",
             answer: "To report a problem with a hostel room, you can send us a message through the website. We will investigate the issue and take appropriate action."
         }
-    ])
+    ]
     return (
         <FandQContainer>
             <h1 style={{
@@ -69,7 +68,7 @@ function Fandq() {
             }}>FAQs</h1>
             {/* quations and expandeble ans component */}
             {Quations.map((item, index) => (
-                <StyledAccordion key={item.id} sx={{
+                <StyledAccordion key={index} sx={{
                     backgroundColor: theme.colors.white,
                     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
                     color: theme.colors.text,

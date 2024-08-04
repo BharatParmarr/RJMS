@@ -28,6 +28,7 @@ import { useParams } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 
@@ -384,8 +385,6 @@ export default Dashboard;
 
 
 
-
-
 const options = {
     scales: {
         y: {
@@ -460,7 +459,7 @@ const CategoryChart = ({ data }: any) => {
                 width: '100%',
             }}>
                 <Styledh2 style={{ fontFamily: 'Roboto' }}>Category Cart</Styledh2>
-                <Bar data={data_convet} options={options} />
+                <Bar data={data_convet} options={options as any} />
             </Styleddiv>
         </Container>
     );

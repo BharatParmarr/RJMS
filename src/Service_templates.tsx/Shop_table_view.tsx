@@ -393,7 +393,7 @@ function Restroant_view_shop() {
             ><span style={{
                 color: `${({ theme }: any) => theme.colors.gray}`,
                 fontSize: '0.7rem'
-            }}>Your Turn:</span>{new Date(min_time).toLocaleString('en-GB', options)} to {new Date(max_time).toLocaleString('en-GB', options)}</Typography>
+            }}>Your Turn:</span>{new Date(min_time).toLocaleString('en-GB', options as any)} to {new Date(max_time).toLocaleString('en-GB', options as any)}</Typography>
         </Wrapper >
     )
 }

@@ -12,7 +12,6 @@ import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import PersonRemoveAlt1RoundedIcon from '@mui/icons-material/PersonRemoveAlt1Rounded';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
-import API_HOST from "../config";
 import Side_pannel from "./components/Side_pannel";
 
 const StyledDiv = styled.div`
@@ -261,7 +260,7 @@ function Hostel_info_change({ hosteldata }: any) {
                     <InputLabel htmlFor="upload-photo" style={{
                         color: theme.colors.text,
                     }}>
-                        {image ? <img src={image instanceof Blob ? URL.createObjectURL(image) : image} alt="hostel" style={{
+                        {image ? <img src={image instanceof Blob ? URL.createObjectURL(image) : image.toString()} alt="hostel" style={{
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',

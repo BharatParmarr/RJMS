@@ -9,7 +9,6 @@ import styled from 'styled-components';
 import API_HOST from "../config";
 import QRCode from 'react-qr-code';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
-import { useTheme } from "../templates/styles/theme";
 import EventSeatRoundedIcon from '@mui/icons-material/EventSeatRounded';
 
 const Wrapper = styled(animated.div)`
@@ -125,7 +124,6 @@ function DownloadableQRCode({ value }: any) {
     );
 }
 function Shop_view() {
-    const { theme } = useTheme();
     const springProps = useSpring({ opacity: 1, from: { opacity: 0 } });
     const CurrentUrl = window.location.origin;
 

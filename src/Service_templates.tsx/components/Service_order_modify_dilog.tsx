@@ -74,6 +74,7 @@ const Transition = React.forwardRef(function Transition(
 
 export default function FullScreenDialog({ open, setOpen, orderId, order, id, modify_order, table_id }: any) {
     // console.log(orderId, order, 'order')
+    console.log(id, 'id')
     const springProps = useSpring({ opacity: 1, from: { opacity: 0 } });
     // const { id } = useParams();
     const { theme } = useTheme();

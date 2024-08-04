@@ -200,8 +200,8 @@ function ProductTable({ products, setProducts }: any) {
         if (!filteredProducts || filteredProducts.length === 0) return [];
         console.log(filteredProducts, 'filteredProducts');
         return filteredProducts.sort((a: { [x: string]: any; }, b: { [x: string]: any; }) => {
-            let valueA = a[sortBy];
-            let valueB = b[sortBy];
+            let valueA = a[sortBy as string];
+            let valueB = b[sortBy as string];
 
             if (valueA == null) valueA = '';
             if (valueB == null) valueB = '';
@@ -278,7 +278,9 @@ function ProductTable({ products, setProducts }: any) {
                                 <ListItemText primary={product.quantity} />
                             </StyledTd>
                             <StyledTd><ListItemText primary={product.price} /></StyledTd>
-                            <StyledTd><ListItemText primary={new Date(product.updated_time).toLocaleString('en-US', options_for_time)} /></StyledTd>
+                            <StyledTd><ListItemText primary={new Date(product.updated_time).toLocaleString('en-US',
+                                options_for_time as Intl.DateTimeFormatOptions
+                            )} /></StyledTd>
                             <StyledTd><Product_quntity_update token={token} product={product} id={id} products={products} setProducts={setProducts} /></StyledTd>
                             <StyledTd><DeleteButton onClick={() => deleteProduct({ productId: product.id, token })}><DeleteIcon /></DeleteButton></StyledTd>
                         </StyledTr>

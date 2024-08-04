@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import API_HOST from "../config"; import styled from 'styled-components';
-import { Typography, List, ListItem, ListItemText, Button } from '@mui/material';
+import { Typography, List, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -33,34 +33,34 @@ const ProductList = styled(List)`
   margin-bottom: 20px;
 `;
 
-const ProductItem = styled(ListItem)`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  transition: all 0.3s ease;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border: 1px solid ${({ theme }) => theme.colors.text}50;
-  &:not(:last-child) {
-    margin-bottom: 10px;
-  }
-    &:hover {
-        box-shadow: 0 0 10px ${({ theme }) => theme.colors.primary}80;
-    }
+// const ProductItem = styled(ListItem)`
+//   display: flex;
+//   justify-content: space-around;
+//   align-items: center;
+//   transition: all 0.3s ease;
+//     padding: 20px;
+//     border-radius: 10px;
+//     margin-bottom: 20px;
+//     border: 1px solid ${({ theme }) => theme.colors.text}50;
+//   &:not(:last-child) {
+//     margin-bottom: 10px;
+//   }
+//     &:hover {
+//         box-shadow: 0 0 10px ${({ theme }) => theme.colors.primary}80;
+//     }
 
-    @media (max-width: 768px) {
-        padding: 10px;
-        flex-direction: column;
-    }
-`;
-const ImageProduct = styled.img`
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 5%;
-    margin-right: 10px;
-    `;
+//     @media (max-width: 768px) {
+//         padding: 10px;
+//         flex-direction: column;
+//     }
+// `;
+// const ImageProduct = styled.img`
+//     width: 100px;
+//     height: 100px;
+//     object-fit: cover;
+//     border-radius: 5%;
+//     margin-right: 10px;
+//     `;
 
 const Inputstyled = styled.input`
     padding: 10px;
@@ -89,20 +89,20 @@ const FormHolderdiv = styled.div`
     }
     `
 
-const QuantityInput = styled.input`
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-    border: 1px solid ${({ theme }) => theme.colors.text};
-    border-radius: 5px;
-    `
+// const QuantityInput = styled.input`
+//     padding: 10px;
+//     margin-bottom: 10px;
+//     background-color: ${({ theme }) => theme.colors.background};
+//     color: ${({ theme }) => theme.colors.text};
+//     border: 1px solid ${({ theme }) => theme.colors.text};
+//     border-radius: 5px;
+//     `
 
-const QuintityButton = styled(Button)`
-    padding: 10px;
-    margin-bottom: 10px;
+// const QuintityButton = styled(Button)`
+//     padding: 10px;
+//     margin-bottom: 10px;
 
-    `
+//     `
 
 function Product_creqte_form({ setProductname, setProductprice, setProductdiscription, setProductImage }: any) {
     const { theme } = useTheme();
@@ -130,41 +130,41 @@ function Product_creqte_form({ setProductname, setProductprice, setProductdiscri
     )
 }
 
-function Product_quntity_update({ token, product, id, setProducts, products }: any) {
-    const [quantity_to_add_inventery, setQuantity_to_add_inventery] = useState<number>();
+// function Product_quntity_update({ token, product, id, setProducts, products }: any) {
+//     const [quantity_to_add_inventery, setQuantity_to_add_inventery] = useState<number>();
 
-    // Update Product Quantity
-    const updateProductQuantity = async ({ productId, quantity, token }: any) => {
-        if (quantity === undefined) {
-            alert('Please enter quantity');
-            return;
-        }
-        const response = await fetch(`${API_HOST}/api/product/${productId}?restorant_id=${id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`
-            },
-            body: JSON.stringify({ quantity: quantity })
-        });
+//     // Update Product Quantity
+//     const updateProductQuantity = async ({ productId, quantity, token }: any) => {
+//         if (quantity === undefined) {
+//             alert('Please enter quantity');
+//             return;
+//         }
+//         const response = await fetch(`${API_HOST}/api/product/${productId}?restorant_id=${id}`, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': `Token ${token}`
+//             },
+//             body: JSON.stringify({ quantity: quantity })
+//         });
 
-        if (response.status === 200) {
-            // alert('Quantity Updated');
-            let newProductarray = [...products];
-            let index = newProductarray.findIndex((product) => product.id === productId);
-            newProductarray[index].quantity = quantity;
-            setProducts(newProductarray);
-        }
-    }
-    return (
-        <>
-            <QuantityInput type="number" name="quantity" id="quantity" placeholder="Quantity" onChange={(e) => {
-                setQuantity_to_add_inventery(parseInt((e.target.value)));
-            }} />
-            <QuintityButton onClick={() => updateProductQuantity({ productId: product.id, quantity: quantity_to_add_inventery, token })}>Update Quantity</QuintityButton>
-        </>
-    )
-}
+//         if (response.status === 200) {
+//             // alert('Quantity Updated');
+//             let newProductarray = [...products];
+//             let index = newProductarray.findIndex((product) => product.id === productId);
+//             newProductarray[index].quantity = quantity;
+//             setProducts(newProductarray);
+//         }
+//     }
+//     return (
+//         <>
+//             <QuantityInput type="number" name="quantity" id="quantity" placeholder="Quantity" onChange={(e) => {
+//                 setQuantity_to_add_inventery(parseInt((e.target.value)));
+//             }} />
+//             <QuintityButton onClick={() => updateProductQuantity({ productId: product.id, quantity: quantity_to_add_inventery, token })}>Update Quantity</QuintityButton>
+//         </>
+//     )
+// }
 
 function Inventory() {
     const { theme } = useTheme();
@@ -217,26 +217,26 @@ function Inventory() {
     }
 
     // Delete Product
-    const deleteProduct = async ({ productId, token }: any) => {
+    // const deleteProduct = async ({ productId, token }: any) => {
 
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            const response = await fetch(`${API_HOST}/api/product`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`
-                },
-                body: JSON.stringify({ product_id: productId })
-            });
-            response.json().then(data => {
-                console.log(data);
-                if (data.message === 'Product deleted') {
-                    let newProductarray = products!.filter((product) => product.id !== productId);
-                    setProducts(newProductarray);
-                }
-            });
-        }
-    }
+    //     if (window.confirm('Are you sure you want to delete this product?')) {
+    //         const response = await fetch(`${API_HOST}/api/product`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Token ${token}`
+    //             },
+    //             body: JSON.stringify({ product_id: productId })
+    //         });
+    //         response.json().then(data => {
+    //             console.log(data);
+    //             if (data.message === 'Product deleted') {
+    //                 let newProductarray = products!.filter((product) => product.id !== productId);
+    //                 setProducts(newProductarray);
+    //             }
+    //         });
+    //     }
+    // }
 
 
     type Product = {

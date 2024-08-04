@@ -1,6 +1,6 @@
 // src/components/GoogleLoginButton.js
 
-import { useGoogleLogin } from '@react-oauth/google';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import API_HOST from '../../config';
 // import GoogleIcon from '@mui/icons-material/Google';
@@ -8,7 +8,7 @@ import './component_styles.css';
 
 const GoogleLoginButton = () => {
     const login = useGoogleLogin({
-        onSuccess: async tokenResponse => {
+        onSuccess: async (tokenResponse: TokenResponse) => {
             console.log('Login success:', tokenResponse);
             try {
                 const { access_token } = tokenResponse;
@@ -25,13 +25,13 @@ const GoogleLoginButton = () => {
             } catch (error) {
                 console.error('Error:', error);
             }
-        },
-        onFailure: (error: any) => {
-            console.error('Login failed:', error);
-        },
+        }
     });
 
-    return <button onClick={login} style={{
+    return <button onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        console.log('Login button clicked:', event);
+        login()
+    }} style={{
         backgroundColor: '#white',
         border: '1px solid blue',
         color: 'black',

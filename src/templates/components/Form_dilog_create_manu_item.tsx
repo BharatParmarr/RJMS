@@ -4,7 +4,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '../styles/theme';
 import { useParams } from 'react-router-dom';
@@ -26,7 +25,7 @@ export default function FormDialog() {
     function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        formData.append('hostel', id)
+        formData.append('hostel', id ?? '')
         api.post('/mealsitem', formData).then((response) => {
             console.log(response.data);
         }).catch(() => {
