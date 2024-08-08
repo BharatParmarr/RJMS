@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTheme } from '../styles/theme';
+// import { useTheme } from '../styles/theme';
 import { motion } from 'framer-motion';
 import heroImage from '../../assets/Static/home.png';
 import { useSpring, animated } from 'react-spring';
@@ -12,7 +12,7 @@ import { Brand_name } from '../../Veriables';
 const HeroSection: React.FC = () => {
     const props = useSpring({ opacity: 1, from: { opacity: 0 } });
     const [props_2, set] = useSpring(() => ({ scale: 1 }));
-    const { theme } = useTheme();
+    // const { theme } = useTheme();
     return (
         <HeroContainer>
             <HeroContent
