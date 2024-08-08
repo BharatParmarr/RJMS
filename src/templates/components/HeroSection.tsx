@@ -7,6 +7,7 @@ import { useSpring, animated } from 'react-spring';
 // import { theme } from 'antd';
 // import google fonts
 import '../css/style.css'
+import { Brand_name } from '../../Veriables';
 
 const HeroSection: React.FC = () => {
     const props = useSpring({ opacity: 1, from: { opacity: 0 } });
@@ -29,21 +30,16 @@ const HeroSection: React.FC = () => {
                             onMouseEnter={() => set({ scale: 1.04 })}
                             onMouseLeave={() => set({ scale: 1 })}
                         >
-                            <Title>Welcome to Bizztrow</Title>
+                            <Title>Welcome to {Brand_name}</Title>
                         </animated.div>
                         <Subtitle>
-                            Empowering Your Restaurant with Seamless Management Solutions.
+                            Empowering Your Business with Seamless Management Solutions.
+                            <br />
+                            <br />
+                            Get Started Today and take your business to the next level.
                         </Subtitle>
                         {/* call to action */}
-                        <button style={{
-                            backgroundColor: theme.colors.primary,
-                            color: 'white',
-                            padding: '10px 20px',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            marginTop: '20px',
-                        }} ><a href="/login">Get Started</a></button>
+
                     </animated.div>
                     <ImageContainer>
                         <img style={{ width: '100%' }} src={heroImage} alt="Restaurant" />
@@ -75,40 +71,21 @@ const HeroContent = styled(motion.div)`
 `;
 
 const Title = styled.h1`
-  font-size: 2.4rem;
+  font-size: 2.9rem;
   margin-bottom: 1rem;
   font-weight: 600;
   font-family: "Oswald", sans-serif;
   color: ${({ theme }) => theme.colors.secondary};
 `;
 
-// const typing = keyframes`
-//   from { width: 0 }
-//   to { width: 100% }
-// `;
-
-// const blink = keyframes`
-//   50% { border-color: transparent }
-// `;
-
-// const Subtitle = styled.h2`
-//   overflow: hidden;
-//   border-right: .15em solid orange;
-//   white-space: nowrap;
-//   margin: 0 auto;
-//   letter-spacing: .15em;
-//   font-size: 24px;
-//   animation: 
-//     ${typing} 3.5s steps(40, end),
-//     ${blink} .75s step-end infinite;
-// `;
-
 const Subtitle = styled.h2`
-    font-size: 1.29rem;
+    font-size: 1.6rem;
     font-family: "Edu TAS Beginner", cursive;
   font-optical-sizing: auto;
-  font-weight: 400;
+  font-weight: 500;
   font-style: normal;
+  margin-top: 1rem;
+    color: ${({ theme }) => theme.colors.text};
 
   @media (max-width: 768px) {
     width: 100%;

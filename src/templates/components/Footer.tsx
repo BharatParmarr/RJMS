@@ -52,9 +52,9 @@ const Footer: React.FC = () => {
       <FooterContent>
         <StyledDiv>
           <SocialLinks>
-            <a href="https://www.facebook.com/yourpage" target="_blank" rel="noopener noreferrer">Facebook</a>
-            <a href="https://www.twitter.com/yourpage" target="_blank" rel="noopener noreferrer">Twitter</a>
-            <a href="https://www.instagram.com/yourpage" target="_blank" rel="noopener noreferrer">Instagram</a>
+            {/* <a href="https://www.facebook.com/bizwayn" target="_blank" rel="noopener noreferrer">Facebook</a> */}
+            {/* <a href="https://www.twitter.com/bizwayn" target="_blank" rel="noopener noreferrer">Twitter</a> */}
+            <a href="https://www.instagram.com/bizwayn" target="_blank" rel="noopener noreferrer">Instagram</a>
           </SocialLinks>
           <PageLinks>
             <a href="/about">About</a>
@@ -62,7 +62,9 @@ const Footer: React.FC = () => {
             <a href="/privacy">Privacy Policy</a>
           </PageLinks>
         </StyledDiv>
-        <Quote>"Your inspirational quote here."</Quote>
+        <Quote>"
+          The only way to do great work is to love what you do.
+          "</Quote>
         &copy; 2024 Bizztrow. All rights reserved.
       </FooterContent>
     </StyledFooter>

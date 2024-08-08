@@ -75,7 +75,7 @@ const NotFound: React.FC = () => {
                     />
                 </svg>
             </AnimatedSvg>
-            {showGame && <StyledForm style={{
+            {showGame && <StyledForm className={'form404'} style={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',

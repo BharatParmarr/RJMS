@@ -101,6 +101,10 @@ export default function Pricing_page() {
         <section className="plans__container" style={{
             backgroundColor: theme.colors.background,
             color: theme.colors.text,
+            minHeight: '100vh',
+            padding: '2rem 0',
+            alignItems: 'center',
+            justifyContent: 'center',
         }}>
             <div className="plans">
                 <div className="plansHero">
@@ -193,6 +197,36 @@ export default function Pricing_page() {
                     </div>
                 </div>
             </div>
+            <Dialog
+                open={true}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                style={{
+                    backgroundColor: `${theme.colors.background}`,
+                    backdropFilter: 'blur(6px)',
+                }}
+
+            >
+                <DialogTitle id="alert-dialog-title" style={{
+                    color: `${theme.colors.primary}`
+                }}>
+                    {"Subscription Free!"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description" style={{
+                        color: `${theme.colors.gray}`
+                    }}>
+                        <h3 style={{
+                            color: `${theme.colors.text}`
+                        }}>You just need to create an account and you are good to go.</h3>
+                        <br />
+                        We are providing free subscription to all users.
+                        <br />
+                        <br />
+                        Enjoy the service and let us know if you need any help.
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
         </section>
     )
 }

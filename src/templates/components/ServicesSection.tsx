@@ -32,23 +32,52 @@ const ServicesSection: React.FC = () => {
                     <ServicesContainer>
                         <Service>
                             <ServiceTitle>Table Management</ServiceTitle>
-                            <ServiceDescription>Efficiently manage table bookings and customer seating.</ServiceDescription>
+                            <ServiceDescription>
+                                Efficiently manage table bookings and customer seating.
+                                <br />
+                                <br />
+                                Set up your restaurant tables and manage reservations. with cloud-based management.
+                            </ServiceDescription>
                         </Service>
                         <Service>
                             <ServiceTitle>Order Tracking</ServiceTitle>
-                            <ServiceDescription>Keep track of orders from the kitchen to the customer's table.</ServiceDescription>
+                            <ServiceDescription>
+                                Keep track of orders from the kitchen to the customer's table.
+                                <br />
+                                <br />
+                                Track order status and manage orders efficiently.
+                            </ServiceDescription>
                         </Service>
                         <Service>
                             <ServiceTitle>Analytics</ServiceTitle>
-                            <ServiceDescription>Get insights into your restaurant's performance with detailed reports.</ServiceDescription>
+                            <ServiceDescription>
+                                Get insights into your restaurant's performance with detailed reports.
+                                <br />
+                                <br />
+                                Monitor sales, orders, and customer feedback.
+                            </ServiceDescription>
                         </Service>
                         <Service>
-                            <ServiceTitle>Table Management</ServiceTitle>
-                            <ServiceDescription>Efficiently manage table bookings and customer seating.</ServiceDescription>
+                            <ServiceTitle>
+                                Customer Management
+                            </ServiceTitle>
+                            <ServiceDescription>
+                                Manage customer information and keep track of their preferences.
+                                <br />
+                                <br />
+                                Provide personalized services to your customers.
+                            </ServiceDescription>
                         </Service>
                         <Service>
-                            <ServiceTitle>Table Management</ServiceTitle>
-                            <ServiceDescription>Efficiently manage table bookings and customer seating.</ServiceDescription>
+                            <ServiceTitle>
+                                Feedback's & Reviews
+                            </ServiceTitle>
+                            <ServiceDescription>
+                                Collect feedback from customers and improve your services.
+                                <br />
+                                <br />
+                                Analyze reviews and ratings to enhance customer satisfaction.
+                            </ServiceDescription>
                         </Service>
                     </ServicesContainer>
                 </motion.div>
@@ -73,7 +102,6 @@ const ServicesContainer = styled.section`
 
 const Service = styled.div`
     flex: 1;
-    max-width: 269px;
     text-align: center;
     shadow: ${({ theme }) => theme.colors.shadow};
     padding: 2rem;
@@ -84,7 +112,7 @@ const Service = styled.div`
     transform: translateY(-10px);
     }
     margin: 1rem;
-    min-height: 200px;
+    min-width: 30%;
     @media (max-width: 768px) {
         margin: 1rem 0;
     }

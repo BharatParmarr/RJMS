@@ -276,7 +276,9 @@ function RegisterRestaurant() {
         }}>Edit</EditButton>
         <EditForm user={usrData} show={show} setShow={setShow} setUserdata={setUsrData} />
       </UserData>
-      <StyledContainer>
+      <StyledContainer style={{
+        display: 'none',
+      }}>
         <h2>Subscription</h2>
         <StyledSubscriptioncontainer>
           {subscription && subscription.map((item: any) => {

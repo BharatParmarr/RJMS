@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { BadgeProps } from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { Brand_name } from '../../Veriables';
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -44,7 +45,10 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     to: { border: `2px solid ${theme.palette.background.paper}` },
   },
 }));
-function PositionedMenu({ subscription }: { subscription?: boolean }) {
+function PositionedMenu({ subscription, services_list }: {
+  subscription?: boolean,
+  services_list: { [key: string]: string }
+}) {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -84,56 +88,22 @@ function PositionedMenu({ subscription }: { subscription?: boolean }) {
           },
         }}
       >
-        <MenuItem onClick={() => {
-          if (subscription) {
-            navigate('/coustemer/')
-          } else {
-            navigate('/pricing/')
-          }
-          handleClose()
-        }} style={{
-          color: theme.colors.text,
-          backgroundColor: theme.colors.background,
-          minWidth: '300px',
-        }}>Coustemer</MenuItem>
-        <Divider variant="middle" component="li" />
-        <MenuItem onClick={() => {
-          if (subscription) {
-            navigate('/create-restaurant/')
-          } else {
-            navigate('/pricing/')
-          }
-          handleClose()
-        }} style={{
-          color: theme.colors.text,
-          backgroundColor: theme.colors.background,
-          minWidth: '300px',
-        }}>Restorant Management</MenuItem>
-        <Divider variant="middle" component="li" />
-        <MenuItem onClick={() => {
-          if (subscription) {
-            navigate('/hostels')
-          } else {
-            navigate('/pricing/')
-          }
-          handleClose()
-        }} style={{
-          color: theme.colors.text,
-          backgroundColor: theme.colors.background
-        }}>Hotels Management</MenuItem>
-        <Divider variant="middle" component="li" />
-        <MenuItem onClick={() => {
-          if (subscription) {
-            navigate('/service-shop')
-          } else {
-            navigate('/pricing/')
-          }
-          handleClose()
-        }} style={{
-          color: theme.colors.text,
-          backgroundColor: theme.colors.background
-        }}>Service Shop</MenuItem>
-        <Divider variant="middle" component="li" />
+        {Object.keys(services_list).map((key) => (
+          <><MenuItem
+            key={key}
+            onClick={() => {
+              if (subscription) {
+                navigate(`/${services_list[key]}`)
+              } else {
+                navigate('/pricing/')
+              }
+            }}
+          >
+            {key}
+          </MenuItem>
+            <Divider variant='middle' component='li' /></>
+        ))}
+
         <MenuItem onClick={() => {
           window.open('https://fitwayn.com', 'new')
         }} style={{
@@ -178,6 +148,13 @@ interface AppAppBarProps {
 
 function Header({ mode, toggleColorMode }: AppAppBarProps) {
 
+  const Services_list = {
+    'Coustemer': 'coustemer',
+    'Restorant Management': 'create-restaurant',
+    // 'Hotels Management': 'hostels',
+    // 'Service Shop': 'service-shop',
+  }
+
   console.log(mode)
   const { theme } = useTheme();
   const navigate = useNavigate();
@@ -204,8 +181,8 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
         const data = await response.json();
         console.log(data);
         setUsername(data.username);
-        setSubscription(data.subscription);
-        console.log(data.subscription, 'subscription');
+        setSubscription(true);
+        // console.log(data.subscription, 'subscription');
       } catch (error) {
         console.error('There was an error!', error);
         setShowLogin(true);
@@ -290,11 +267,13 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                 style={{
                   color: theme.colors.primary,
                   cursor: 'pointer',
-                  fontSize: '1.7rem',
+                  fontSize: '1.52rem',
                   marginRight: '20px',
+                  fontFamily: 'Montserrat, Tenor Sans',
+                  fontWeight: '600',
                 }}
               >
-                BizzWin
+                {Brand_name}
               </Typography>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 {/* <MenuItem
@@ -312,7 +291,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                     Hostels
                   </Typography>
                 </MenuItem> */}
-                <PositionedMenu subscription={subscription} />
+                <PositionedMenu subscription={subscription} services_list={Services_list} />
                 <MenuItem
                   onClick={() => window.open('/pricing/', '_self')}
                   sx={{ py: '6px', px: '12px' }}
@@ -343,7 +322,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                 variant="contained"
                 size="small"
                 component="a"
-                href="/login/"
+                href="/auth/"
                 target="_blank"
                 style={{
                   backgroundColor: theme.colors.primary,
@@ -396,38 +375,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   >
                     <ToggleColorMode mode={theme.colors.white == '#fff' ? 'light' : 'dark'} toggleColorMode={toggleColorMode} />
                   </Box>
-                  <MenuItem onClick={() => {
-                    navigate('/coustemer/')
-                  }}>
-                    Coustemer
-                  </MenuItem>
-                  <MenuItem onClick={() => {
-                    if (subscription) {
-                      navigate('/create-restaurant/')
-                    } else {
-                      navigate('/pricing/')
-                    }
-                  }}>
-                    Restotant
-                  </MenuItem>
-                  <MenuItem onClick={() => {
-                    if (subscription) {
-                      navigate('/hostels')
-                    } else {
-                      navigate('/pricing/')
-                    }
-                  }}>
-                    Hostels
-                  </MenuItem>
-                  <MenuItem onClick={() => {
-                    if (subscription) {
-                      navigate('/service-shop')
-                    } else {
-                      navigate('/pricing/')
-                    }
-                  }}>
-                    Service Shop
-                  </MenuItem>
+                  {Services_list && <PositionedMenu subscription={subscription} services_list={Services_list} />}
                   <MenuItem onClick={() => {
                     window.open('https://fitwayn.com', 'new')
                   }}>
@@ -448,7 +396,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                       variant="contained"
                       size="small"
                       component="a"
-                      href="/login/"
+                      href="/auth/"
                       target="_blank"
                       className='login-button'
                     >
@@ -477,152 +425,3 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
 }
 
 export default Header;
-
-// import React, { useEffect, useState } from 'react';
-// import styled from 'styled-components';
-// import { motion } from 'framer-motion';
-
-// const Header: React.FC = () => {
-//   const [username, setUsername] = useState('');
-//   const [showLogin, setShowLogin] = useState(false);
-//   const [isNavVisible, setNavVisible] = useState(false);
-
-//   useEffect(() => {
-//     async function fetchData() {
-//       let token = await localStorage.getItem('token');
-//       if (!token) {
-//         setShowLogin(true);
-//         return;
-//       }
-//       try {
-//         const response = await fetch(`http://127.0.0.1:8000/api/user`, {
-//           method: 'GET',
-//           headers: {
-//             'Content-Type': 'application/json',
-//             Authorization: `Token ${token}`,
-//           },
-//         });
-//         const data = await response.json();
-//         setUsername(data.username);
-//       } catch (error) {
-//         console.error('There was an error!', error);
-//         setShowLogin(true);
-//       }
-//     }
-//     fetchData();
-//   }, []);
-
-//   return (
-//     <StyledHeader>
-//       <Logo initial={{ x: -200 }} animate={{ x: 0 }} transition={{ duration: 0.5 }}>
-//         Bizztrow
-//       </Logo>
-//       <Hamburger onClick={() => setNavVisible(!isNavVisible)}>
-//         <span></span>
-//         <span></span>
-//         <span></span>
-//       </Hamburger>
-//       <Nav
-//         initial={{ x: 200 }}
-//         animate={{ x: isNavVisible ? 0 : 200 }}
-//         transition={{ duration: 0.5 }}
-//         isNavVisible={isNavVisible}
-//       >
-//         <NavItem href="#home">Home</NavItem>
-//         <NavItem href="#services">Services</NavItem>
-//         <NavItem href="#contact">Contact</NavItem>
-//         {showLogin ? (
-//           <NavItem style={{ backgroundColor: 'black', color: 'white', padding: '5px' }} href="#login">Login</NavItem>
-//         ) : (
-//           <NavItem href="#dashboard" style={{ backgroundColor: 'black', color: 'white', paddingLeft: '5px', paddingRight: '5px', borderRadius: '7px', paddingTop: '2px', paddingBottom: '2px' }}>{username.length > 8 ? `${username.substring(0, 8)}...` : username}</NavItem>
-//         )}
-//       </Nav>
-//     </StyledHeader>
-//   );
-// };
-
-// const StyledHeader = styled.header`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   padding: 1rem 2rem;
-//   position: sticky;
-//   top: 0;
-//   z-index: 1000;
-// `;
-
-// const Logo = styled(motion.h1)`
-//   font-size: 1.5rem;
-//   color: ${({ theme }) => theme.colors.primary};
-// `;
-
-// const Nav = styled(motion.nav) <{ isNavVisible: boolean }>`
-//   display: flex;
-//   flex-direction: column;
-//   gap: 1rem;
-//   position: fixed;
-//   top: 0;
-//   right: 0;
-//   height: 100vh;
-//   width: 70%;
-//   background-color: ${({ theme }) => theme.colors.primary};
-//   padding: 2rem;
-//   transform: translateX(${({ isNavVisible }) => (isNavVisible ? '0' : '100%')});
-//   transition: transform 0.3s ease-in-out;
-
-//   @media (min-width: 768px) {
-//     position: static;
-//     flex-direction: row;
-//     height: auto;
-//     width: auto;
-//     background-color: transparent;
-//     padding: 0;
-//     transform: none;
-//   }
-// `;
-
-// const NavItem = styled.a`
-//   color: ${({ theme }) => theme.colors.text};
-//   font-size: 1rem;
-//   position: relative;
-//   text-decoration: none;
-
-//   &::after {
-//     content: '';
-//     display: block;
-//     width: 0;
-//     height: 2px;
-//     background: #fff;
-//     transition: width 0.3s;
-//     position: absolute;
-//     bottom: -2px;
-//     left: 0;
-//   }
-
-//   &:hover::after {
-//     width: 100%;
-//   }
-// `;
-
-// const Hamburger = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-around;
-//   width: 2rem;
-//   height: 2rem;
-//   cursor: pointer;
-//   z-index: 1000;
-
-//   span {
-//     width: 2rem;
-//     height: 0.25rem;
-//     background: #fff;
-//     transition: all 0.3s ease;
-//   }
-
-//   @media (min-width: 768px) {
-//     display: none;
-//   }
-// `;
-
-// export default Header;
