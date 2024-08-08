@@ -300,6 +300,7 @@ function Restroant_view() {
                 })
             })
                 .then(response => {
+                    console.log(response);
                     if (response.status === 400) {
                         alert('Please select items to order')
                     } else if (response.status === 401) {

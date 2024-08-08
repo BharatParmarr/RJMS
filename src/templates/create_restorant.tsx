@@ -198,6 +198,10 @@ function TimeView({ settimedata }: { settimedata: any }) {
                 value={opetion}
                 label="Age"
                 onChange={handleChangeopetion}
+                style={{
+                    borderColor: theme.colors.primary,
+                }}
+                sx={{ color: theme.colors.text }}
             >
                 <MenuItem value={0}>Same For All</MenuItem>
                 <MenuItem value={1}>Select Separately</MenuItem>
@@ -210,25 +214,45 @@ function TimeView({ settimedata }: { settimedata: any }) {
                     alignItems: 'center',
                     padding: '10px',
                     gap: '10px',
+                    backgroundColor: theme.colors.white,
                 }}>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="simple table">
+                    <TableContainer style={{
+                        backgroundColor: theme.colors.background,
+                        borderRadius: '9px',
+                        boxShadow: theme.colors.shadow,
+                        color: theme.colors.text,
+                    }} component={Paper}
+                        sx={{ color: theme.colors.text }}
+                    >
+                        <Table aria-label="simple table" style={{
+                            color: theme.colors.text,
+                        }}>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Day</TableCell>
-                                    <TableCell align="right">Opening Time</TableCell>
-                                    <TableCell align="right">Closing Time</TableCell>
+                                    <TableCell style={{
+                                        color: theme.colors.text,
+                                    }}>Day</TableCell>
+                                    <TableCell style={{
+                                        color: theme.colors.text,
+                                    }} align="right">Opening Time</TableCell>
+                                    <TableCell style={{
+                                        color: theme.colors.text,
+                                    }} align="right">Closing Time</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {
                                     days.map((day) => (
                                         <TableRow key={day}>
-                                            <TableCell component="th" scope="row">
+                                            <TableCell style={{
+                                                color: theme.colors.text,
+                                            }} component="th" scope="row">
                                                 {day}
                                             </TableCell>
-                                            <TableCell align="right">{extractTime(timestart[day])}</TableCell>
                                             <TableCell align="right">{extractTime(timeend[day])}</TableCell>
+                                            <TableCell style={{
+                                                color: theme.colors.text,
+                                            }} align="right">{extractTime(timestart[day])}</TableCell>
                                         </TableRow>
                                     ))
                                 }
@@ -253,14 +277,17 @@ function TimeView({ settimedata }: { settimedata: any }) {
                             alignItems: 'center',
                             padding: '10px',
                             gap: '10px',
+                            background: 'white',
                         }}>
                             <TimePicker
                                 label="Opening Time"
                                 onChange={setstarttime}
+                                sx={{ color: theme.colors.text }}
                             />
                             <TimePicker
                                 label="Closing Time"
                                 onChange={setendtime}
+                                sx={{ color: theme.colors.text }}
                             />
                         </div>
                     </> : <div style={{
@@ -597,7 +624,11 @@ export default function Create_restorant() {
                         display: showForm ? 'block' : 'none',
                         paddingTop: '20px',
                         position: 'fixed',
+                        top: '0',
+                        left: '0',
                         overflow: 'auto',
+                        width: '100%',
+                        height: '100%',
                         zIndex: 1,
                         backgroundColor: theme.colors.white,
                     }}>
@@ -609,6 +640,20 @@ export default function Create_restorant() {
                                 fontFamily: ' Roboto, Lato, Arial, sans-serif',
                             }}
                         >Create Restaurant</h2>
+                        {/* close button */}
+                        <Button onClick={() => show()} style={{
+                            backgroundColor: `${({ theme }: any) => theme.colors.primary}`,
+                            color: `${({ theme }: any) => theme.colors.white}`,
+                            borderRadius: '10px 0px 0px 10px',
+                            padding: '10px',
+                            marginBottom: '20px',
+                            boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
+                            position: 'absolute',
+                            top: '12px',
+                            right: '0',
+                        }}
+                            variant="contained"
+                        >Close</Button>
                         <AnimatedTextField
                             fullWidth
                             margin="normal"

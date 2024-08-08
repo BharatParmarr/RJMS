@@ -291,6 +291,17 @@ function RegisterRestaurant() {
         </StyledSubscriptioncontainer>
       </StyledContainer>
     </UserDataSection>
+    {/* go to home button */}
+    <Button
+      style={{
+        marginTop: '20px',
+        position: 'absolute',
+        bottom: '10px',
+
+      }}
+      variant="contained" color="primary" onClick={() => {
+        window.location.href = '/';
+      }}>Home</Button>
   </Container>);
 }
 
