@@ -14,7 +14,6 @@ import Backdrop from '@mui/material/Backdrop';
 import { motion, AnimatePresence } from 'framer-motion';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import { useParams } from "react-router-dom";
-import React from "react";
 
 
 const Container = styled.div`
@@ -139,12 +138,10 @@ export default function Order_history() {
         }
     }, [selectedTable, orders]);
 
-    const ref = React.useRef(0);
     useEffect(() => {
-        console.log('render', ref.current);
+
         setOpen(true)
-        if (empty || ref.current === 0) {
-            ref.current += 1;
+        if (empty) {
             setOpen(false)
             return
         }
