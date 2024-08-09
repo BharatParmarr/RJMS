@@ -265,7 +265,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                 color="text.primary"
                 sx={{ ml: 1, }}
                 style={{
-                  color: theme.colors.primary,
+                  color: '#003bde',
                   cursor: 'pointer',
                   fontSize: '1.52rem',
                   marginRight: '20px',

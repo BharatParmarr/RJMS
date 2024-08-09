@@ -125,7 +125,6 @@ function TimeView({ settimedata }: { settimedata: any }) {
     // set time for all days start and end
     function setstarttime(newValue: any) {
         newValue = newValue['$d'].toString();
-        console.log(newValue);
         setTimestart({ 'monday': newValue, 'tuesday': newValue, 'wednesday': newValue, 'thursday': newValue, 'friday': newValue, 'saturday': newValue, 'sunday': newValue, });
     }
     function setendtime(newValue: any) {
@@ -148,7 +147,6 @@ function TimeView({ settimedata }: { settimedata: any }) {
     }
 
     useEffect(() => {
-        console.log(isOpen)
         for (let day in timestart) {
             if (timestart[day] === '') {
                 return;
@@ -199,9 +197,13 @@ function TimeView({ settimedata }: { settimedata: any }) {
                 label="Age"
                 onChange={handleChangeopetion}
                 style={{
-                    borderColor: theme.colors.primary,
+                    backgroundColor: theme.colors.background,
+                    borderRadius: '9px',
+                    border: `1px solid ${theme.colors.primary}`,
+                    color: theme.colors.text,
+                    width: '50%',
+                    marginBottom: '20px',
                 }}
-                sx={{ color: theme.colors.text }}
             >
                 <MenuItem value={0}>Same For All</MenuItem>
                 <MenuItem value={1}>Select Separately</MenuItem>
@@ -249,10 +251,12 @@ function TimeView({ settimedata }: { settimedata: any }) {
                                             }} component="th" scope="row">
                                                 {day}
                                             </TableCell>
-                                            <TableCell align="right">{extractTime(timeend[day])}</TableCell>
                                             <TableCell style={{
                                                 color: theme.colors.text,
                                             }} align="right">{extractTime(timestart[day])}</TableCell>
+                                            <TableCell style={{
+                                                color: theme.colors.text,
+                                            }} align="right">{extractTime(timeend[day])}</TableCell>
                                         </TableRow>
                                     ))
                                 }
@@ -277,17 +281,39 @@ function TimeView({ settimedata }: { settimedata: any }) {
                             alignItems: 'center',
                             padding: '10px',
                             gap: '10px',
-                            background: 'white',
+                            backgroundColor: theme.colors.background,
                         }}>
                             <TimePicker
                                 label="Opening Time"
                                 onChange={setstarttime}
-                                sx={{ color: theme.colors.text }}
+                                sx={{
+                                    color: theme.colors.text,
+                                    backgroundColor: theme.colors.background,
+                                    'input': {
+                                        color: theme.colors.text,
+                                    },
+                                    'label': {
+                                        color: theme.colors.text,
+                                    },
+
+                                }}
                             />
                             <TimePicker
                                 label="Closing Time"
                                 onChange={setendtime}
-                                sx={{ color: theme.colors.text }}
+                                sx={{
+                                    color: theme.colors.text,
+                                    backgroundColor: theme.colors.background,
+                                    'input': {
+                                        color: theme.colors.text,
+                                    },
+                                    'label': {
+                                        color: theme.colors.text,
+                                    },
+                                    'icon': {
+                                        color: theme.colors.text,
+                                    }
+                                }}
                             />
                         </div>
                     </> : <div style={{
@@ -308,19 +334,44 @@ function TimeView({ settimedata }: { settimedata: any }) {
                                     alignItems: 'center',
                                     gap: '10px',
                                     padding: '10px',
-                                    backgroundColor: theme.colors.white,
+                                    backgroundColor: theme.colors.background,
                                     borderRadius: '9px',
-                                    boxShadow: theme.colors.shadow,
+                                    color: theme.colors.text,
+                                    minWidth: '70%',
+                                    alignContent: 'center',
+                                    justifyContent: 'center',
                                 }}>
                                     {isOpen[day] ? <> <Typography variant="h6" style={{
-                                        color: `${({ theme }: any) => theme.colors.primary}`,
+                                        color: theme.colors.primary,
                                         fontSize: '1rem',
-                                    }}>{day}</Typography>
+                                    }}>{day.toLocaleUpperCase()}</Typography>
                                         <TimePicker
+                                            sx={{
+                                                color: theme.colors.text,
+                                                backgroundColor: theme.colors.background,
+                                                'input': {
+                                                    color: theme.colors.text,
+                                                },
+                                                'label': {
+                                                    color: theme.colors.text,
+                                                },
+
+                                            }}
                                             label="Opening Time"
                                             onChange={(newValue) => setstarttime1(newValue, day)}
                                         />
                                         <TimePicker
+                                            sx={{
+                                                color: theme.colors.text,
+                                                backgroundColor: theme.colors.background,
+                                                'input': {
+                                                    color: theme.colors.text,
+                                                },
+                                                'label': {
+                                                    color: theme.colors.text,
+                                                },
+
+                                            }}
                                             label="Closing Time"
                                             onChange={(newValue) => setendtime1(newValue, day)}
                                         />
@@ -421,6 +472,7 @@ export default function Create_restorant() {
         }
 
         let yourToken = localStorage.getItem('token');
+        console.log(yourToken);
         fetch(`${API_HOST}/restorants/`, {
             method: 'POST',
             headers: {
@@ -429,6 +481,7 @@ export default function Create_restorant() {
             body: formdata
         })
             .then(response => {
+                console.log(response, 'response');
                 if (response.status === 201) {
 
                     alert('Congratulations! Restorant Is Online.');
@@ -461,7 +514,10 @@ export default function Create_restorant() {
                     console.log(data)
                 }).catch(err => console.log(err))
             })
-            .catch((error) => console.error('Error:', error));
+            .catch((error) => {
+                console.error('Error:', error);
+                console.log('Error:', error);
+            });
 
 
     }

@@ -145,6 +145,7 @@ export default function Order_history() {
         setOpen(true)
         if (empty || ref.current === 0) {
             ref.current += 1;
+            setOpen(false)
             return
         }
         fetch(API_HOST + '/api/orderHistory?page=' + page + '&' + 'restorant_id=' + id, {
@@ -292,11 +293,7 @@ export default function Order_history() {
                         {empty ? <Typography variant="h3" style={{ fontSize: '1.5rem' }}>No more orders</Typography> : <StyledButton onClick={() => setPage(page + 1)} style={{
                             border: '2px solid ' + theme.colors.white,
                         }}>
-                            <Button variant="text" style={{
-                                fontSize: '0.75rem', color: theme.colors.text,
-                                fontFamily: 'Roboto, sans-serif',
-                                textTransform: 'capitalize',
-                            }} >Load More</Button>
+                            Load More
                         </StyledButton>}
                     </AnimatePresence>
                 </AccordionDetails>

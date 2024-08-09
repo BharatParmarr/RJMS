@@ -208,13 +208,18 @@ export default function Pricing_page() {
 
             >
                 <DialogTitle id="alert-dialog-title" style={{
-                    color: `${theme.colors.primary}`
+                    color: `${theme.colors.primary}`,
+                    background: theme.colors.background,
                 }}>
                     {"Subscription Free!"}
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent style={{
+                    color: theme.colors.gray,
+                    background: theme.colors.background,
+                }}>
                     <DialogContentText id="alert-dialog-description" style={{
-                        color: `${theme.colors.gray}`
+                        color: theme.colors.gray,
+                        background: theme.colors.background,
                     }}>
                         <h3 style={{
                             color: `${theme.colors.text}`
