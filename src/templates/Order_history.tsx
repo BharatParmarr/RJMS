@@ -139,7 +139,7 @@ export default function Order_history() {
     }, [selectedTable, orders]);
 
     useEffect(() => {
-
+        console.log('fetching orders')
         setOpen(true)
         if (empty) {
             setOpen(false)
