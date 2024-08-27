@@ -17,6 +17,7 @@ const ChartContainer = styled(Paper)`
 
 
 const OrderChart = ({ orderData }: any) => {
+    console.log(orderData, 'ddd');
     const { theme } = useTheme();
     const options = {
         scales: {

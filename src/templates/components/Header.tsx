@@ -18,7 +18,7 @@ import API_HOST from '../../config';
 import { useTheme } from '../styles/theme';
 import '../css/style.css'
 // import Logo from '../../assets/Static/logo.jpg'
-import Logo from '../../assets/Static/bizzwin.png'
+import Logo from '../../assets/Static/logo.png'
 import { useNavigate } from 'react-router-dom';
 import { BadgeProps } from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
@@ -178,8 +178,17 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
             Authorization: `Token ${token}`,
           },
         });
+        if (response.status == 401) {
+          localStorage.removeItem('token');
+          setShowLogin(true);
+          return;
+        } else if (response.status == 403) {
+          localStorage.removeItem('token');
+          setShowLogin(true);
+          return;
+        }
         const data = await response.json();
-        console.log(data);
+        console.log(response.status, 'xoxo');
         setUsername(data.username);
         setSubscription(true);
         // console.log(data.subscription, 'subscription');

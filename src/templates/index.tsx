@@ -202,8 +202,8 @@ const MorphingText: React.FC = () => {
     "Productivity", "Availability", "Security"
   ];
 
-  const morphTime = 1;
-  const cooldownTime = 2.25;
+  const morphTime = 1.5;
+  const cooldownTime = 1.5;
 
   const textIndexRef = useRef(texts.length - 1);
   const timeRef = useRef(new Date().getTime());
@@ -378,6 +378,27 @@ const InfoSection = () => {
   );
 }
 
+const BodyContainer = styled.div`
+transition: all 0.3s ease-in-out;
+background: ${({ theme }) => theme.colors.background};
+animation: gradient 15s ease infinite;
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+`;
+
+
+
 
 
 const App: React.FC = () => {
@@ -402,26 +423,28 @@ const App: React.FC = () => {
   let colorMode = 'light' as Theme;
   return (
     <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <Header toggleColorMode={toggleTheme} mode={colorMode} />
-      <HeroSection />
-      <InfoSection />
-      <ServicesSection />
-      <Footer />
-      <div style={{
-        position: 'fixed',
-        bottom: 10,
-        right: 10,
-        minWidth: '300px',
-        zIndex: 1000,
-      }}>
-        <SimpleAlert
-          message={message}
-          type={type}
-          open={open}
-          setOpen={setOpen}
-        />
-      </div>
+      <BodyContainer>
+        <GlobalStyle />
+        <Header toggleColorMode={toggleTheme} mode={colorMode} />
+        <HeroSection />
+        <InfoSection />
+        <ServicesSection />
+        <Footer />
+        <div style={{
+          position: 'fixed',
+          bottom: 10,
+          right: 10,
+          minWidth: '300px',
+          zIndex: 1000,
+        }}>
+          <SimpleAlert
+            message={message}
+            type={type}
+            open={open}
+            setOpen={setOpen}
+          />
+        </div>
+      </BodyContainer>
     </ThemeProvider>
   );
 };

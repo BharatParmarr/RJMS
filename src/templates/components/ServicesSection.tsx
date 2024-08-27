@@ -23,7 +23,7 @@ const ServicesSection: React.FC = () => {
                 <motion.div
                     animate={controls}
                     initial="hidden"
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0 }}
                     variants={{
                         visible: { opacity: 1, scale: 1 },
                         hidden: { opacity: 0, scale: 0 }
@@ -90,7 +90,6 @@ const ServicesContainer = styled.section`
   display: flex;
   justify-content: space-around;
   padding: 2.4rem 2rem;
-  background-color: ${({ theme }) => theme.colors.background};
   flex-wrap: wrap;
 
   @media (max-width: 768px) {

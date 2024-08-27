@@ -41,6 +41,20 @@ import NotFound from "./Static/404";
 import Coustemer_view_Home from "./Coustemer_view/Coustemer_view_Home";
 import Restorant_home_view from "./templates/Restoratn_home_view";
 import MenuBook from "./templates/components/MenuBook";
+import Featch_business from "./src2/Featch_business";
+import Create_Business_form from "./src2/component2/Create_Business_form";
+import Dashbord from "./src2/Dashbord";
+import BusinessSettings from "./src2/Settings_page";
+import Create_products from "./src2/Create_products";
+import Inventory_2 from "./src2/Inventory";
+// import CreateAppointment from "./src2/Appointment_book";
+import AppointmentQueue from "./src2/Que_Appointment";
+import AppointmentManager from "./src2/Booking_componet";
+import History_Appointment from "./src2/History_Appointment";
+import Data_analysis_page from "./src2/Data_analysis_page";
+import HomePage_Landingpage from "./src2/Landign_page";
+
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider>
@@ -85,6 +99,18 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           {/* coustemer views */}
           <Route path="/Coustemer" element={<Coustemer_view_Home />} />
           <Route path="/MenuPage" element={<MenuBook />} />
+          {/* Hospital */}
+          <Route path="/Manage/Hospital" element={<Featch_business />} />
+          <Route path="/Manage/:type_page/:id/:sub_id" element={<Dashbord />} />
+          <Route path="/Manage/Inventory/:type_page/:id/:sub_id" element={<Inventory_2 />} />
+          <Route path="/Manage/Appointments/:type_page/:id/:sub_id" element={<AppointmentManager />} />
+          <Route path="/Manage/Appointments_que/:type_page/:id/:sub_id" element={<AppointmentQueue />} />
+          <Route path="/Manage/Appointments_history/:type_page/:id/:sub_id" element={<History_Appointment />} />
+          <Route path="/Manage/Edit/:type_page/:id/:sub_id" element={<BusinessSettings />} />
+          <Route path="/Manage/create/:type" element={<Create_Business_form />} />
+          <Route path="/Manage/functionalitys/:type_page/:id/:sub_id" element={<Create_products />} />
+          <Route path="/Manage/Data_analysis/:type_page/:id/:sub_id" element={<Data_analysis_page />} />
+          <Route path="/Hospital/:sub_id" element={<HomePage_Landingpage />} />
           {/* pages */}
           <Route path="/F&Q" element={<Fandq />} />
           <Route path="*" element={<NotFound />} />

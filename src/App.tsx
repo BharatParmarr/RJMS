@@ -4,7 +4,7 @@ import API_HOST from './config';
 import styled from 'styled-components';
 import Edit from '@mui/icons-material/Edit';
 import { Button } from '@mui/material';
-
+import HomeIcon from '@mui/icons-material/Home';
 
 // Container for the entire application
 const Container = styled.div`
@@ -157,6 +157,8 @@ function EditForm({ user, show, setShow, setUserdata }: { user: any, show: boole
     address: string;
     image?: string;
     username: string;
+    first_name?: string;
+    last_name?: string;
   };
   const [formData, setFormData] = useState<UsrData>({
     id: user?.id ? user?.id : 0,
@@ -165,6 +167,8 @@ function EditForm({ user, show, setShow, setUserdata }: { user: any, show: boole
     address: user?.address ? user?.address : '',
     image: user?.image ? user?.image : '',
     username: user?.username ? user?.username : '',
+    first_name: user?.first_name ? user?.first_name : '',
+    last_name: user?.last_name ? user?.last_name : '',
   });
 
   useEffect(() => {
@@ -175,6 +179,8 @@ function EditForm({ user, show, setShow, setUserdata }: { user: any, show: boole
       address: user?.address ? user?.address : '',
       image: user?.image ? user?.image : '',
       username: user?.username ? user?.username : '',
+      first_name: user?.first_name ? user?.first_name : '',
+      last_name: user?.last_name ? user?.last_name : '',
     });
   }, [user]);
   const handleChange = (e: any) => {
@@ -211,6 +217,8 @@ function EditForm({ user, show, setShow, setUserdata }: { user: any, show: boole
   return (<>
     {show && <Form onSubmit={handleSubmit}>
       <InputField type="text" name="username" value={formData?.username} onChange={handleChange} />
+      <InputField type="text" name="first_name" value={formData?.first_name} onChange={handleChange} />
+      <InputField type="text" name="last_name" value={formData?.last_name} onChange={handleChange} />
       {/* <InputField type="text" name="email" value={formData?.email} onChange={handleChange} /> */}
       <InputField type="text" name="phone" placeholder='Phone' value={formData?.phone} onChange={handleChange} />
       <InputField type="text" name="address" value={formData?.address} placeholder='Address' onChange={handleChange} />
@@ -228,6 +236,8 @@ function RegisterRestaurant() {
     address: string;
     image: string;
     username: string;
+    first_name?: string;
+    last_name?: string;
   };
   const [usrData, setUsrData] = useState<UsrData>();
   const [show, setShow] = useState<boolean>(false);
@@ -268,9 +278,12 @@ function RegisterRestaurant() {
     <UserDataSection>
       <UserData>
         <h1>{usrData?.username}</h1>
-        <p>{usrData?.email}</p>
-        <p>{usrData?.phone}</p>
-        <p>{usrData?.address}</p>
+        <p>Email: {usrData?.email}</p>
+        <p>First Name: {usrData?.first_name}</p>
+        <p>Last Name: {usrData?.last_name}</p>
+        <p>ID: {usrData?.id}</p>
+        <p>Phone: {usrData?.phone}</p>
+        <p>Address: {usrData?.address}</p>
         <EditButton variant="contained" color="primary" startIcon={<Edit />} onClick={() => {
           setShow(!show);
         }}>Edit</EditButton>
@@ -296,12 +309,12 @@ function RegisterRestaurant() {
       style={{
         marginTop: '20px',
         position: 'absolute',
-        bottom: '10px',
-
+        bottom: '20px',
+        right: '20px',
       }}
       variant="contained" color="primary" onClick={() => {
         window.location.href = '/';
-      }}>Home</Button>
+      }}><HomeIcon /></Button>
   </Container>);
 }
 

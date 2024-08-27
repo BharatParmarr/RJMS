@@ -17,7 +17,7 @@ const ThemeProvider = ({ children }: any) => {
             text: '#202124', // Dark grey
             footerBg: '#202124',
             footerText: '#fff',
-            shadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            shadow: 'rgba(0, 0, 0, 0.1)',
             black: '#000',
             white: '#fff',
             gray: '#828282',
@@ -29,10 +29,14 @@ const ThemeProvider = ({ children }: any) => {
             text: '#f5f5f5',
             footerBg: '#141414',
             footerText: '#f5f5f5',
-            shadow: '0 0 10px rgba(255, 255, 255, 0.1)',
+            shadow: 'rgba(255, 255, 255, 0.1)',
             black: '#fff',
             white: '#000',
             gray: '#828282',
+        },
+        spacing: {
+            padding: '20px',
+            margin: '10px',
         },
     };
 
