@@ -12,6 +12,40 @@ const CompleteButton = styled.button`
     cursor: pointer;
 `;
 
+const TableContainer = styled.div`
+    width: 100%;
+    overflow-x: auto;
+
+    @media (max-width: 768px) {
+        table {
+            width: 100%;
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        tr{
+            margin-bottom: 10px;
+            border: 1px solid #f4f4f4;
+            width: 100%;
+        }
+        th {
+            background: #f4f4f4;
+        }
+            tbody {
+                width: 100%;
+                display: block;
+                align-items: center;
+                justify-content: center;
+            }
+    }
+`;
+
 const AppointmentsTable = ({ columns, data, MarkAppointmentComplete }: any) => {
     console.log(data, 'data');
     // State for search input
@@ -95,7 +129,9 @@ const AppointmentsTable = ({ columns, data, MarkAppointmentComplete }: any) => {
                 onChange={(e) => setSearchInput(e.target.value)}
                 style={{ marginBottom: '10px', padding: '8px', width: '100%' }}
             />
-            {renderTable(tableInstance)}
+            <TableContainer>
+                {renderTable(tableInstance)}
+            </TableContainer>
         </div>
     );
 };
