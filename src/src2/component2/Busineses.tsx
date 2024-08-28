@@ -99,7 +99,7 @@ const BusinesesImage = styled.img`
     width: 100%;
     height: 200px;
     border-radius: 5px 5px 0px 0px;
-    object-fit: cover;
+    object-fit: contain;
 `;
 
 

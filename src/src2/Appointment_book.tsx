@@ -105,7 +105,7 @@ function Bed_book({ id }: any) {
 }
 
 
-const CreateAppointment = ({ type, target_id, name_of_selected }: any) => {
+const CreateAppointment = ({ type, target_id, name_of_selected, handleCloseDialog }: any) => {
     const { sub_id } = useParams();
     const { theme } = useTheme();
     const [formData, setFormData] = useState({
@@ -150,10 +150,23 @@ const CreateAppointment = ({ type, target_id, name_of_selected }: any) => {
                     const response = await axios.post(API_HOST + '/api/appointments/create/', formData); // Replace with your API endpoint
                     if (response.status === 201) {
                         setStatus('Appointment created via HTTP request');
+                        handleCloseDialog();
                     }
                 } catch (error) {
                     setStatus('Error creating appointment');
+                    alert('Error creating appointment');
                 }
+            }
+        } else if (type === 'facility') {
+            try {
+                const response = await axios.post(API_HOST + '/api/appointments/create/', formData); // Replace with your API endpoint
+                if (response.status === 201) {
+                    setStatus('Appointment created via HTTP request');
+                    handleCloseDialog();
+                }
+            } catch (error) {
+                setStatus('Error creating appointment');
+                alert('Error creating appointment');
             }
         }
     };

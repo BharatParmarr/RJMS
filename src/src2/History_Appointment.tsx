@@ -96,9 +96,10 @@ function History_Appointment() {
     // Define table columns
     const columns = React.useMemo(
         () => [
-            { Header: 'Queue Number', accessor: 'que_number' },
-            { Header: 'Patient Name', accessor: 'patient_name' },
-            { Header: 'Appointment Type', accessor: 'appointment_type' },
+            { Header: 'Queue', accessor: 'que_number' },
+            { Header: 'Name', accessor: 'patient_name' },
+            { Header: 'Appointment', accessor: 'appointment_type' },
+            { Header: 'For', accessor: 'appointment_for' },
             { Header: 'Date', accessor: 'date' },
             { Header: 'Time', accessor: 'time' },
             { Header: 'Status', accessor: 'appointment_status' }

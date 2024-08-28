@@ -252,10 +252,10 @@ const AppointmentManager = () => {
                 </AppBar>
                 <StyledContainerContent>
                     {/* Here you can add a form component based on the selectedType */}
-                    {selectedType === 'doctors' && <CreateAppointment type="doctor" target_id={target_id} name_of_selected={name_of_selected} />}
-                    {selectedType === 'rooms' && <CreateAppointment type="room" target_id={target_id} name_of_selected={name_of_selected} />}
-                    {selectedType === 'beds' && <CreateAppointment type="bed" target_id={target_id} name_of_selected={name_of_selected} />}
-                    {selectedType === 'facilities' && <CreateAppointment type="facility" target_id={target_id} name_of_selected={name_of_selected} />}
+                    {selectedType === 'doctors' && <CreateAppointment type="doctor" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
+                    {selectedType === 'rooms' && <CreateAppointment type="room" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
+                    {selectedType === 'beds' && <CreateAppointment type="bed" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
+                    {selectedType === 'facilities' && <CreateAppointment type="facility" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
                 </StyledContainerContent>
             </Dialog>
         </Container>

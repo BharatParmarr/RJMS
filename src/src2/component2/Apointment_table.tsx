@@ -38,6 +38,9 @@ const AppointmentsTable = ({ columns, data, MarkAppointmentComplete }: any) => {
         data: filteredData,
     });
 
+    interface RowOriginal {
+        id: number;
+    }
     // Render table
     const renderTable = (tableInstance: TableInstance<{}>) => (
         <table {...tableInstance.getTableProps()} style={{ width: '100%', marginTop: 10 }}>
@@ -66,7 +69,10 @@ const AppointmentsTable = ({ columns, data, MarkAppointmentComplete }: any) => {
                             ))}
                             <td >
                                 {row.values.appointment_status === 'Pending' ? (<CompleteButton
-                                    onClick={() => MarkAppointmentComplete(row.id, row.values.appointment_type)}
+                                    onClick={() => {
+                                        let id = (row.original as RowOriginal).id;
+                                        MarkAppointmentComplete(id, row.values.appointment_type)
+                                    }}
                                     style={{ border: 'none', cursor: 'pointer' }}
                                 >
                                     <TaskAltIcon style={{ color: '#fff', fontSize: 20 }} />

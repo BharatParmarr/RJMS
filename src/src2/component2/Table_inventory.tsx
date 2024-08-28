@@ -271,7 +271,7 @@ function ProductTable({ products, setProducts }: any) {
                     {products && <TableHeader columns={Object.keys(products[0])} onSort={handleSort} />}
                 </StyledThead>
                 <StyledTbody>
-                    {displayedProducts.map((product: { id: Key | null | undefined; image: string; name: string | undefined; quantity: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; price: any; updated_time: string | number | Date; }) => (
+                    {displayedProducts.map((product: { id: Key | null | undefined; image: string; name: string | undefined; quantity: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; price: any; updated_at: string | number | Date; }) => (
                         <StyledTr key={product.id}>
                             <StyledTd>{product.image && <ImageProduct src={product.image} alt={product.name} />}</StyledTd>
                             <StyledTd>
@@ -281,7 +281,7 @@ function ProductTable({ products, setProducts }: any) {
                                 <ListItemText primary={product.quantity} />
                             </StyledTd>
                             <StyledTd><ListItemText primary={product.price} /></StyledTd>
-                            <StyledTd><ListItemText primary={new Date(product.updated_time).toLocaleString('en-US',
+                            <StyledTd><ListItemText primary={new Date(product.updated_at).toLocaleString('en-US',
                                 options_for_time as Intl.DateTimeFormatOptions
                             )} /></StyledTd>
                             <StyledTd><Product_quntity_update token={token} product={product} id={id} products={products} setProducts={setProducts} /></StyledTd>
