@@ -12,6 +12,8 @@ const StyledContainer = styled(Container)({
     alignItems: 'center',
     height: '100vh',
     textAlign: 'center',
+    fontFamily: 'Fira Mono',
+    letterSpacing: '-7px',
 });
 
 const AnimatedBox = styled(motion.div)({
@@ -31,6 +33,7 @@ const StyledForm = styled(animated.form)({
     backgroundColor: 'gray',
 
 });
+
 
 const NotFound: React.FC = () => {
     const props = useSpring({
@@ -53,9 +56,9 @@ const NotFound: React.FC = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5 }}
             >
-                <Typography variant="h1" component="div" gutterBottom>
+                <div title='404' className='error_div_animation'>
                     404
-                </Typography>
+                </div>
                 <Typography variant="h5" component="div" gutterBottom>
                     Oops! Page not found.
                 </Typography>

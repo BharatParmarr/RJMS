@@ -91,6 +91,7 @@ const ServicesContainer = styled.section`
   justify-content: space-around;
   padding: 2.4rem 2rem;
   flex-wrap: wrap;
+ 
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -107,6 +108,8 @@ const Service = styled.div`
     border-radius: 10px;
     background-color: ${({ theme }) => theme.colors.objectBg};
     transition: transform 0.3s;
+     background-color: ${({ theme }) => theme.colors.white};
+  box-shadow: 0 0 10px ${({ theme }) => theme.colors.shadow};
     &:hover {
     transform: translateY(-10px);
     }

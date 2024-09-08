@@ -7,6 +7,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useTheme } from '../templates/styles/theme';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const StyledDatePicker = styled(DatePicker)`
     margin: 20px;
@@ -52,15 +54,18 @@ function History_Appointment() {
     const [page, setPage] = React.useState(1);
     const [date, set_date] = React.useState('');
     const [isDataRemaining, setIsDataRemaining] = React.useState(true);
+    const [backdrop, setBackdrop] = React.useState(false);
 
     const prevPageRef = React.useRef(page);
     const prevDateRef = React.useRef(date);
 
     useEffect(() => {
+        setBackdrop(true);
         async function fetch() {
             const response = await apis2.get(`/manage/appointment/queue/${sub_id}/full_history?&page=${page}&date=${date}`);
             if (response.data.results.length === 0) {
                 setIsDataRemaining(false);
+
                 return;
             }
             if (prevDateRef.current !== date) {
@@ -81,6 +86,7 @@ function History_Appointment() {
             prevDateRef.current = date;
         }
         fetch();
+        setBackdrop(false);
     }, [page, date]);
 
     const MarkAppointmentComplete = async (id: number, appointment_type: string) => {
@@ -112,6 +118,12 @@ function History_Appointment() {
 
     return (
         <MainContainer>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={backdrop}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Headign>History Appointment</Headign>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <StyledDatePicker label="Appointment Date" onChange={(newValue) => {

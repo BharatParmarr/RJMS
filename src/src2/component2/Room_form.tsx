@@ -14,7 +14,6 @@ import { styled as styledmui } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import HospitalBed from './Bed_form';
@@ -36,6 +35,7 @@ const BootstrapDialog = styledmui(Dialog)(({ theme }) => ({
 }));
 
 function Add_Bed({ room_id, room_name }: any) {
+    const { theme } = useTheme();
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -54,6 +54,12 @@ function Add_Bed({ room_id, room_name }: any) {
                 onClose={handleClose}
                 aria-labelledby="customized-dialog-title"
                 open={open}
+                sx={{
+                    '& .MuiDialog-paper': {
+                        backgroundColor: theme.colors.background,
+                        color: theme.colors.text,
+                    },
+                }}
             >
                 <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
                     Add new Bed
@@ -73,11 +79,7 @@ function Add_Bed({ room_id, room_name }: any) {
                 <DialogContent dividers>
                     <HospitalBed room_id={room_id} room_name={room_name} />
                 </DialogContent>
-                <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
-                        Close
-                    </Button>
-                </DialogActions>
+
             </BootstrapDialog>
         </React.Fragment>
     );
@@ -131,6 +133,7 @@ const DivroomDetails = styled.div`
     width: 100%;
     padding: 10px;
     border-bottom: 1px solid #ccc;
+    color: ${({ theme }) => theme.colors.text};
     `;
 
 const HospitalRoom = () => {

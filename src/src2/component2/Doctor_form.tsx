@@ -62,17 +62,63 @@ const HospitalDoctor = () => {
 
     const fetchDoctors = async () => {
         const response = await apis2.get('/manage/doctor/' + sub_id);
-        console.log(response.data, 'kk');
         setDoctors(response.data);
     };
 
     const handleCreate = async (data: any) => {
-        await apis.post('/doctors/', data);
+        if (data.image) {
+            const formData = new FormData();
+            formData.append('user', data.user);
+            formData.append('specialization', data.specialization);
+            formData.append('available_days', data.available_days);
+            formData.append('available_time', data.available_time);
+            formData.append('hospital', data.hospital);
+            formData.append('price', data.price);
+            formData.append('repeat_pationt_fees', data.repeat_pationt_fees);
+            formData.append('image', data.image);
+            await apis.post('/doctors/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then((res) => {
+                console.log(res, 'res');
+            }).catch((err) => {
+                console.log(err, 'err');
+            })
+        } else {
+            await apis.post('/doctors/', data);
+        }
         fetchDoctors();
     };
 
     const handleEdit = async (data: any) => {
-        await apis.put(`/doctors/${editingDoctor.id}/`, data);
+        if (data.image) {
+            const formData = new FormData();
+            formData.append('user', data.user);
+            formData.append('specialization', data.specialization);
+            formData.append('available_days', data.available_days);
+            formData.append('available_time', data.available_time);
+            formData.append('hospital', data.hospital);
+            formData.append('price', data.price);
+            formData.append('repeat_pationt_fees', data.repeat_pationt_fees);
+            formData.append('image', data.image);
+            await apis.put(`/doctors/${editingDoctor.id}/`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then((res) => {
+                console.log(res, 'res');
+            }).catch((err) => {
+                console.log(err, 'err');
+            })
+        } else {
+            await apis.put(`/doctors/${editingDoctor.id}/`, data).then((res) => {
+                console.log(res, 'res');
+            }).catch((err) => {
+                console.log(err, 'err');
+            })
+        }
+
         setEditingDoctor(null);
         fetchDoctors();
     };
@@ -120,6 +166,8 @@ const HospitalDoctor = () => {
                             { name: 'available_time', type: 'text', placeholder: 'Available Time' },
                             { name: 'hospital', type: 'number', placeholder: 'Hospital', hidden: true, value: sub_id },
                             { name: 'price', type: 'text', placeholder: 'Fees' },
+                            { name: 'repeat_pationt_fees', type: 'text', placeholder: 'Repeat Patient Fees' },
+                            { name: 'image', type: 'file', placeholder: 'Image' },
                         ]}
                     />
                     <List>

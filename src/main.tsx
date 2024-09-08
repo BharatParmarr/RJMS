@@ -53,69 +53,84 @@ import AppointmentManager from "./src2/Booking_componet";
 import History_Appointment from "./src2/History_Appointment";
 import Data_analysis_page from "./src2/Data_analysis_page";
 import HomePage_Landingpage from "./src2/Landign_page";
+import Education_App from "./src2/App_education";
+import CreateStudent from "./src2/Create_Education";
+import Terms_and_condtion from "./templates/Terms_and_condtion";
+import StaffList from "./src2/component2/StaffList";
+import Staff_attendance_list from "./src2/component2/Staff_attendance_list";
+function Main() {
+  return (
+    <React.StrictMode>
+      <ThemeProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/app" element={<App />} />
+            <Route path="/auth" element={<Oauth />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/verify-otp" element={<Otp_verification />} />
+            <Route path="/create-restaurant" element={<Create_restorant />} />
+            <Route path="/restorant/:id" element={<Restorant_table_list />} />
+            <Route path="/restorant/home/:id" element={<Restorant_home_view />} />
+            <Route path="/restorant/table/:id/:table_id" element={<Restroant_view />} />
+            <Route path="/Shop/table/:id/:table_id" element={<Restroant_view_shop />} />
+            <Route path="/restorant/Manage/:id" element={<Create_table />} />
+            <Route path="/restorant/Manage/staff/:type_page/:sub_id" element={<StaffList />} />
+            <Route path="/restorant/Manage/staff/attendance/:type_page/:sub_id" element={<Staff_attendance_list />} />
+            <Route path="/Shop/Manage/:id" element={<Create_table_shop />} />
+            <Route path="/Orders_view/:id" element={<Orders_view />} />
+            <Route path="/Shop/Orders/:id" element={<Services_Orders_view />} />
+            <Route path="/data-analysis/:id" element={<Data_anlysis />} />
+            <Route path="/pricing" element={<Pricing_page />} />
+            <Route path="/order-history/:id" element={<Order_history />} />
+            <Route path="/inventory/:id" element={<Inventory />} />
+            <Route path="/restorant/Settings/:id" element={<Settings_restorant />} />
+            <Route path="/Shop/Settings/:id" element={<Settings_shop />} />
+            <Route path="/hostels" element={<HostelList />} />
+            <Route path="/hostels/create" element={<HostelForm />} />
+            <Route path="/hostels/room/:id/:roomid/:room_name" element={<Room_view />} />
+            <Route path="/hostels/:id" element={<Hostel_view />} />
+            <Route path="/rooms" element={<RoomList />} />
+            <Route path="/rooms/create" element={<RoomForm />} />
+            <Route path="/students" element={<StudentList />} />
+            <Route path="/students/create" element={<StudentForm />} />
+            <Route path="/hostels/pyments/:id" element={<PaymentsHistory />} />
+            <Route path="/hostels/Meals/:id" element={<Meals_list />} />
+            <Route path="/hostels/NoticeBord/:id" element={<Notice_bord />} />
+            <Route path="/hostels/Settings/:id" element={<Settings />} />
+            <Route path="/Service-shop" element={<Service_home />} />
+            <Route path="/Service-shop/:id" element={<Shop_view />} />
+            <Route path="/Service-shop/create" element={<Service_shop_create />} />
+            {/* coustemer views */}
+            <Route path="/Coustemer" element={<Coustemer_view_Home />} />
+            <Route path="/MenuPage" element={<MenuBook />} />
+            {/* Hospital */}
+            <Route path="/Manage/Hospital" element={<Featch_business />} />
+            <Route path="/Manage/:type_page/:id/:sub_id" element={<Dashbord />} />
+            <Route path="/Manage/Inventory/:type_page/:id/:sub_id" element={<Inventory_2 />} />
+            <Route path="/Manage/Appointments/:type_page/:id/:sub_id" element={<AppointmentManager />} />
+            <Route path="/Manage/Appointments_que/:type_page/:id/:sub_id" element={<AppointmentQueue />} />
+            <Route path="/Manage/Appointments_history/:type_page/:id/:sub_id" element={<History_Appointment />} />
+            <Route path="/Manage/Edit/:type_page/:id/:sub_id" element={<BusinessSettings />} />
+            <Route path="/Manage/create/:type" element={<Create_Business_form />} />
+            <Route path="/Manage/functionalitys/:type_page/:id/:sub_id" element={<Create_products />} />
+            <Route path="/Manage/Data_analysis/:type_page/:id/:sub_id" element={<Data_analysis_page />} />
+            <Route path="/Manage/staff/:type_page/:id/:sub_id" element={<StaffList />} />
+            <Route path="/Manage/staff/attendance/:type_page/:id/:sub_id" element={<Staff_attendance_list />} />
+            <Route path="/Hospital/:sub_id" element={<HomePage_Landingpage />} />
+            <Route path="/Education/create" element={<CreateStudent />} />
+            <Route path="/Education/*" element={<Education_App />} />
+            {/* leagal */}
+            <Route path="/legals/terms-and-conditions" element={<Terms_and_condtion />} />
+            {/* pages */}
+            <Route path="/F&Q" element={<Fandq />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </React.StrictMode>
+  );
+}
 
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <ThemeProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/app" element={<App />} />
-          <Route path="/auth" element={<Oauth />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/verify-otp" element={<Otp_verification />} />
-          <Route path="/create-restaurant" element={<Create_restorant />} />
-          <Route path="/restorant/:id" element={<Restorant_table_list />} />
-          <Route path="/restorant/home/:id" element={<Restorant_home_view />} />
-          <Route path="/restorant/table/:id/:table_id" element={<Restroant_view />} />
-          <Route path="/Shop/table/:id/:table_id" element={<Restroant_view_shop />} />
-          <Route path="/restorant/Manage/:id" element={<Create_table />} />
-          <Route path="/Shop/Manage/:id" element={<Create_table_shop />} />
-          <Route path="/Orders_view/:id" element={<Orders_view />} />
-          <Route path="/Shop/Orders/:id" element={<Services_Orders_view />} />
-          <Route path="/data-analysis/:id" element={<Data_anlysis />} />
-          <Route path="/pricing" element={<Pricing_page />} />
-          <Route path="/order-history/:id" element={<Order_history />} />
-          <Route path="/inventory/:id" element={<Inventory />} />
-          <Route path="/restorant/Settings/:id" element={<Settings_restorant />} />
-          <Route path="/Shop/Settings/:id" element={<Settings_shop />} />
-          <Route path="/hostels" element={<HostelList />} />
-          <Route path="/hostels/create" element={<HostelForm />} />
-          <Route path="/hostels/room/:id/:roomid/:room_name" element={<Room_view />} />
-          <Route path="/hostels/:id" element={<Hostel_view />} />
-          <Route path="/rooms" element={<RoomList />} />
-          <Route path="/rooms/create" element={<RoomForm />} />
-          <Route path="/students" element={<StudentList />} />
-          <Route path="/students/create" element={<StudentForm />} />
-          <Route path="/hostels/pyments/:id" element={<PaymentsHistory />} />
-          <Route path="/hostels/Meals/:id" element={<Meals_list />} />
-          <Route path="/hostels/NoticeBord/:id" element={<Notice_bord />} />
-          <Route path="/hostels/Settings/:id" element={<Settings />} />
-          <Route path="/Service-shop" element={<Service_home />} />
-          <Route path="/Service-shop/:id" element={<Shop_view />} />
-          <Route path="/Service-shop/create" element={<Service_shop_create />} />
-          {/* coustemer views */}
-          <Route path="/Coustemer" element={<Coustemer_view_Home />} />
-          <Route path="/MenuPage" element={<MenuBook />} />
-          {/* Hospital */}
-          <Route path="/Manage/Hospital" element={<Featch_business />} />
-          <Route path="/Manage/:type_page/:id/:sub_id" element={<Dashbord />} />
-          <Route path="/Manage/Inventory/:type_page/:id/:sub_id" element={<Inventory_2 />} />
-          <Route path="/Manage/Appointments/:type_page/:id/:sub_id" element={<AppointmentManager />} />
-          <Route path="/Manage/Appointments_que/:type_page/:id/:sub_id" element={<AppointmentQueue />} />
-          <Route path="/Manage/Appointments_history/:type_page/:id/:sub_id" element={<History_Appointment />} />
-          <Route path="/Manage/Edit/:type_page/:id/:sub_id" element={<BusinessSettings />} />
-          <Route path="/Manage/create/:type" element={<Create_Business_form />} />
-          <Route path="/Manage/functionalitys/:type_page/:id/:sub_id" element={<Create_products />} />
-          <Route path="/Manage/Data_analysis/:type_page/:id/:sub_id" element={<Data_analysis_page />} />
-          <Route path="/Hospital/:sub_id" element={<HomePage_Landingpage />} />
-          {/* pages */}
-          <Route path="/F&Q" element={<Fandq />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-  </React.StrictMode>
-);
+ReactDOM.createRoot(document.getElementById("root")!).render(<Main />);

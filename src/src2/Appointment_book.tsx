@@ -1,8 +1,8 @@
 // src/components/CreateAppointment.js
 
 import { useEffect, useState } from 'react';
-import { Button, TextField, Grid, Card, Typography, Switch } from '@mui/material';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { Button, TextField, Grid, Typography, Switch } from '@mui/material';
+// import useWebSocket, { ReadyState } from 'react-use-websocket';
 import axios from 'axios';
 import styled from 'styled-components';
 import API_HOST from '../config';
@@ -12,14 +12,17 @@ import Room_book from './component2/Room_book';
 import { apis2 } from '../apis';
 
 // Styled-components for custom styling
-const FormContainer = styled(Card)`
+const FormContainer = styled.div`
   margin: 20px;
   padding: 20px;
-  background-color: ${({ theme }) => theme.colors.white};
+  background: ${({ theme }) => theme.colors.background};
     width: 95%;
     display: flex;
     flex-direction: column;
     overflow: auto;
+    padding-bottom: 20px;
+    height: 100vh;
+    border-radius: 10px;
 `;
 
 const StyledTypography = styled(Typography)`
@@ -105,7 +108,7 @@ function Bed_book({ id }: any) {
 }
 
 
-const CreateAppointment = ({ type, target_id, name_of_selected, handleCloseDialog }: any) => {
+const CreateAppointment = ({ type, target_id, name_of_selected, handleCloseDialog, target_id_fees }: any) => {
     const { sub_id } = useParams();
     const { theme } = useTheme();
     const [formData, setFormData] = useState({
@@ -119,53 +122,57 @@ const CreateAppointment = ({ type, target_id, name_of_selected, handleCloseDialo
         target_id: target_id, // doctor_id, room_id, bed_id, facility_id depending on type
         date: '',
         time: '',
+        custom_fees: target_id_fees,
     });
 
-    const [status, setStatus] = useState('');
+    // const [status, setStatus] = useState('');
 
     // WebSocket URL (replace with your backend WebSocket URL)
-    const socketUrl = 'ws://localhost:8000/ws/appointments/' + `${sub_id}/${localStorage.getItem('token')}/`;
+    // const socketUrl = 'ws://192.168.0.106:8000/ws/appointments/' + `${sub_id}/${localStorage.getItem('token')}/`;
 
-    const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
-        onOpen: () => setStatus('WebSocket connection established'),
-        onClose: () => setStatus('WebSocket connection closed'),
-        onError: () => setStatus('WebSocket error occurred')
-    });
-    useEffect(() => {
-        console.log(lastMessage, status);
-    }, []);
+    // const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+    //     onOpen: () => setStatus('WebSocket connection established'),
+    //     onClose: () => setStatus('WebSocket connection closed'),
+    //     onError: () => {
+    //         setStatus('WebSocket error occurred')
+    //         alert('Something went wrong please try again later')
+    //     },
+    // });
+    // useEffect(() => {
+    //     console.log(lastMessage, status);
+    // }, []);
 
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
 
         // Check WebSocket connection status
         if (type === 'doctor') {
-            if (readyState === ReadyState.OPEN) {
-                // If WebSocket is open, send appointment data
-                sendMessage(JSON.stringify(formData));
-                setStatus('Appointment created via WebSocket');
-            } else {
-                // If WebSocket is not connected, fall back to regular HTTP request
-                try {
-                    const response = await axios.post(API_HOST + '/api/appointments/create/', formData); // Replace with your API endpoint
-                    if (response.status === 201) {
-                        setStatus('Appointment created via HTTP request');
-                        handleCloseDialog();
-                    }
-                } catch (error) {
-                    setStatus('Error creating appointment');
-                    alert('Error creating appointment');
+            // if (readyState === ReadyState.OPEN) {
+            // If WebSocket is open, send appointment data
+            // sendMessage(JSON.stringify(formData))
+            // setStatus('Appointment created via WebSocket');
+            // } else {
+            // If WebSocket is not connected, fall back to regular HTTP request
+            try {
+                const response = await axios.post(API_HOST + '/api/appointments/create/', formData); // Replace with your API endpoint
+                if (response.status === 201) {
+                    // setStatus('Appointment created via HTTP request');
+                    handleCloseDialog();
                 }
+            } catch (error) {
+                // setStatus('Error creating appointment');
+                alert('Error creating appointment');
             }
+            // }
         } else if (type === 'facility') {
             try {
                 const response = await axios.post(API_HOST + '/api/appointments/create/', formData); // Replace with your API endpoint
                 if (response.status === 201) {
-                    setStatus('Appointment created via HTTP request');
+                    // setStatus('Appointment created via HTTP request');
                     handleCloseDialog();
                 }
             } catch (error) {
-                setStatus('Error creating appointment');
+                // setStatus('Error creating appointment');
                 alert('Error creating appointment');
             }
         }
@@ -177,9 +184,10 @@ const CreateAppointment = ({ type, target_id, name_of_selected, handleCloseDialo
     };
 
     return (
-        <FormContainer sx={{
-            backgroundColor: theme.colors.white,
-        }}>
+        <FormContainer>
+            {/* <StyledTypography variant="subtitle1" color="secondary" style={{ marginTop: '20px' }}>
+                {status}
+            </StyledTypography> */}
             <StyledTypography style={{
                 fontSize: '1.1rem',
             }} variant="h5">
@@ -197,7 +205,7 @@ const CreateAppointment = ({ type, target_id, name_of_selected, handleCloseDialo
             </StyledTypography>
             {(type === 'doctor' || type === 'facility') && <Styledform onSubmit={handleSubmit}>
                 <StyledGrid container spacing={2} sx={{
-                    backgroundColor: theme.colors.white,
+                    backgroundColor: theme.colors.background,
                     padding: '20px',
                     borderRadius: '10px',
                 }}>
@@ -350,6 +358,26 @@ const CreateAppointment = ({ type, target_id, name_of_selected, handleCloseDialo
                             }}
                         />
                     </StyledGrid>
+                    <StyledGrid item xs={12} sm={6}>
+                        <StyledTextField
+                            label="Fees"
+                            name="custom_fees"
+                            value={formData.custom_fees}
+                            onChange={handleInputChange}
+                            fullWidth
+                            InputLabelProps={{
+                                style: { color: theme.colors.text },
+                            }}
+                            sx={{
+                                input: {
+                                    color: theme.colors.text,
+                                    backgroundColor: theme.colors.white,
+                                    border: `1px solid ${theme.colors.gray}`,
+                                    borderRadius: '8px',
+                                },
+                            }}
+                        />
+                    </StyledGrid>
                     <StyledGrid item xs={12}>
                         <StyledButton type="submit" variant="contained" color="primary">
                             Create Appointment
@@ -361,9 +389,7 @@ const CreateAppointment = ({ type, target_id, name_of_selected, handleCloseDialo
             {type == 'room' && <Room_book id={target_id} sub_id={sub_id} />}
             {type == 'bed' && <Bed_book id={target_id} />}
             {/* Display connection and status messages */}
-            {/* <StyledTypography variant="subtitle1" color="secondary" style={{ marginTop: '20px' }}>
-                {status}
-            </StyledTypography> */}
+
         </FormContainer>
     );
 };

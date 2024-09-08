@@ -70,7 +70,7 @@ function PositionedMenu({ subscription, services_list }: {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
         style={{
-          display: 'flex', gap: 0.5, justifyContent: 'space-between', color: 'black',
+          display: 'flex', gap: 0.5, justifyContent: 'space-between', color: theme.colors.text,
         }}
       >
         Services <ArrowDropDownIcon />
@@ -188,10 +188,8 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
           return;
         }
         const data = await response.json();
-        console.log(response.status, 'xoxo');
         setUsername(data.username);
         setSubscription(true);
-        // console.log(data.subscription, 'subscription');
       } catch (error) {
         console.error('There was an error!', error);
         setShowLogin(true);
@@ -205,19 +203,6 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
     setOpen(newOpen);
   };
 
-  // const scrollToSection = (sectionId: string) => {
-  //   const sectionElement = document.getElementById(sectionId);
-  //   const offset = 128;
-  //   if (sectionElement) {
-  //     const targetScroll = sectionElement.offsetTop - offset;
-  //     sectionElement.scrollIntoView({ behavior: 'smooth' });
-  //     window.scrollTo({
-  //       top: targetScroll,
-  //       behavior: 'smooth',
-  //     });
-  //     setOpen(false);
-  //   }
-  // };
 
   return (
     <div>
@@ -264,7 +249,6 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
             >
               <img
                 src={
-                  // 'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg'
                   Logo
                 }
                 style={logoStyle}
@@ -285,26 +269,12 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                 {Brand_name}
               </Typography>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                {/* <MenuItem
-                  onClick={() => window.open('/create-restaurant/', '_self')}
-                  sx={{ py: '6px', px: '12px' }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Restorant
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => window.open('/hostels', '_self')}
-                  sx={{ py: '6px', px: '12px' }}
-                ><Typography variant="body2" color="text.primary">
-                    Hostels
-                  </Typography>
-                </MenuItem> */}
                 <PositionedMenu subscription={subscription} services_list={Services_list} />
                 <MenuItem
                   onClick={() => window.open('/pricing/', '_self')}
                   sx={{ py: '6px', px: '12px' }}
-                ><Typography variant="body2" color="text.primary">
+                >
+                  <Typography variant="body2" color={theme.colors.text}>
                     Pricing
                   </Typography>
                 </MenuItem>
@@ -312,7 +282,7 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                   onClick={() => navigate('/F&Q/')}
                   sx={{ py: '6px', px: '12px' }}
                 >
-                  <Typography variant="body2" color="text.primary">
+                  <Typography variant="body2" color={theme.colors.text}>
                     FAQ
                   </Typography>
                 </MenuItem>

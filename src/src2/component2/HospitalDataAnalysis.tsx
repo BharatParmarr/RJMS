@@ -96,13 +96,14 @@ function Selaction({ data = 'month', month, setMonth }: { data: string, month: s
     const years = ['2023', '2024'];
 
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
+    const { theme } = useTheme();
 
     return (
         <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">{data.toLocaleUpperCase()}</InputLabel>
+                <InputLabel sx={{ color: theme.colors.text }} id="demo-simple-select-label">{data.toLocaleUpperCase()}</InputLabel>
                 {data === 'month' ? <Select
+                    sx={{ color: theme.colors.text, borderColor: theme.colors.text, backgroundColor: theme.colors.white }}
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={month}
@@ -111,6 +112,7 @@ function Selaction({ data = 'month', month, setMonth }: { data: string, month: s
                 >
                     {months.map((month) => <MenuItem value={month}>{month}</MenuItem>)}
                 </Select> : <Select
+                    sx={{ color: theme.colors.text, borderColor: theme.colors.text, backgroundColor: theme.colors.white }}
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={month}
@@ -324,10 +326,10 @@ const HospitalDataAnalysis = ({ hospitalId }: any) => {
                             <AttachMoney color="info" fontSize="large" />
                             <Typography variant="h6" ml={1}>Financial Overview</Typography>
                         </Box>
-                        <Typography>Total Revenue: ${data.financial_stats.total_revenue?.toFixed(2)}</Typography>
+                        <Typography>Total Revenue: ₹{data.financial_stats.total_revenue?.toFixed(2)}</Typography>
                         {data.financial_stats.revenue_by_department.map((dept, index) => (
                             <Typography key={index}>
-                                {dept.specialization}: ${dept.revenue?.toFixed(2)}
+                                {dept.specialization}: ₹{dept.revenue?.toFixed(2)}
                             </Typography>
                         ))}
                     </StyledPaper>

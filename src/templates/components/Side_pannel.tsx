@@ -12,7 +12,8 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-
+import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded';
+import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 const NavigationWrap = styled.div`
     display: flex;
     alignItems: center;
@@ -151,7 +152,7 @@ function Menuburger(params: any) {
     );
 }
 function Side_pannel(params: any) {
-    console.log(params);
+
     const { theme } = useTheme();
     const [open, setOpen] = useState(false);
     const id = params.id;
@@ -207,6 +208,9 @@ function Side_pannel(params: any) {
                         <StyledButton style={{
                             color: option === 'Order History' ? theme.colors.primary : theme.colors
                         }} onClick={() => navigate(`/order-history/${id}`)} startIcon={<HistoryIcon />}>Orders History</StyledButton>
+                        <DividerBar textAlign="left">Staff</DividerBar>
+                        <StyledButton startIcon={<GroupsRoundedIcon />} onClick={() => navigate(`/restorant/Manage/staff/restorant/${id}`)}>Restorant Staff</StyledButton>
+                        <StyledButton startIcon={<BadgeRoundedIcon />} onClick={() => navigate(`/restorant/Manage/staff/attendance/restorant/${id}`)}>Attendance</StyledButton>
                         <DividerBar textAlign="left">Manage</DividerBar>
                         <StyledButton
                             disabled={option === 'Products'}

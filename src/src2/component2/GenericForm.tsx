@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextField, Checkbox, FormControlLabel } from '@mui/material';
 import { useTheme } from '../../templates/styles/theme';
-// import apis from './apis'; // Assuming you have this setup in a separate file
+import PersonIcon from '@mui/icons-material/Person';
 
 const FormContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
@@ -79,7 +79,6 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, initialData, onSubmit
     const [formData, setFormData] = useState(initialData);
     const { theme } = useTheme();
 
-    console.log(fields, initialData, 'fields');
     useEffect(() => {
         setFormData(initialData);
         // shake the input fields
@@ -93,11 +92,20 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, initialData, onSubmit
     }, [initialData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        console.log(e.target.files, 'e.target.files');
+        if (e.target.files) {
+            const file = e.target.files[0];
+            setFormData({
+                ...formData,
+                [e.target.name]: file,
+            });
+        } else {
+            const { name, value } = e.target;
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,14 +122,12 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, initialData, onSubmit
         // loop on fields and add all the hidden fields to the formData
         fields.forEach((field) => {
             if (field.hidden) {
-                console.log(field);
                 data = {
                     ...data,
                     [field.name]: field.value,
                 };
             }
         });
-        console.log(data);
         onSubmit(data);
     };
 
@@ -135,30 +141,52 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, initialData, onSubmit
                             display: 'block'
                         }}
                     >
-                        {field.type == 'checkbox' ?
+                        {field.type == 'file' ?
                             <>
-                                <>{!field.hidden && <MuiFormControlLabel control={<MuiCheckbox
-                                    name={field.name?.toString()}
-                                    checked={formData[field.name as any] || false}
-                                    onChange={handleCheckboxChange}
-                                    sx={{
-                                        input: { color: theme.colors.text }, label: { color: theme.colors.text },
-                                        border: `1px solid ${theme.colors.gray}`,
-                                        borderRadius: '5px',
-                                        margin: '0 10px '
-                                    }}
-                                />} label={field.placeholder} />}</>
+                                <>
+                                    {!field.hidden && <Input
+                                        type={field.type}
+                                        name={field.name?.toString()}
+                                        onChange={handleChange}
+                                        label={field.placeholder}
+                                        sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.gray }, border: `1px solid ${theme.colors.gray}` }}
+                                    />}
+                                </>
+                                {/* if image is there then display it else display profile icon of mui */}
+                                {!field.hidden && <>
+                                    {formData[field.name as any] ? <>
+                                        {typeof (formData[field.name as any]) === 'string' ? <img src={formData[field.name as any]} alt={field.placeholder} style={{ width: 200, height: 200 }} />
+                                            : <img src={URL.createObjectURL(formData[field.name as any])} alt={field.placeholder} style={{ width: 200, height: 200 }} />}
+                                    </>
+                                        : <PersonIcon sx={{ width: 200, height: 200, color: theme.colors.gray }} />
+                                    }
+                                </>}
                             </>
-                            :
-                            <>{!field.hidden && <Input
-                                type={field.type}
-                                name={field.name?.toString()}
-                                value={formData[field.name as any] || ''}
-                                onChange={handleChange}
-                                label={field.placeholder}
-                                sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.gray }, border: `1px solid ${theme.colors.gray}` }}
-                            />}</>
-                        }</span>
+                            : <>
+                                {field.type == 'checkbox' ?
+                                    <>
+                                        <>{!field.hidden && <MuiFormControlLabel control={<MuiCheckbox
+                                            name={field.name?.toString()}
+                                            checked={formData[field.name as any] || false}
+                                            onChange={handleCheckboxChange}
+                                            sx={{
+                                                input: { color: theme.colors.text }, label: { color: theme.colors.text },
+                                                border: `1px solid ${theme.colors.gray}`,
+                                                borderRadius: '5px',
+                                                margin: '0 10px '
+                                            }}
+                                        />} label={field.placeholder} />}</>
+                                    </>
+                                    :
+                                    <>{!field.hidden && <Input
+                                        type={field.type}
+                                        name={field.name?.toString()}
+                                        value={formData[field.name as any] || ''}
+                                        onChange={handleChange}
+                                        label={field.placeholder}
+                                        sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.gray }, border: `1px solid ${theme.colors.gray}` }}
+                                    />}</>
+                                }</>}</span>
                 ))}
                 <Button type="submit">Submit</Button>
             </MainForm>

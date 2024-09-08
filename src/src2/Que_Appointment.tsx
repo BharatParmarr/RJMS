@@ -85,15 +85,16 @@ const AppointmentQueue = () => {
         },
         onMessage: (event) => {
             const data = JSON.parse(event.data);
-            console.log('Data:', data);
-            if (Array.isArray(data.appointments)) {
-                // If the data is an array, it means we received the pending appointments
-                setAppointments(data.appointments);
-                console.log('Pending appointments:', data);
-            } else {
-                // Otherwise, it's a new appointment
-                setAppointments((prev) => [...prev, data.appointments]);
-                console.log('New appointment:', data.appointments);
+            console.log('Data41414:', data);
+            if (data.appointments) {
+                console.log(data.appointments, 'data.appointments');
+                if (Array.isArray(data.appointments)) {
+                    // If the data is an array, it means we received the pending appointments
+                    setAppointments(data.appointments);
+                } else {
+                    // Otherwise, it's a new appointment
+                    setAppointments((prev) => [...prev, data.appointments]);
+                }
             }
         },
         onClose: () => {
@@ -111,7 +112,6 @@ const AppointmentQueue = () => {
     useEffect(() => {
         async function fetch() {
             const response = await apis2.get(`/manage/appointment/queue/${sub_id}?date=${date}&page=${page}`);
-            console.log('Response:', response);
 
             if (prevDateRef.current !== date) {
                 // Date has changed, replace old data with new data
@@ -157,56 +157,13 @@ const AppointmentQueue = () => {
 
     // Render table
     const renderTable = (_tableInstance: any, MarkAppointmentComplete: any) => (
-        // <table {...tableInstance.getTableProps()} style={{ width: '100%', marginTop: 10 }}>
-        //     <thead>
-        //         {tableInstance.headerGroups.map((headerGroup: { getHeaderGroupProps: () => JSX.IntrinsicAttributes & React.ClassAttributes<HTMLTableRowElement> & React.HTMLAttributes<HTMLTableRowElement>; headers: any[]; }, options: React.Key | null | undefined) => {
-        //             return (
-        //                 <tr {...headerGroup.getHeaderGroupProps()} key={options}>
-        //                     {headerGroup.headers.map((column: { getHeaderProps: () => JSX.IntrinsicAttributes & React.ClassAttributes<HTMLTableHeaderCellElement> & React.ThHTMLAttributes<HTMLTableHeaderCellElement>; render: (arg0: string) => string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }, options: React.Key | null | undefined) => {
-        //                         return (
-        //                             <th {...column.getHeaderProps()} style={{ textAlign: 'left', padding: '8px' }} key={options}>
-        //                                 {column.render('Header')}
-        //                             </th>
-        //                         );
-        //                     })}
-        //                 </tr>
-        //             )
-        //         })}
-        //     </thead>
-        //     <tbody {...tableInstance.getTableBodyProps()}>
-        //         {tableInstance.rows.map((row: any) => {
-        //             tableInstance.prepareRow(row);
-        //             return (
-        //                 <tr {...row.getRowProps()}>
-        //                     {row.cells.map((cell: { getCellProps: () => JSX.IntrinsicAttributes & React.ClassAttributes<HTMLTableDataCellElement> & React.TdHTMLAttributes<HTMLTableDataCellElement>; render: (arg0: string) => string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }) => (
-        //                         <td {...cell.getCellProps()} style={{ padding: '8px' }}>
-        //                             {cell.render('Cell')}
-        //                         </td>
-        //                     ))}
-        //                     <td>
-        //                         <CompleteButton onClick={() => {
-        //                             MarkAppointmentComplete(row.id, row.values.appointment_type);
-        //                         }}>
-        //                             <TaskAltIcon style={{
-        //                                 color: '#000',
-        //                                 fontSize: 20
-        //                             }} />
-        //                         </CompleteButton>
-        //                     </td>
-        //                 </tr>
-        //             );
-        //         })}
-        //     </tbody>
-        // </table>
         <AppointmentsTable MarkAppointmentComplete={MarkAppointmentComplete} columns={columns} data={appointments} />
     );
 
     // Mark appointment as complete
     const MarkAppointmentComplete = async (id: number, appointment_type: string) => {
         const res = await apis2.get(`/manage/appointment/compelet/${id}/${appointment_type}`);
-        console.log('Response:', res);
         if (res.status === 200) {
-            console.log('Appointment marked as complete');
             // Remove the appointment from the queue
             setAppointments((prev) => prev.filter((appointment) => appointment.id !== id));
         }

@@ -60,11 +60,15 @@ const Styledtable = styled.table`
     `;
 
 const StyledGrid = styled(Grid)`
-    margin-top: 20px;
+    border-radius: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 `;
 
 const StyledStatCard = styled(StatCard)`
-    background: ${({ theme }) => theme.colors.white};
+    border-radius: 0px;
+    background: ${({ theme }) => theme.colors.background};
     `;
 
 const StyledCardContent = styled(CardContent)`
@@ -75,6 +79,7 @@ const StyledCardContent = styled(CardContent)`
     color: ${({ theme }) => theme.colors.text};
     flex-direction: column;
     font-size: 1rem;
+    border-radius: 0px;
     `;
 
 
@@ -165,7 +170,7 @@ const Dashboard2 = ({ data }: any) => {
                 height: 1.1,
                 width: '100%',
             }} />
-            <StyledGrid container spacing={4}>
+            <StyledGrid container spacing={0}>
                 {[
                     { label: 'Doctors', value: data.doctors },
                     { label: 'Nurses', value: data.nurses },
@@ -174,7 +179,7 @@ const Dashboard2 = ({ data }: any) => {
                     { label: 'Facilities', value: data.facilities },
                     { label: 'Room Occupancies', value: data.room_occupancies }
                 ].map((item, index) => (
-                    <Grid item xs={12} sm={6} md={3} key={index}>
+                    <Grid item xs={12} sm={6} md={4} key={index}>
                         <motion.div whileHover={{ boxShadow: `0px 0px 10px 0px ${theme.colors.primary}88` }}>
                             <StyledStatCard>
                                 <StyledCardContent>
@@ -190,33 +195,10 @@ const Dashboard2 = ({ data }: any) => {
                     </Grid>
                 ))}
             </StyledGrid>
-
-            {/* Charts */}
-            {/* <Grid container spacing={3} style={{ marginTop: 20 }}>
-                <Grid item xs={12} md={6}>
-                    <Card>
-                        <CardContent>
-                            <Typography variant="h6" component="div" gutterBottom>
-                                Distribution Bar Chart
-                            </Typography>
-                            <Bar data={barChartData} />
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <Card>
-                        <CardContent>
-                            <Typography variant="h6" component="div" gutterBottom>
-                                Distribution Pie Chart
-                            </Typography>
-                            <Pie data={pieChartData} />
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid> */}
-
             {/* Tables */}
-            <TableContainer>
+            <TableContainer style={{
+                display: 'none'
+            }}>
                 {renderTable(doctorTableInstance)}
                 {renderTable(nurseTableInstance)}
             </TableContainer>

@@ -6,12 +6,13 @@ import AutoGraphRoundedIcon from '@mui/icons-material/AutoGraphRounded';
 import InventoryRoundedIcon from '@mui/icons-material/InventoryRounded';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import HistoryIcon from '@mui/icons-material/History';
-import PublicIcon from '@mui/icons-material/Public';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from '../../templates/styles/theme';
+import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded';
+import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 
 const NavigationWrap = styled.div`
     display: flex;
@@ -83,7 +84,6 @@ const TypographyDiv = styled(Typography)`
         width: 100%;
         height: 100%;
         z-index: 100;
-
     }
     `;
 
@@ -100,6 +100,7 @@ const MenuburgerDiv = styled.div`
     top: 0;
     right: 0;
     z-index: 1001;
+    border-radius: 0 0 0 5px;
 
     @media (max-width: 768px) {
         display: flex;
@@ -110,15 +111,34 @@ const Burgerlayer = styled.div`
     width: 30px;
     height: 3px;
     margin: 3px;
-    border-bottom: 1.5px solid ${({ theme }) => theme.colors.text};
+    border-bottom: 3px solid ${({ theme }) => theme.colors.text};
     transition: all 0.3s;
+    border-radius: 10px;
+
+    &:nth-child(1) {
+    margin-top: 0;
+    }
     `;
 
 const Maindiv = styled.div`
     width: 18%;
+    max-height: 100vh;
+    overflow: auto;
 
     @media (max-width: 768px) {
         width: 100%;
+    }
+
+    // scrollbar
+    &::-webkit-scrollbar {
+        width: 7px;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: ${({ theme }) => theme.colors.white};
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.colors.gray}32;
+        border-radius: 10px;
     }
 `;
 
@@ -151,28 +171,113 @@ function Menuburger(params: any) {
     );
 }
 function Side_pannel_genral(params: any) {
-    console.log(params);
     const { theme } = useTheme();
     const [open, setOpen] = useState(false);
-    const id = params.id;
     const navigate = useNavigate();
     const option = params.option;
-    const type_page = params.type_page
-
-    type links_type = {
-        [key: string]: Array<string>
-    }
-
-    const { sub_id } = useParams();
-
-    const Links = {
-        'Restorant': ['Orders', 'Dashbord', 'Inventory', 'Data Analysis', 'Order History', 'Products', 'Settings', 'Restorant'],
-        'Restorant-links': ['/Orders_view', '/restorant', '/inventory', '/data-analysis', '/order-history', '/restorant/Manage', '/restorant/Settings', `/restorant/home/${sub_id}`],
-        'hospital': ['Appointments', 'Dashbord', 'Inventory', 'Data Analysis', 'Appointments History', 'Resources', 'Settings', 'Hospital'],
-        'hospital-links': [`/Manage/Appointments_que/${type_page}/${id}/${sub_id}`, `/Manage/${type_page}/${id}/${sub_id}`, `/Manage/Inventory/${type_page}/${id}/${sub_id}`, `/Manage/Data_analysis/${type_page}/${id}/${sub_id}`, `/Manage/Appointments_history/${type_page}/${id}/${sub_id}`, `/Manage/functionalitys/${type_page}/${id}/${sub_id}`, `/Manage/Edit/${type_page}/${id}/${sub_id}`, `/Hospital/${sub_id}`],
-    } as links_type
+    const type_page = params.type_page as keyof typeof links_obj;
 
 
+
+    const { id, sub_id } = useParams();
+    type links_obj_type = {
+        [key: string]: {
+            [key: string]: {
+                [key: string]: [string, JSX.Element];
+            };
+        };
+    };
+    const [links_obj, setLinks_obj] = useState<links_obj_type>({
+        'Restorant': {
+            'Web Page': {
+                'Restorant': ['/restorant/home/${sub_id}', <HomeRoundedIcon />],
+            },
+            'Work': {
+                'Home': ['/', <HomeRoundedIcon />],
+                'Orders': ['/Orders_view', <ReceiptLongRoundedIcon />],
+                'Dashbord': ['/restorant', <DashboardIcon />],
+                'Inventory': ['/inventory', <InventoryRoundedIcon />]
+            },
+            'Data': {
+                'Data Analysis': ['/data-analysis', <AutoGraphRoundedIcon />],
+                'Order History': ['/order-history', <HistoryIcon />],
+            },
+            'Manage': {
+                'Products': ['/restorant/Manage', <SettingsRoundedIcon />],
+                'Settings': ['/restorant/Settings', <ManageAccountsRoundedIcon />],
+            }
+        },
+        'hospital': {
+            'Web Page': {
+                'Hospital': [`/Hospital/${sub_id}`, <HomeRoundedIcon />],
+            },
+            'Work': {
+                'Home': ['/', <HomeRoundedIcon />],
+                'Appointments': [`/Manage/Appointments_que/hospital/${id}/${sub_id}`, <ReceiptLongRoundedIcon />],
+                'Dashbord': [`/Manage/hospital/${id}/${sub_id}`, <DashboardIcon />],
+                'Inventory': [`/Manage/Inventory/hospital/${id}/${sub_id}`, <InventoryRoundedIcon />],
+            },
+            'Data': {
+                'Data Analysis': [`/Manage/Data_analysis/hospital/${id}/${sub_id}`, <AutoGraphRoundedIcon />],
+                'Appointments History': [`/Manage/Appointments_history/hospital/${id}/${sub_id}`, <HistoryIcon />]
+            },
+            'Staff': {
+                'Staff': [`/Manage/staff/hospital/${id}/${sub_id}`, <GroupsRoundedIcon />],
+                'Attendance': [`/Manage/staff/attendance/hospital/${id}/${sub_id}`, <BadgeRoundedIcon />],
+            },
+            'Manage': {
+                'Products': [`/Manage/functionalitys/hospital/${id}/${sub_id}`, <SettingsRoundedIcon />],
+                'Settings': [`/Manage/Edit/hospital/${id}/${sub_id}`, <ManageAccountsRoundedIcon />],
+            },
+        },
+        'Education': {
+            'Web Page': {
+                'Education': [`/Education/${sub_id}`, <HomeRoundedIcon />],
+            },
+            'Work': {
+                'Home': ['/', <HomeRoundedIcon />],
+                'Courses': ['/Manage/Courses', <ReceiptLongRoundedIcon />],
+                'Dashbord': ['/Education', <DashboardIcon />],
+                'Inventory': ['/Manage/Inventory', <InventoryRoundedIcon />],
+            },
+            'Data': {
+                'Data Analysis': ['/Manage/Data_analysis', <AutoGraphRoundedIcon />],
+                'Courses History': ['/Manage/Courses_history', <HistoryIcon />],
+            },
+            'Manage': {
+                'Courses': ['/Manage/Courses', <SettingsRoundedIcon />],
+                'Settings': ['/Manage/Edit', <ManageAccountsRoundedIcon />],
+            }
+        }
+    });
+    useEffect(() => {
+        let position_obj: any = JSON.parse(localStorage.getItem('position') || '{}');
+        console.log(position_obj, 'position_obj');
+        if (!sub_id) return;
+        if (position_obj[type_page] && position_obj[type_page][sub_id]) {
+            if (position_obj[type_page][sub_id] === 'owner') {
+                // dont remove any links
+            } else if (position_obj[type_page][sub_id] === 'manager') {
+                // remove Settings link 
+                let new_links_obj = links_obj;
+                delete new_links_obj[type_page]['Manage'].Settings;
+                setLinks_obj(new_links_obj);
+            } else if (position_obj[type_page][sub_id] === 'staff') {
+                // remove all settings,staff, data analysis
+                let new_links_obj = links_obj;
+                delete new_links_obj[type_page]['Manage'].Settings;
+                delete new_links_obj[type_page]['Manage'].Staff;
+                delete new_links_obj[type_page]['Data']['Data Analysis'];
+                setLinks_obj(new_links_obj);
+            } else {
+                let new_links_obj = links_obj;
+                delete new_links_obj[type_page]['Manage'].Settings;
+                delete new_links_obj[type_page]['Manage'].Staff;
+                delete new_links_obj[type_page]['Data']['Data Analysis'];
+                setLinks_obj(new_links_obj);
+            }
+        }
+    }, [id, type_page]);
 
 
     return (
@@ -201,46 +306,20 @@ function Side_pannel_genral(params: any) {
                         fontSize: '1.5rem',
                     }}>{option}</span>
                     <NavigationWrap >
-                        <StyledButton style={{
-                            color: option === 'Restorant' ? theme.colors.primary : theme.colors.text,
-                        }} onClick={() => navigate(Links[`${type_page}-links`][7])} startIcon={<PublicIcon />}>{type_page}</StyledButton>
-                        <DividerBar textAlign="left">Work</DividerBar>
-                        <StyledButton style={{
-                            color: option === 'Home' ? theme.colors.primary : theme.colors
-                        }} onClick={() => navigate(`/`)} startIcon={<HomeRoundedIcon />}>Home</StyledButton>
-                        <StyledButton style={{
-                            color: option === 'Orders' ? theme.colors.primary : theme.colors
-                        }} onClick={() => navigate(Links[`${type_page}-links`][0])} startIcon={<ReceiptLongRoundedIcon />}>
-                            {Links[type_page][0]}
-                        </StyledButton>
-                        <StyledButton style={{
-                            color: option === 'Dashbord' ? theme.colors.primary : theme.colors
-                        }} onClick={() => navigate(
-                            Links[`${type_page}-links`][1]
-                        )} startIcon={<DashboardIcon />}>Dashbord</StyledButton>
-                        <StyledButton style={{
-                            color: option === 'Inventory' ? theme.colors.primary : theme.colors
-                        }} startIcon={<InventoryRoundedIcon />} onClick={() => window.location.href = Links[`${type_page}-links`][2]}>Inventory</StyledButton>
-                        <DividerBar textAlign="left">Data</DividerBar>
-                        <StyledButton style={{
-                            color: option === 'Data Analysis' ? theme.colors.primary : theme.colors
-                        }} startIcon={<AutoGraphRoundedIcon />} onClick={() => window.location.href = Links[`${type_page}-links`][3]}>Data Analysis</StyledButton>
-                        <StyledButton style={{
-                            color: option === 'Order History' ? theme.colors.primary : theme.colors
-                        }} onClick={() => navigate(Links[`${type_page}-links`][4])} startIcon={<HistoryIcon />}>
-                            {
-                                Links[type_page][4]
-                            }
-                        </StyledButton>
-                        <DividerBar textAlign="left">Manage</DividerBar>
-                        <StyledButton
-                            disabled={option === 'Products'}
-                            style={{
-                                color: option === 'Products' ? theme.colors.primary : theme.colors
-                            }} startIcon={<SettingsRoundedIcon />} onClick={() => navigate(Links[`${type_page}-links`][5])}>Products</StyledButton>
-                        <StyledButton style={{
-                            color: option === 'Settings' ? theme.colors.primary : theme.colors
-                        }} startIcon={<ManageAccountsRoundedIcon />} onClick={() => navigate(Links[`${type_page}-links`][6])}>Settings</StyledButton>
+                        {Object.keys(links_obj[type_page]).map((key, _index) => (
+                            <>
+                                <DividerBar textAlign="left">{key}</DividerBar>
+                                {Object.keys(links_obj[type_page][key]).map((key2, index2) => (
+                                    <StyledButton style={{
+                                        color: option === key2 ? theme.colors.primary : theme.colors.text,
+                                        backgroundColor: option === key2 ? theme.colors.gray + '32' : theme.colors.white,
+                                    }} key={index2} onClick={() => navigate(links_obj[type_page][key][key2][0])} startIcon={links_obj[type_page][key][key2][1]}
+                                    >
+                                        {key2}
+                                    </StyledButton>
+                                ))}
+                            </>
+                        ))}
                     </NavigationWrap>
                 </div>
             </TypographyDiv></Maindiv>

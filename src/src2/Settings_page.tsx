@@ -6,6 +6,7 @@ import EditHospitalForm from './component2/Edit_Specific_domain_Form';
 // import { Divider } from '@mui/material';
 import Side_pannel_genral from './component2/Side_pannel_genral';
 import { useParams } from 'react-router-dom';
+import Hospital_Timings from './component2/Hospital_timings';
 
 const SettingsContainer = styled.div`
     display: flex;
@@ -38,6 +39,7 @@ const BusinessSettings = () => {
                 <UpdateManagerStaff />
                 <EditBusinessForm />
                 <EditHospitalForm />
+                <Hospital_Timings For={type_page as string} sub_id={id as string} />
             </Div>
         </SettingsContainer>
     );

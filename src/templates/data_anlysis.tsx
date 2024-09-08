@@ -18,7 +18,7 @@ function Data_anlysis() {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                console.log(data, "data")
                 setData(data);
             })
             .catch((error) => console.error('Error:', error));
@@ -27,7 +27,8 @@ function Data_anlysis() {
         // <Dashboard data={data} />
         <div style={{
             backgroundColor: theme.colors.background,
-            padding: '20px'
+            padding: '20px',
+
         }}>
             {data && <Dashboard data={data} />}
         </div>

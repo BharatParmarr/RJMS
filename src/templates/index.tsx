@@ -10,6 +10,7 @@ import SimpleAlert from './components/succes_aleart';
 import styled from 'styled-components';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import Inventory2RoundedIcon from '@mui/icons-material/Inventory2Rounded';
+// import SecondSection from './components/SecondSection';
 
 const InfoContainer = styled.div`
   color: #fff;
@@ -164,11 +165,12 @@ const CardText = styled.p`
   font-size: 1.2rem;
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: 20px;
+  line-height: 24px;
 `;
 
 const Cardaction = styled.button`
   background: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.white};
+  color: '#ffffff';
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -176,6 +178,7 @@ const Cardaction = styled.button`
   font-size: 1.2rem;
   font-weight: 500;
   transition: all 0.3s ease-in-out;
+
 
   &:hover {
     background: ${({ theme }) => theme.colors.secondary};
@@ -380,7 +383,15 @@ const InfoSection = () => {
 
 const BodyContainer = styled.div`
 transition: all 0.3s ease-in-out;
-background: ${({ theme }) => theme.colors.background};
+background: ${({ theme }) => theme.colors.white};
+background: linear-gradient(0deg, rgba(255,255,255,00) 50%, rgba(226,225,255,1) 100%);
+background: ${({ theme }) => theme.colors.white === '#fff'
+    ? 'linear-gradient(194deg, rgba(193,197,255,1) 17%, rgba(255,226,236,1) 100%)'
+    : 'linear-gradient(0deg, rgba(0,0,0,1) 51%, rgba(3,0,103,1) 100%)'};
+background-size: 100%;
+background-repeat: no-repeat;
+background-attachment: fixed;
+background-position: center;
 animation: gradient 15s ease infinite;
 
 @keyframes gradient {
@@ -427,6 +438,7 @@ const App: React.FC = () => {
         <GlobalStyle />
         <Header toggleColorMode={toggleTheme} mode={colorMode} />
         <HeroSection />
+        {/* <SecondSection /> */}
         <InfoSection />
         <ServicesSection />
         <Footer />

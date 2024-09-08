@@ -14,8 +14,12 @@ import CreateAppointment from './Appointment_book';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import HotelIcon from '@mui/icons-material/Hotel';
-import deepOrange from '@mui/material/colors/deepOrange';
 import { useTheme } from '../templates/styles/theme';
+import Switch from '@mui/material/Switch';
+import SearchOldCase from './component2/Search_old_case';
+import useNotification from '../General/useNotification';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -128,6 +132,14 @@ const StyledContainerContent = styled.div`
     height: 100vh;
 `;
 
+const Maincontainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: ${({ theme }) => theme.colors.background};
+
+    height: 100vh;
+`;
 
 const AppointmentManager = () => {
     const { theme } = useTheme();
@@ -142,6 +154,14 @@ const AppointmentManager = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [target_id, setTarget_id] = useState(0);
     const [name_of_selected, setName_of_selected] = useState('');
+    const [isNewAppointment, setIsNewAppointment] = useState(false);
+    const [price, setPrice] = useState(0);
+    const [old_appointment_fees, setOld_appointment_fees] = useState(0);
+    const handleAppointmentTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsNewAppointment(event.target.checked);
+    };
+    const { openNotification } = useNotification();
+    const [backdrop, setBackdrop] = useState(false);
 
     // Fetch data for each type
     const fetchData = async () => {
@@ -166,20 +186,25 @@ const AppointmentManager = () => {
             });
         } catch (error) {
             console.error("Error fetching data", error);
+            openNotification('error', 'Error', 'Error fetching data');
         }
     };
 
     useEffect(() => {
-        fetchData();
-
+        setBackdrop(true);
+        fetchData().then(() => {
+            setBackdrop(false);
+        });
     }, []);
 
     // Open dialog and set selected type
-    const handleOpenDialog = (type: string | React.SetStateAction<null>, target_id: number, name_of_selected: string) => {
+    const handleOpenDialog = (type: string | React.SetStateAction<null>, target_id: number, name_of_selected: string, price?: number, old_appointment_fees?: number) => {
         setSelectedType(type);
         setOpenDialog(true);
         setTarget_id(target_id);
         setName_of_selected(name_of_selected);
+        setPrice(price || 0);
+        setOld_appointment_fees(old_appointment_fees || 0);
     };
 
     const handleCloseDialog = () => {
@@ -187,17 +212,31 @@ const AppointmentManager = () => {
         setSelectedType(null);
         setTarget_id(0);
         setName_of_selected('');
+        setPrice(0);
     };
 
     // Render list based on the selected type
     const renderList = (type: string, items: any[]) => (
         <StyledList>
-            {items.map((item: { name: any; room_number: any; bed_number: any; user: { first_name: any; }; id: number }, index: React.Key | null | undefined) => (
-                <>{type === 'doctors' ? <PersonStyledListItem key={index} onClick={() => handleOpenDialog(type, item.id, item.name)}>
-                    <PersonStyledAvatar sx={{ bgcolor: deepOrange[500], width: 80, height: 80, fontSize: '1.85rem' }}>{item.name[0].toUpperCase()}</PersonStyledAvatar>
+            {items.map((item: { name: any; room_number: any; bed_number: any; user: { first_name: any; }; id: number, price?: number, repeat_pationt_fees?: number, image?: string, room_price?: number }, index: React.Key | null | undefined) => (
+                <>{type === 'doctors' ? <PersonStyledListItem key={index} onClick={() => handleOpenDialog(type, item.id, item.name, item.price, item.repeat_pationt_fees)}>
+                    {/* if item.image is not null then show the image else show the avatar */}
+                    {item.image ? <PersonStyledAvatar
+                        src={item.image}
+                        sx={{
+                            width: 80,
+                            height: 80,
+                            fontSize: '1.85rem',
+                        }} /> : <PersonStyledAvatar sx={{ bgcolor: '#17c5cc', width: 80, height: 80, fontSize: '1.85rem' }}></PersonStyledAvatar>}
                     <StyledListItemText primary={item.name} />
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        <span style={{ margin: '10px' }}>₹</span>
+                        <StyledListItemText primary={item.price} />
+                        <span style={{ margin: '10px' }}>| ₹</span>
+                        <StyledListItemText primary={item.repeat_pationt_fees} />
+                    </div>
                 </PersonStyledListItem> :
-                    <StyledListItem key={index} onClick={() => handleOpenDialog(type, item.id, item.name || item.room_number || item.bed_number || item.user.first_name)}>
+                    <StyledListItem key={index} onClick={() => handleOpenDialog(type, item.id, item.name || item.room_number || item.bed_number || item.user.first_name, item.price || item.repeat_pationt_fees || item.room_price)}>
                         {type === 'rooms' && <StyledAvatar sx={{ bgcolor: 'blue' }}><MeetingRoomIcon /></StyledAvatar>}
                         {type === 'beds' && <StyledAvatar sx={{ bgcolor: '#948500' }}><HotelIcon /></StyledAvatar>}
                         {type === 'facilities' && <StyledAvatar sx={{ bgcolor: 'green' }}><LocalHospitalIcon /></StyledAvatar>}
@@ -209,6 +248,13 @@ const AppointmentManager = () => {
 
     return (
         <Container>
+            {backdrop && <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={backdrop}
+                onClick={() => setBackdrop(false)}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>}
             <Heading>Doctors</Heading>
             {renderList('doctors', data.doctors)}
             <Heading>Rooms</Heading>
@@ -229,6 +275,11 @@ const AppointmentManager = () => {
                 style={{
                     backgroundColor: theme.colors.background,
                     width: '100%',
+                }}
+                PaperProps={{
+                    style: {
+                        backgroundColor: theme.colors.background,
+                    },
                 }}
             >
                 <AppBar sx={{ position: 'relative', background: theme.colors.white }}>
@@ -251,11 +302,34 @@ const AppointmentManager = () => {
                     </Toolbar>
                 </AppBar>
                 <StyledContainerContent>
+                    {/* create switch for old and new appointment */}
+                    {selectedType === 'doctors' && <>
+                        <Switch
+                            checked={isNewAppointment}
+                            onChange={handleAppointmentTypeChange}
+                            color="primary"
+                            sx={{
+                                margin: '20px',
+                                color: theme.colors.text,
+                            }}
+                            size="small"
+                        />
+                        <Typography sx={{
+                            margin: '20px',
+                            color: theme.colors.text
+                        }} variant="h6" component="div">
+                            {isNewAppointment ? 'New Appointment' : 'Old Appointment'}
+                        </Typography></>}
                     {/* Here you can add a form component based on the selectedType */}
-                    {selectedType === 'doctors' && <CreateAppointment type="doctor" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
-                    {selectedType === 'rooms' && <CreateAppointment type="room" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
-                    {selectedType === 'beds' && <CreateAppointment type="bed" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
-                    {selectedType === 'facilities' && <CreateAppointment type="facility" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
+                    {selectedType === 'doctors' ? <Maincontainer>{isNewAppointment ?
+                        <CreateAppointment type="doctor" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} target_id_fees={price} />
+                        : <SearchOldCase doctor_id={target_id} custom_fees={old_appointment_fees} />}
+                    </Maincontainer> :
+                        <>
+                            {selectedType === 'rooms' && <CreateAppointment type="room" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
+                            {selectedType === 'beds' && <CreateAppointment type="bed" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
+                            {selectedType === 'facilities' && <CreateAppointment type="facility" target_id={target_id} name_of_selected={name_of_selected} handleCloseDialog={handleCloseDialog} />}
+                        </>}
                 </StyledContainerContent>
             </Dialog>
         </Container>

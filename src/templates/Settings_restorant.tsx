@@ -13,6 +13,7 @@ import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import PersonRemoveAlt1RoundedIcon from '@mui/icons-material/PersonRemoveAlt1Rounded';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
 import Side_pannel from "./components/Side_pannel";
+import Hospital_Timings from "../src2/component2/Hospital_timings";
 
 const StyledDiv = styled.div`
     padding: 20px;
@@ -485,7 +486,7 @@ type SettingsProps = {
     Settings?: any
 }
 
-function Settings_restorant({ For = "Restorant", Settings = Settings_component }: SettingsProps) {
+function Settings_restorant({ For = "restorant", Settings = Settings_component }: SettingsProps) {
     const { theme } = useTheme()
     const { id } = useParams()
 
@@ -505,6 +506,7 @@ function Settings_restorant({ For = "Restorant", Settings = Settings_component }
                     color: theme.colors.gray
                 }}>{For}</h5></h1>
                 <Settings />
+                <Hospital_Timings For={For} sub_id={id as string} />
             </StyledDiv >
         </ContainerHOlder>
     )

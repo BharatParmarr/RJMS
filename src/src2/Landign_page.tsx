@@ -127,7 +127,6 @@ const HeroTitle = styled(motion.h1)`
     margin-bottom: 1.5rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     width: 100%;
-    text-align: center;
     text-transform: capitalize;
     overflow-wrap: break-word;
 
@@ -221,16 +220,6 @@ const Image = styled.img`
     height: 65%;
     object-fit: cover;
     transform: rotateY(180deg);
-    animation: filter_animation 10s infinite;
-
-    @keyframes filter_animation {
-        0% {
-            filter: hue-rotate(0deg);
-        }
-        100% {
-            filter: hue-rotate(360deg);
-        }
-    }
 
     @media (max-width: 768px) {
         width: 100%;
@@ -381,12 +370,12 @@ const iconStyle = { marginRight: '10px' };
 
 const HospitalInfo = styled.div`
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     padding: 2rem;
     margin-top: 2rem;
-    gap: 2rem;
+    gap: 1rem;
     min-height: 100vh;
 
     @media (max-width: 768px) {
@@ -403,13 +392,19 @@ const HospitalInfoCard = styled.div`
     height: fit-content;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 1rem;
     width: 30%;
-
+    text-align: center;
+    
     @media (max-width: 768px) {
         width: 90%;
+    }
+
+    &:hover {
+        transform: scale(1.05);
+        transition: all 0.2s ease-in;
     }
 `;
 
@@ -449,13 +444,13 @@ const ReviewCard = styled.div`
     box-shadow: 0 4px 6px ${({ theme }) => theme.colors.shadow};
     transition: all 0.3s ease-in;
     height: fit-content;
-background: rgba(255, 255, 255, 0.2);
-border-radius: 16px;
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-backdrop-filter: blur(5px);
--webkit-backdrop-filter: blur(5px);
-border: 1px solid rgba(255, 255, 255, 0.3);
-color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
 `;
 
 const ReviewRating = styled.p`
@@ -775,30 +770,6 @@ const LandingPage = ({ hospital }: any) => {
 // ... existing HomePage_Landingpage component ...
 
 export default function HomePage_Landingpage() {
-
-    // const hospital = {
-    //     business: {
-    //         name: 'Hospital Name',
-    //         address: 'Hospital Address',
-    //         phone: '1234567890',
-    //         email: 'ajlkjds lkjlkj.com',
-    //         logo: 'https://via.placeholder.com/150',
-    //     },
-    //     specialties: 'Specialty 1, Specialty 2, Specialty 3',
-    //     facilities_available: 'Facility 1, Facility 2, Facility 3',
-    //     number_of_beds: 100,
-    //     number_of_rooms: 50,
-    //     opening_hours: 'Monday - Sunday',
-    //     timings: [
-    //         {day: 'Monday', opening_time: '9:00 AM', closing_time: '5:00 PM' },
-    //         {day: 'Tuesday', opening_time: '9:00 AM', closing_time: '5:00 PM' },
-    //         {day: 'Wednesday', opening_time: '9:00 AM', closing_time: '5:00 PM' },
-    //         {day: 'Thursday', opening_time: '9:00 AM', closing_time: '5:00 PM' },
-    //         {day: 'Friday', opening_time: '9:00 AM', closing_time: '5:00 PM' },
-    //         {day: 'Saturday', opening_time: '9:00 AM', closing_time: '5:00 PM' },
-    //         {day: 'Sunday', opening_time: '9:00 AM', closing_time: '5:00 PM' },
-    //     ],
-    // };
 
     const [hospital, setHospital] = useState({});
     const { sub_id } = useParams();

@@ -16,7 +16,14 @@ const apis2 = axios.create({
     },
 });
 
-export { apis, apis2 };
+const Education_apis = axios.create({
+    baseURL: API_HOST + '/api3/req',
+    headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+    },
+});
+
+export { apis, apis2, Education_apis };
 
 
 export default apis;

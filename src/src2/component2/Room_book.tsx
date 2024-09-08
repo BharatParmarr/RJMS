@@ -9,7 +9,7 @@ import { apis2 } from '../../apis';
 const Styledform = styled.form`
   width: 100%;
     display: flex;
-    background-color: ${({ theme }) => theme.colors.background};
+    background-color: ${({ theme }) => theme.colors.white};
     flex-direction: column;
     margin-top: 20px;
 `;
@@ -40,7 +40,7 @@ const Bed = styled.div`
   display: flex;
   flex-direction: column;
   padding: 20px;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.white};
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   color: ${({ theme }) => theme.colors.text};
@@ -49,6 +49,7 @@ const Bed = styled.div`
 
 const BedNameContainer = styled.h3`
   color: ${({ theme }) => theme.colors.text};
+  
 `;
 
 function Bed_book({ id, name }: any) {
@@ -92,7 +93,7 @@ function Bed_book({ id, name }: any) {
             </BedNameContainer>
             <Styledform onSubmit={handleSubmit}>
                 <StyledGrid container spacing={2} sx={{
-                    backgroundColor: theme.colors.background,
+                    backgroundColor: theme.colors.white,
                     padding: '20px',
                     borderRadius: '10px',
                 }}>
@@ -119,7 +120,6 @@ function Room_book({ id, sub_id }: any) {
     useEffect(() => {
         const res = apis2.get('/room_book/' + id);
         res.then((response) => {
-            console.log(response);
             if (response.status === 200) {
                 setTotalPatients(response.data.total_patients);
             }
@@ -160,10 +160,11 @@ function Room_book({ id, sub_id }: any) {
     return (
         <div style={{
             overflowY: 'auto',
+            backgroundColor: theme.colors.background,
         }}>
             <Styledform onSubmit={handleSubmit}>
                 <StyledGrid container spacing={2} sx={{
-                    backgroundColor: theme.colors.white,
+                    backgroundColor: theme.colors.background,
                     padding: '20px',
                     borderRadius: '10px',
                 }}>

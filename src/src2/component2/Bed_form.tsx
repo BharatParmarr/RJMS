@@ -28,6 +28,7 @@ const ListItem = styled.li`
   border-bottom: 1px solid #ccc;
   display: flex;
   justify-content: space-between;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const Button = styled.button`
