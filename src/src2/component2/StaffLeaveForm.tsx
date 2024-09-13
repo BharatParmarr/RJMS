@@ -7,6 +7,8 @@ import { Table } from 'antd';
 import { useEffect } from 'react';
 import { Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import { ConfigProvider } from "antd";
+
 const StyledTable = styled(Table)`
     background-color: ${({ theme }) => theme.colors.background};
     border-radius: 10px;
@@ -56,6 +58,7 @@ const StyledContainer = styled.div`
     border-radius: 10px;
     animation: smooth-appear 0.5s ease-in-out;
     position: relative;
+    padding-bottom: 100px;
     @keyframes smooth-appear {
         from {
             bottom: -100%;
@@ -381,42 +384,45 @@ const StaffAttendance_and_Salary_History_pageination = ({ staff_id, setDialogOpe
             <CloseButton type="primary" htmlType="button" onClick={() => {
                 setDialogOpen(false);
             }}>x</CloseButton>
-            <Tabs defaultActiveKey="1"
-                items={[
-                    {
-                        key: '1',
-                        label: 'Attendance History',
-                        children: <Conatiner>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <Selaction data='month' month={month} setMonth={setMonth} />
-                                <Selaction data='year' month={year.toString()} setMonth={setYear} />
-                            </div>
-                            <StyledTable
-                                dataSource={attendance}
-                                pagination={false}
-                                columns={columns}
-                            />
-                        </Conatiner>
-                    },
-                    {
-                        key: '2',
-                        label: 'Salary History',
-                        children: <Conatiner>
-                            {/* date picker */}
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <Selaction data='month' month={month2} setMonth={setMonth2} />
-                                <Selaction data='year' month={year2.toString()} setMonth={setYear2} />
-                            </div>
-                            <StyledTable
-                                dataSource={salary}
-                                pagination={false}
-                                columns={columns2}
-                            />
-                        </Conatiner>
-                    }
-                ]}
-            />
-
+            <ConfigProvider theme={{ token: { colorText: "gray" } }}>
+                <Tabs defaultActiveKey="1"
+                    items={[
+                        {
+                            key: '1',
+                            label: 'Attendance History',
+                            children: <Conatiner>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <Selaction data='month' month={month} setMonth={setMonth} />
+                                    <Selaction data='year' month={year.toString()} setMonth={setYear} />
+                                </div>
+                                <StyledTable
+                                    dataSource={attendance}
+                                    pagination={false}
+                                    columns={columns}
+                                    rowHoverable={false}
+                                />
+                            </Conatiner>
+                        },
+                        {
+                            key: '2',
+                            label: 'Salary History',
+                            children: <Conatiner>
+                                {/* date picker */}
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <Selaction data='month' month={month2} setMonth={setMonth2} />
+                                    <Selaction data='year' month={year2.toString()} setMonth={setYear2} />
+                                </div>
+                                <StyledTable
+                                    dataSource={salary}
+                                    pagination={false}
+                                    columns={columns2}
+                                    rowHoverable={false}
+                                />
+                            </Conatiner>
+                        }
+                    ]}
+                />
+            </ConfigProvider>
         </StyledContainer>
     );
 };

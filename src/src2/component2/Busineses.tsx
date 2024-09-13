@@ -38,6 +38,9 @@ const BusinessList = styled.ul`
     border-radius: 8px;
     background-color: ${({ theme }) => theme.colors.background};
     margin-bottom: 50px;
+    @media (max-width: 768px) {
+        padding: 10px;
+    }
 `;
 
 const Business = styled.li`

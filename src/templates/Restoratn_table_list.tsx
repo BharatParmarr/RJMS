@@ -356,10 +356,10 @@ function Restorant_table_list() {
                         <DividerBar textAlign="left">Data</DividerBar>
                         <StyledButton startIcon={<AutoGraphRoundedIcon />} onClick={() =>
                             window.location.href = `/data-analysis/${id}`
-                        }>Data Analysis</StyledButton>
+                        }>Analytics</StyledButton>
                         <StyledButton onClick={() => navigate(`/order-history/${id}`)} startIcon={<HistoryIcon />}>Orders History</StyledButton>
                         <DividerBar textAlign="left">Staff</DividerBar>
-                        <StyledButton startIcon={<PeopleIcon />} onClick={() => navigate(`/restorant/Manage/staff/restorant/${id}`)}>Restorant Staff</StyledButton>
+                        <StyledButton startIcon={<PeopleIcon />} onClick={() => navigate(`/restorant/Manage/staff/restorant/${id}`)}>Staff</StyledButton>
                         <StyledButton startIcon={<PeopleIcon />} onClick={() => navigate(`/restorant/Manage/staff/attendance/restorant/${id}`)}>Attendance</StyledButton>
                         <DividerBar textAlign="left">Manage</DividerBar>
                         <StyledButton startIcon={<SettingsRoundedIcon />} onClick={() => navigate(`/restorant/Manage/${id}`)}>Products</StyledButton>
@@ -368,14 +368,6 @@ function Restorant_table_list() {
                 </div>
             </TypographyDiv>
             <Maindiv >
-                <Typography variant="h3" component="div" style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBottom: '20px',
-                    fontSize: '1.5rem',
-                    fontFamily: 'Lato',
-                    color: theme.colors.secondary,
-                }}>Tables</Typography>
                 <List style={{
                     display: 'flex',
                     flexDirection: 'row',

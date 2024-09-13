@@ -14,6 +14,10 @@ import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import contect_ilustration from './svg/contact_ilustration.svg';
 import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded';
+import Diversity1Icon from '@mui/icons-material/Diversity1';
+import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+
 
 const Wrapper = styled(animated.div)`
   background-color: ${({ theme }) => theme.colors.background};
@@ -100,18 +104,74 @@ const Herodiv = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
     border-radius: 5px;
     width: 100%;
     height: 100vh;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    position: relative;
+    background-color: ${({ theme }) => theme.colors.background};
     @media (max-width: 768px) {
         width: 100%;
-        height: 50vh;
+        height: 100vh;
         margin-top: 50px;
+        flex-direction: column-reverse;
+    }
+`;
+
+const StyledTypographyHero = styled.h1`
+    font-size: 4.5rem;
+    color: ${({ theme }) => theme.colors.text};
+    text-align: center;
+    width: 50%;
+    padding: 10px;
+    margin-top: 20px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: left;
+    padding-left: 50px;
+    @media (max-width: 768px) {
+        font-size: 2.5rem;
+        width: 100%;
+    }
+    p{
+        font-size: 1.5rem;
+        font-weight: 400;
+        text-align: left;
+        padding-left: 5px;
+        color: ${({ theme }) => theme.colors.gray};
+        margin-top: 10px;
+
+        @media (max-width: 768px) {
+            font-size: 1.2rem;
+        }
+    }
+`;
+
+const StyledImageContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 100%;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+const StyledImageHero = styled.img`
+    width: 90%;
+    object-fit: cover;
+    height: 100%;
+    border-radius: 5px;
+    align-self: center;
+    justify-self: center;
+    display: flex;
+    @media (max-width: 768px) {
+        width: 90%;
     }
 `;
 
@@ -137,6 +197,65 @@ const StyledImage = styled.img`
     object-fit: cover;
 `;
 
+
+const CardsContainerSpeciality = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    margin-top: 40px;
+`;
+
+
+const CardsOFSpeciality = styled.div`
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    width: 25%;
+    height: 300px;
+    background-color: ${({ theme }) => theme.colors.white};
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    transition: 0.3s all;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+
+const CardTitle = styled.div`
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 1.8rem;
+    font-weight: 600;
+`;
+
+const CardDescription = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    font-size: 1.5rem;
+    font-weight: 400;
+`;
+
+const SectionStyled = styled.section`
+    position: relative;
+`;
 
 
 function MySideNav() {
@@ -253,65 +372,70 @@ function NavBarRestorant(
 
 
 function HeroSection({ restorantLogo }: any) {
-    const { theme } = useTheme();
-    const quotes = [
-        "People who love to eat are always the best people.",
-        "The secret of success in life is to eat what you like and let the food fight it out inside.",
-        "A restaurant is a fantasy—a kind of living fantasy in which diners are the most important members of the cast.",
-        "Food is symbolic of love when words are inadequate.",
-        "Cooking is an art, but all art requires knowing something about the techniques and materials.",
-        "One cannot think well, love well, sleep well, if one has not dined well.",
-        "Good food is the foundation of genuine happiness.",
-        "A recipe has no soul. You, as the cook, must bring soul to the recipe.",
-        "Dining is and always was a great artistic opportunity.",
-        "You don’t need a silver fork to eat good food.",
-        "Food is our common ground, a universal experience.",
-        "Life is uncertain. Eat dessert first."
-    ];
-    return (
-        <Herodiv className="herodiv" style={{
-            // backgroundImage: `url(${API_HOST + '/' + restorantLogo})`,
-            display: 'flex',
-            justifyContent: 'space-around',
-            alignItems: 'center',
-            flexDirection: 'row',
-            gap: '20px',
-        }}>
-            <Typography variant="h3" component="div" style={{
-                fontSize: '1.5rem',
-                color: theme.colors.black,
-                textAlign: 'center',
-                width: '50%',
-                padding: '10px',
-                backgroundColor: theme.colors.gray + '69',
-                borderRadius: '5px',
-            }}>{
-                    quotes[Math.floor(Math.random() * quotes.length)]
+    // const { theme } = useTheme();
+    // const quotes = [
+    //     'Enjoy Our Delicious Meals.',
 
-                }</Typography>
-            <div style={{
-                width: '50%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '20px',
-            }}>
-                <img src={restorantLogo} alt="restorant image" style={{
-                    width: '90%',
-                    objectFit: 'cover',
-                    height: '84%',
-                    borderRadius: '5px',
-                    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                    alignSelf: 'center',
-                    justifySelf: 'center',
-                    display: 'flex',
-                    alignItems: 'center',
-                }} />
-            </div>
-        </Herodiv>
+    // ];
+    return (
+        <SectionStyled >
+            <Herodiv>
+                <StyledTypographyHero >
+                    Enjoy Our <br />Delicious Meals.
+                    <p>
+                        For the love of delicious food.
+                    </p>
+                </StyledTypographyHero>
+                <StyledImageContainer>
+                    <StyledImageHero src={restorantLogo} alt="restorant image" />
+                </StyledImageContainer>
+            </Herodiv>
+        </SectionStyled>
     )
 }
 
+
+function FoodSection() {
+
+    let speciality = [
+        {
+            title: 'Expert Chefs',
+            description: 'Our chefs are experts in their field and use the freshest ingredients to create delicious meals.',
+            icon: <Diversity1Icon />,
+        },
+        {
+            title: 'Quality Food',
+            description: 'We use the freshest ingredients to create delicious meals.',
+            icon: <PlaylistAddCheckCircleIcon />,
+        },
+        {
+            title: 'Hygiene',
+            description: 'We maintain the highest standards of hygiene to ensure that our customers are safe and healthy.',
+            icon: <CleaningServicesIcon />,
+        },
+        {
+            title: 'Hygiene',
+            description: 'We maintain the highest standards of hygiene to ensure that our customers are safe and healthy.',
+            icon: <CleaningServicesIcon />,
+        },
+
+    ]
+    return (
+        <CardsContainerSpeciality>
+            {speciality.map((item, index) => (
+                <CardsOFSpeciality key={index}>
+                    {item.icon}
+                    <CardTitle >
+                        {item.title}
+                    </CardTitle>
+                    <CardDescription>
+                        {item.description}
+                    </CardDescription>
+                </CardsOFSpeciality>
+            ))}
+        </CardsContainerSpeciality>
+    )
+}
 
 
 
@@ -375,13 +499,14 @@ function Restorant_home_view() {
             })
     }, []);
 
-    let weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 
     return (
         <Wrapper style={springProps}>
             <NavBarRestorant restorantname={RestrontDetails.name} />
             <HeroSection restorantLogo={RestrontDetails.logo} />
+            <FoodSection />
             <ContactDetails id='contact' >
                 <Typography variant="h3" component="div" style={{
                     display: 'flex',

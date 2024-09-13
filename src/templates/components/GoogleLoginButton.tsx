@@ -3,10 +3,11 @@
 import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import API_HOST from '../../config';
-// import GoogleIcon from '@mui/icons-material/Google';
 import './component_styles.css';
+import useNotification from '../../General/useNotification';
 
 const GoogleLoginButton = () => {
+    const { openNotification } = useNotification();
     const login = useGoogleLogin({
         onSuccess: async (tokenResponse: TokenResponse) => {
             console.log('Login success:', tokenResponse);
@@ -18,18 +19,19 @@ const GoogleLoginButton = () => {
                 if (response.data.token) {
                     localStorage.setItem('token', response.data.token);
                     window.location.href = '/app';
+                    openNotification('success', 'Success', 'Login successful');
                 }
                 else {
-                    alert('Login failed');
+                    openNotification('error', 'Error', 'Login failed');
                 }
             } catch (error) {
                 console.error('Error:', error);
+                openNotification('error', 'Error', 'Login failed');
             }
         }
     });
 
-    return <button onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        console.log('Login button clicked:', event);
+    return <button onClick={(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         login()
     }} style={{
         backgroundColor: '#white',

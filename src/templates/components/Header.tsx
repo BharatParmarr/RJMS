@@ -24,6 +24,7 @@ import { BadgeProps } from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Brand_name } from '../../Veriables';
+import useNotification from '../../General/useNotification';
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -147,15 +148,12 @@ interface AppAppBarProps {
 }
 
 function Header({ mode, toggleColorMode }: AppAppBarProps) {
-
+  const { openNotification } = useNotification();
   const Services_list = {
     'Coustemer': 'coustemer',
     'Restorant Management': 'create-restaurant',
-    // 'Hotels Management': 'hostels',
-    // 'Service Shop': 'service-shop',
   }
 
-  console.log(mode)
   const { theme } = useTheme();
   const navigate = useNavigate();
 
@@ -181,17 +179,19 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
         if (response.status == 401) {
           localStorage.removeItem('token');
           setShowLogin(true);
+          openNotification('error', 'Error', 'Your account is not verified.')
           return;
         } else if (response.status == 403) {
           localStorage.removeItem('token');
           setShowLogin(true);
+          openNotification('error', 'Error', 'Your account is not verified.')
           return;
         }
         const data = await response.json();
         setUsername(data.username);
         setSubscription(true);
       } catch (error) {
-        console.error('There was an error!', error);
+        openNotification('error', 'Error', 'Something went wrong!')
         setShowLogin(true);
       }
     }
@@ -276,6 +276,14 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                 >
                   <Typography variant="body2" color={theme.colors.text}>
                     Pricing
+                  </Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => navigate('/about')}
+                  sx={{ py: '6px', px: '12px' }}
+                >
+                  <Typography variant="body2" color={theme.colors.text}>
+                    About Us
                   </Typography>
                 </MenuItem>
                 <MenuItem
@@ -364,6 +372,9 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
                     navigate('/pricing/')
                   }} >
                     Pricing
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate('/about')}>
+                    About Us
                   </MenuItem>
                   <MenuItem onClick={() => navigate('/F&Q/')}>
                     F & Q

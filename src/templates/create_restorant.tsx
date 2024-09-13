@@ -17,6 +17,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import useNotification from '../General/useNotification';
 
 const StyledPaper = styled(Paper)`
 background-color: ${({ theme }) => theme.colors.background};
@@ -398,7 +399,7 @@ function TimeView({ settimedata }: { settimedata: any }) {
 
 
 export default function Create_restorant() {
-
+    const { openNotification } = useNotification();
     const { theme } = useTheme();
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
@@ -435,7 +436,15 @@ export default function Create_restorant() {
                 'Authorization': `Token ${yourToken}`
             }
         })
-            .then(response => response.json())
+            .then(response => {
+                if (response.status === 401) {
+                    openNotification('error', 'Error', 'Your account is not verified.')
+                } else if (response.status === 403) {
+                    openNotification('error', 'Error', 'You are not authorized to access this page.')
+                } else {
+                    return response.json()
+                }
+            })
             .then(data => setRestorants(data))
             .catch((error) => console.error('Error:', error));
 
@@ -455,24 +464,23 @@ export default function Create_restorant() {
             formdata.append('logo', logo);
         }
         if (!name || !address || !phone || !email || !website || !description) {
-            alert('Please fill all the fields');
+            openNotification('warning', 'Warning', 'Please fill all the fields');
             return;
         }
         if (logo.size > 2000000) {
-            alert('Image size should be less than 1MB');
+            openNotification('warning', 'Warning', 'Image size should be less than 1MB');
             return;
         }
         if (logo.type !== 'image/jpeg' && logo.type !== 'image/png') {
-            alert('Image should be in jpeg or png format');
+            openNotification('warning', 'Warning', 'Image should be in jpeg or png format');
             return;
         }
         if (website && !website.includes('https')) {
-            alert('Website should start with https://');
+            openNotification('warning', 'Warning', 'Website should start with https://');
             return;
         }
 
         let yourToken = localStorage.getItem('token');
-        console.log(yourToken);
         fetch(`${API_HOST}/restorants/`, {
             method: 'POST',
             headers: {
@@ -484,7 +492,7 @@ export default function Create_restorant() {
                 console.log(response, 'response');
                 if (response.status === 201) {
 
-                    alert('Congratulations! Restorant Is Online.');
+                    openNotification('success', 'Success', 'Congratulations! Restorant Is Online.');
                     setName('');
                     setAddress('');
                     setPhone('');
@@ -495,7 +503,7 @@ export default function Create_restorant() {
                     setShowForm(false);
 
                 } else {
-                    alert('Error: ' + response.statusText);
+                    openNotification('error', 'Error', 'Error: ' + response.statusText);
                     return;
                 }
                 return response.json();
@@ -511,12 +519,13 @@ export default function Create_restorant() {
                     }),
 
                 }).then(res => res.json()).then(data => {
-                    console.log(data)
-                }).catch(err => console.log(err))
+                    console.log(data);
+                }).catch(_err => {
+                    openNotification('error', 'Error', 'Something went wrong! Please try again later.');
+                })
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                console.log('Error:', error);
+            .catch((_error) => {
+                openNotification('error', 'Error', 'Something went wrong! Please try again later.');
             });
 
 
@@ -546,20 +555,15 @@ export default function Create_restorant() {
                     >
                         My Restaurants
                     </Typography>
-                    <Typography variant="h5" style={{
-                        marginBottom: '20px',
-                        fontSize: '1rem',
-                        color: `${({ theme }: any) => theme.colors.primary}`
-                    }}>Owner</Typography>
                     <StyledList style={{
                         backgroundColor: theme.colors.background,
                         marginBottom: '30px',
                     }} >
-                        {restorants?.created_by.length && restorants.created_by.length > 0 ? '' : <Typography variant="h5" style={{
-                            marginBottom: '20px',
-                            fontSize: '0.59rem',
-                            color: theme.colors.gray,
-                        }}>No restorant as owner</Typography>}
+                        {restorants?.created_by.length === 0 && restorants?.manager_restorant.length === 0 && restorants?.staffs.length === 0 && <h2 style={{
+                            color: theme.colors.text,
+                            textAlign: 'center',
+                            marginTop: '20px',
+                        }}>No restaurants found.</h2>}
                         {restorants?.created_by.map((created_by: any) => (
                             <StyledButton2 style={{
                                 display: 'flex',
@@ -588,7 +592,7 @@ export default function Create_restorant() {
                             </StyledButton2>
                         ))}
                     </StyledList>
-                    {restorants?.manager_restorant.length && restorants?.manager_restorant.length > 0 ? <StyledList>
+                    {restorants?.manager_restorant.length && restorants?.manager_restorant.length > 0 && <StyledList>
                         {restorants?.manager_restorant.map((restorant: any) => (
                             <StyledButton2 style={{
                                 display: 'flex',
@@ -603,7 +607,7 @@ export default function Create_restorant() {
                             }} key={restorant.id}
                                 onClick={() => navigate(`/restorant/${restorant.id}`, { state: { restorant } })}
                             >
-                                <ListImage src={API_HOST + restorant.logo} alt={restorant.name} />
+                                <ListImage src={restorant.logo} alt={restorant.name} />
                                 <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${restorant.id}`, { state: { restorant } })} style={{
                                     color: theme.colors.primary,
                                     backgroundColor: `${({ theme }: any) => theme.colors.white}`,
@@ -616,19 +620,8 @@ export default function Create_restorant() {
                                 </StyledButton2>
                             </StyledButton2>
                         ))}
-                    </StyledList> :
-                        <Typography variant="h5" style={{
-                            marginBottom: '20px',
-                            fontSize: '0.58rem',
-                            color: theme.colors.gray
-                        }}>No restorant as meanager</Typography>}
-                    <Typography variant="h5" style={{
-                        marginBottom: '0px',
-                        fontSize: '1rem',
-                        color: `${({ theme }: any) => theme.colors.primary}`
-
-                    }}>Staff</Typography>
-                    {restorants?.staffs.length && restorants.staffs.length > 0 ? <StyledList>
+                    </StyledList>}
+                    {restorants?.staffs.length && restorants.staffs.length > 0 && <StyledList>
                         {restorants?.staffs.map((staff: any) => (
                             <StyledButton2 style={{
                                 display: 'flex',
@@ -643,7 +636,7 @@ export default function Create_restorant() {
                             }} key={staff.id}
                                 onClick={() => navigate(`/restorant/${staff.id}`, { state: { staff } })}
                             >
-                                <ListImage src={API_HOST + staff.logo} alt={staff.name} />
+                                <ListImage src={staff.logo} alt={staff.name} />
                                 <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${staff.id}`, { state: { staff } })} style={{
                                     color: theme.colors.primary,
                                     backgroundColor: `${({ theme }: any) => theme.colors.white}`,
@@ -656,14 +649,7 @@ export default function Create_restorant() {
                                 </StyledButton2>
                             </StyledButton2>
                         ))}
-                    </StyledList> :
-                        <Typography variant="h5" style={{
-                            marginBottom: '20px',
-                            marginTop: '10px',
-                            fontSize: '0.59rem',
-                            color: theme.colors.gray,
-                        }}>No restorant as staff</Typography>}
-
+                    </StyledList>}
                     <Button onClick={() => show()} style={{
                         backgroundColor: `${({ theme }: any) => theme.colors.primary}`,
                         color: `${({ theme }: any) => theme.colors.white}`,

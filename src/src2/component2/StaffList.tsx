@@ -131,6 +131,7 @@ const OpentContainer = styled.div`
     height: 99vh;
     background-color: ${({ theme }) => theme.colors.background};
     z-index: 1000;
+    overflow: scroll;
 `;
 
 const StaffList = () => {

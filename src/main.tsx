@@ -58,6 +58,11 @@ import CreateStudent from "./src2/Create_Education";
 import Terms_and_condtion from "./templates/Terms_and_condtion";
 import StaffList from "./src2/component2/StaffList";
 import Staff_attendance_list from "./src2/component2/Staff_attendance_list";
+import BlogListing from "./templates/Blogs";
+import BlogPost from "./templates/Post/blog-post";
+import AboutUsSection from "./templates/Pages";
+import BlogPost_1 from "./templates/Post/How Business Management Software Can Boost Small Business Growth";
+
 function Main() {
   return (
     <React.StrictMode>
@@ -65,6 +70,9 @@ function Main() {
         <Router>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/blog" element={<BlogListing />} />
+            <Route path="/about" element={<AboutUsSection />} />
+            <Route path="/blog/1" element={<BlogPost_1 />} />
             <Route path="/app" element={<App />} />
             <Route path="/auth" element={<Oauth />} />
             <Route path="/login" element={<Login />} />

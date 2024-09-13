@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import API_HOST from "../config";
 import styled from 'styled-components';
 import { Button, List, ListItem, ListItemText, Typography } from '@mui/material';
@@ -14,7 +14,10 @@ import Backdrop from '@mui/material/Backdrop';
 import { motion, AnimatePresence } from 'framer-motion';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import { useParams } from "react-router-dom";
-
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs, { Dayjs } from "dayjs";
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
@@ -128,6 +131,8 @@ export default function Order_history() {
     const [tablesId, setTablesId] = useState<number[]>([]);
     const [selectedTable, setSelectedTable] = useState<number | null>(null);
     const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+    const [selectedDate, setSelectedDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
+    const [previousDate, setPreviousDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
 
     useEffect(() => {
         // Filter the orders based on the selected table id
@@ -138,14 +143,23 @@ export default function Order_history() {
         }
     }, [selectedTable, orders]);
 
+    const ref = useRef(true)
+
     useEffect(() => {
-        console.log('fetching orders')
-        setOpen(true)
-        if (empty) {
-            setOpen(false)
+        if (ref.current) {
+            ref.current = false
             return
         }
-        fetch(API_HOST + '/api/orderHistory?page=' + page + '&' + 'restorant_id=' + id, {
+        // Reset orders and page when date changes
+        if (selectedDate !== previousDate) {
+            setOrders([]);
+            setTables([]);
+            setTablesId([]);
+            setPage(1);
+            setEmpty(false);
+            setPreviousDate(selectedDate);
+        }
+        fetch(API_HOST + '/api/orderHistory?page=' + page + '&' + 'restorant_id=' + id + '&' + 'date=' + selectedDate, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -153,6 +167,7 @@ export default function Order_history() {
             }
         }).then(response => response.json())
             .then(data => {
+                console.log(data)
                 if (data.length === 0) {
                     setEmpty(true)
                     return
@@ -174,9 +189,13 @@ export default function Order_history() {
             }).finally(() => {
                 setOpen(false)
             })
-    }, [page])
+    }, [page, selectedDate])
     return (
         <Container>
+            {/* select date */}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker onChange={(newValue) => setSelectedDate(`${newValue.$y}-${newValue.$M + 1}-${newValue.$D}`)} />
+            </LocalizationProvider>
             <Tablesnamelist>
                 {tables && tables.map((table: any) => (
                     <StyledButton onClick={() => setSelectedTable(tablesId[tables.indexOf(table)])} key={table} style={{
