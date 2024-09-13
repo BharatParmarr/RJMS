@@ -17,7 +17,7 @@ import { useParams } from "react-router-dom";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
@@ -194,7 +194,10 @@ export default function Order_history() {
         <Container>
             {/* select date */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker onChange={(newValue) => setSelectedDate(`${newValue.$y}-${newValue.$M + 1}-${newValue.$D}`)} />
+                <DatePicker onChange={(newValue: any) => {
+                    if (newValue === null) return;
+                    setSelectedDate(`${newValue.$y}-${newValue.$M + 1}-${newValue.$D}` as string);
+                }} />
             </LocalizationProvider>
             <Tablesnamelist>
                 {tables && tables.map((table: any) => (

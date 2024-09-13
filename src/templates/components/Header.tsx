@@ -148,6 +148,7 @@ interface AppAppBarProps {
 }
 
 function Header({ mode, toggleColorMode }: AppAppBarProps) {
+  console.assert(mode);
   const { openNotification } = useNotification();
   const Services_list = {
     'Coustemer': 'coustemer',

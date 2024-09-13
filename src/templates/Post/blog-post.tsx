@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Typography, Container, Grid, List, ListItem, ListItemText, AppBar, Toolbar, IconButton, Drawer, useMediaQuery, useTheme } from '@mui/material';
+import { Typography, Container, Grid, List, ListItemText, AppBar, Toolbar, IconButton, Drawer, useMediaQuery, useTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link as ScrollLink, Element } from 'react-scroll';

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Typography, Card, CardContent, Grid, Button } from '@mui/material';
+import { Typography, Card, CardContent, Grid } from '@mui/material';
 import { useSpring, animated } from 'react-spring';
 
 const HeroSectionBlogs = styled.div`

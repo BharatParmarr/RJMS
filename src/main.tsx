@@ -59,7 +59,7 @@ import Terms_and_condtion from "./templates/Terms_and_condtion";
 import StaffList from "./src2/component2/StaffList";
 import Staff_attendance_list from "./src2/component2/Staff_attendance_list";
 import BlogListing from "./templates/Blogs";
-import BlogPost from "./templates/Post/blog-post";
+// import BlogPost from "./templates/Post/blog-post";
 import AboutUsSection from "./templates/Pages";
 import BlogPost_1 from "./templates/Post/How Business Management Software Can Boost Small Business Growth";
 
