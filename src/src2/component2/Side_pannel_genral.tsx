@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Typography, Button, Divider } from '@mui/material'
+import { Typography, Button } from '@mui/material'
 import ReceiptLongRoundedIcon from '@mui/icons-material/ReceiptLongRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import AutoGraphRoundedIcon from '@mui/icons-material/AutoGraphRounded';
@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from '../../templates/styles/theme';
 import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
+import WebIcon from '@mui/icons-material/Web';
 
 const NavigationWrap = styled.div`
     display: flex;
@@ -37,36 +38,10 @@ const NavigationWrap = styled.div`
         justify-content: flex-start;
         text-align: left;
 
-            &::after {
-                content: '';
-                width: 100%;
-                height: 0%;
-                position: absolute;
-                background-color: ${({ theme }) => theme.colors.primary}32;
-                transition: all 0.6s;
-            }
-            &:hover::after {
-                height: 100%;
-
-            }
-        }
-        `;
-
-
-const DividerBar = styled(Divider)`
-    color: ${({ theme }) => theme.colors.gray};
-    width: 100%;
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 5px 0;
-    text-align: center;
-    letter-spacing: 0.51px;
-
-    &::before,
-    &::after {
-    border: 1px solid ${({ theme }) => theme.colors.gray};
+        
     }
-    `;
+`;
+
 
 const TypographyDiv = styled(Typography)`
     alignItems: center;
@@ -143,10 +118,20 @@ const Maindiv = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-  color: ${({ theme }) => theme.colors.white};
-  margin: 10px 0;
-  background-color: ${({ theme }) => theme.colors.secondary};
+
+    span{
+        transition: all 0.2s;
+    }
+
+    &:hover{
+        }
+        &:hover > span{
+            background-color: ${({ theme }) => theme.colors.gray}32;
+        }
+    }
 `;
+
+
 
 
 function Menuburger(params: any) {
@@ -190,26 +175,30 @@ function Side_pannel_genral(params: any) {
     const [links_obj, setLinks_obj] = useState<links_obj_type>({
         'Restorant': {
             'Web Page': {
-                'Restorant': ['/restorant/home/${sub_id}', <HomeRoundedIcon />],
+                'Restorant': [`/restorant/home/${id}`, <WebIcon />],
             },
             'Work': {
                 'Home': ['/', <HomeRoundedIcon />],
-                'Orders': ['/Orders_view', <ReceiptLongRoundedIcon />],
-                'Dashbord': ['/restorant', <DashboardIcon />],
-                'Inventory': ['/inventory', <InventoryRoundedIcon />]
+                'Orders': [`/Orders_view/${id}`, <ReceiptLongRoundedIcon />],
+                'Dashbord': [`/restorant/${id}`, <DashboardIcon />],
+                'Inventory': [`/inventory/${id}`, <InventoryRoundedIcon />]
             },
             'Data': {
-                'Data Analysis': ['/data-analysis', <AutoGraphRoundedIcon />],
-                'Order History': ['/order-history', <HistoryIcon />],
+                'Analytics': [`/data-analysis/${id}`, <AutoGraphRoundedIcon />],
+                'Order History': [`/order-history/${id}`, <HistoryIcon />],
+            },
+            'Staff': {
+                'Staff': [`/restorant/Manage/staff/restorant/${id}`, <GroupsRoundedIcon />],
+                'Attendance': [`/restorant/Manage/staff/attendance/restorant/${id}`, <BadgeRoundedIcon />],
             },
             'Manage': {
-                'Products': ['/restorant/Manage', <SettingsRoundedIcon />],
-                'Settings': ['/restorant/Settings', <ManageAccountsRoundedIcon />],
+                'Products': [`/restorant/Manage/${id}`, <SettingsRoundedIcon />],
+                'Settings': [`/restorant/Settings/${id}`, <ManageAccountsRoundedIcon />],
             }
         },
         'hospital': {
             'Web Page': {
-                'Hospital': [`/Hospital/${sub_id}`, <HomeRoundedIcon />],
+                'Hospital': [`/Hospital/${sub_id}`, <WebIcon />],
             },
             'Work': {
                 'Home': ['/', <HomeRoundedIcon />],
@@ -232,7 +221,7 @@ function Side_pannel_genral(params: any) {
         },
         'Education': {
             'Web Page': {
-                'Education': [`/Education/${sub_id}`, <HomeRoundedIcon />],
+                'Education': [`/Education/${sub_id}`, <WebIcon />],
             },
             'Work': {
                 'Home': ['/', <HomeRoundedIcon />],
@@ -252,8 +241,8 @@ function Side_pannel_genral(params: any) {
     });
     useEffect(() => {
         let position_obj: any = JSON.parse(localStorage.getItem('position') || '{}');
-        console.log(position_obj, 'position_obj');
         if (!sub_id) return;
+        console.log(position_obj, 'position_obj', position_obj[type_page][sub_id]);
         if (position_obj[type_page] && position_obj[type_page][sub_id]) {
             if (position_obj[type_page][sub_id] === 'owner') {
                 // dont remove any links
@@ -298,21 +287,30 @@ function Side_pannel_genral(params: any) {
                     backgroundColor: theme.colors.white,
                 }}>
                     <span style={{
+                        color: '#003bde',
+                        cursor: 'pointer',
+                        fontSize: '1.52rem',
+                        fontFamily: 'Montserrat, Tenor Sans',
+                        fontWeight: '600',
+                        textTransform: 'capitalize',
                         padding: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: theme.colors.secondary,
-                        fontSize: '1.5rem',
-                    }}>{option}</span>
+                        letterSpacing: '0.5px',
+                    }}>Bizwayn</span>
                     <NavigationWrap >
                         {Object.keys(links_obj[type_page]).map((key, _index) => (
                             <>
-                                <DividerBar textAlign="left">{key}</DividerBar>
+                                {/* <DividerBar textAlign="left">{key}</DividerBar> */}
                                 {Object.keys(links_obj[type_page][key]).map((key2, index2) => (
                                     <StyledButton style={{
                                         color: option === key2 ? theme.colors.primary : theme.colors.text,
-                                        backgroundColor: option === key2 ? theme.colors.gray + '32' : theme.colors.white,
+                                        backgroundColor: option === key2 ? theme.colors.gray + '42' : theme.colors.white,
+                                        marginBottom: '5px',
+                                        fontSize: '1rem',
+                                        fontWeight: '400',
+                                        textTransform: 'capitalize',
+                                        borderRadius: '5px',
+                                        paddingLeft: '10px',
+                                        transition: 'all 0.2s',
                                     }} key={index2} onClick={() => navigate(links_obj[type_page][key][key2][0])} startIcon={links_obj[type_page][key][key2][1]}
                                     >
                                         {key2}

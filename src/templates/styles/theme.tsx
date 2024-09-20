@@ -21,6 +21,7 @@ const ThemeProvider = ({ children }: any) => {
             black: '#000',
             white: '#fff',
             gray: '#828282',
+            gradiant1: 'linear-gradient(194deg, rgba(193,197,255,1) 17%, rgba(255,226,236,1) 100%)'
         } : {
             primary: '#0063e1',
             secondary: '#108700',
@@ -33,6 +34,8 @@ const ThemeProvider = ({ children }: any) => {
             black: '#fff',
             white: '#000',
             gray: '#828282',
+            // gradiant1: 'linear-gradient(90deg, rgba(29,69,253,1) 0%, rgba(252,69,98,1) 100%)'
+            gradiant1: 'linear-gradient(90deg, rgb(9 75 67) 0%, rgb(18 20 56) 100%)'
         },
         spacing: {
             padding: '20px',

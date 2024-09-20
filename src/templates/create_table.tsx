@@ -11,7 +11,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SimpleAlert from "./components/succes_aleart";
 import Switch from '@mui/material/Switch';
-import Side_pannel from "./components/Side_pannel";
+import Side_pannel_genral from "../src2/component2/Side_pannel_genral";
 
 const ContainerHOlder = styled.div`
     display: flex;
@@ -137,8 +137,7 @@ function create_table() {
     const [type, setType] = useState('success');
 
     const { id } = useParams();
-    // const location = useLocation();
-    // const created_by = location.state.created_by;
+
     const [tables, settables] = useState([]);
     // navigtation
     const navigate = useNavigate();
@@ -315,8 +314,8 @@ function create_table() {
                 body: JSON.stringify({ category_id: category_id })
             })
                 .then(response => {
-                    if (!response.ok) { // or check for response.status === 200 for strictly checking for 200
-                        alert('Failed to delete category, Try again later.')
+                    if (!response.ok) {
+                        throw new Error('Failed to delete category, Try again later.')
                     }
                     return response.json();
                 })
@@ -358,7 +357,7 @@ function create_table() {
         })
             .then(response => {
                 if (!response.ok) {
-                    alert('Failed to create Table, Try again later.')
+                    throw new Error('Failed to create Table, Try again later.')
                 }
                 return response.json();
             })
@@ -537,7 +536,7 @@ function create_table() {
     }, [manu_category_2]);
     return (
         <ContainerHOlder>
-            <Side_pannel id={id} option={'Products'} />
+            <Side_pannel_genral id={id} option={'Products'} type_page="Restorant" />
             <Wrapper id="wrapper">
                 <h1 style={{
                     marginBottom: '20px',

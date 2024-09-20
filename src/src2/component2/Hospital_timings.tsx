@@ -13,6 +13,10 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     padding: 20px;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 const StyledTimeContainer = styled.div`
@@ -57,6 +61,12 @@ const TimeEditContaineer = styled.div`
     background-color: ${({ theme }) => theme.colors.background};
     border-radius: 10px;
     color: ${({ theme }) => theme.colors.text};
+
+    @media (max-width: 768px) {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+    }
 `;
 function Hospital_Timings({ For = "hospital", sub_id }: { For: string, sub_id: string }) {
 
@@ -126,7 +136,7 @@ function Hospital_Timings({ For = "hospital", sub_id }: { For: string, sub_id: s
 
     return (
         <Container>
-            <Space direction="vertical" size={12}>
+            <Space direction="vertical" size={12} style={{ width: '100%' }}>
                 <label style={{ textTransform: 'capitalize' }}>{For} Timings</label>
                 <div>
                     <label>Set time for all days :</label>

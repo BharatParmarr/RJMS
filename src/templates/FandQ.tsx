@@ -30,32 +30,32 @@ function Fandq() {
         {
             id: 1,
             question: "What is the purpose of this website?",
-            answer: "The purpose of this website is to provide a platform for students to find a hostel room and for hostel owners to list their rooms. It is a win-win situation for both parties."
+            answer: "The purpose of this website is to provide a platform for students to find a Restaurant and for Restaurant owners to list their Restaurant. It is a win-win situation for both parties."
         },
         {
             id: 2,
-            question: "How do I list my hostel room?",
-            answer: "To list your hostel room, you need to create an account and log in. Once you are logged in, you can click on the 'Create Room' button and fill in the required details."
+            question: "How do I list my Restaurant?",
+            answer: "To list your Restaurant, you need to create an account and log in. Once you are logged in, you can click on the 'Create Restaurant' button and fill in the required details. But you need to be in waitlist to get approval from admin."
         },
         {
             id: 3,
-            question: "How do I find a hostel room?",
-            answer: "To find a hostel room, you need to create an account and log in. Once you are logged in, you can search for available rooms by entering your preferred location, price range, and other filters."
+            question: "How do I find a Restaurant?",
+            answer: "To find a Restaurant, you need to create an account and log in. Once you are logged in, you can search for available rooms by entering your preferred location, price range, and other filters."
         },
         {
             id: 4,
-            question: "How do I pay for a hostel room?",
-            answer: "To pay for a hostel room, you need to contact the hostel owner directly. The payment method will depend on the hostel owner's preference."
+            question: "How do I pay for a Restaurant?",
+            answer: "To pay for a Restaurant, you need to contact the Restaurant owner directly. The payment method will depend on the Restaurant owner's preference."
         },
         {
             id: 5,
-            question: "How do I contact the hostel owner?",
-            answer: "To contact the hostel owner, you can send them a message through the website. You can also find their contact details on the room listing page."
+            question: "How do I contact the Restaurant owner?",
+            answer: "To contact the Restaurant owner, you can send them a message through the website. You can also find their contact details on the listing page."
         },
         {
             id: 6,
-            question: "How do I report a problem with a hostel room?",
-            answer: "To report a problem with a hostel room, you can send us a message through the website. We will investigate the issue and take appropriate action."
+            question: "How do I report a problem with a Restaurant?",
+            answer: "To report a problem with a Restaurant, you can send us a message through the website. We will investigate the issue and take appropriate action."
         }
     ]
     return (

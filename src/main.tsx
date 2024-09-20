@@ -62,6 +62,8 @@ import BlogListing from "./templates/Blogs";
 // import BlogPost from "./templates/Post/blog-post";
 import AboutUsSection from "./templates/Pages";
 import BlogPost_1 from "./templates/Post/How Business Management Software Can Boost Small Business Growth";
+import Waitinglist from "./templates/Waitinglist";
+import Business_create_form from "./Salon/Components/Business_create_form";
 
 function Main() {
   return (
@@ -129,10 +131,13 @@ function Main() {
             <Route path="/Hospital/:sub_id" element={<HomePage_Landingpage />} />
             <Route path="/Education/create" element={<CreateStudent />} />
             <Route path="/Education/*" element={<Education_App />} />
+            {/* salon */}
+            <Route path="/Salon/create" element={<Business_create_form initialValues={{}} />} />
             {/* leagal */}
             <Route path="/legals/terms-and-conditions" element={<Terms_and_condtion />} />
             {/* pages */}
             <Route path="/F&Q" element={<Fandq />} />
+            <Route path="/admin/auth/waitinglist" element={<Waitinglist />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

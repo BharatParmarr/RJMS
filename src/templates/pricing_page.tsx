@@ -10,6 +10,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { motion } from 'framer-motion';
+import { Card, CardContent, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Star from '@mui/icons-material/Star';
+import Rocket from '@mui/icons-material/Rocket';
+import ThumbsUp from '@mui/icons-material/ThumbsUpDown';
 
 function FormDialog({ open, setOpen, setCode, makeRequset, type }: any) {
 
@@ -119,10 +125,8 @@ export default function Pricing_page() {
 
                         <div className="card">
                             <div className="card__header">
-                                {/* <div className="card__icon symbol symbol--rounded"></div> */}
                                 <h2>Free</h2>
                             </div>
-                            {/* <div className="card__desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do</div> */}
                         </div>
 
                         <div className="price">₹ 0<span>/ month</span></div>
@@ -221,17 +225,91 @@ export default function Pricing_page() {
                         color: theme.colors.gray,
                         background: theme.colors.background,
                     }}>
-                        <h3 style={{
+                        {/* <h3 style={{
                             color: `${theme.colors.text}`
                         }}>You just need to create an account and you are good to go.</h3>
                         <br />
                         We are providing free subscription to all users.
                         <br />
                         <br />
-                        Enjoy the service and let us know if you need any help.
+                        Enjoy the service and let us know if you need any help. */}
+                        <PromotionalCard />
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
         </section>
     )
 }
+
+
+const StyledCard = styled(Card)(({ theme }) => ({
+    background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+    color: theme.palette.common.white,
+    borderRadius: 16,
+    overflow: 'hidden',
+    position: 'relative',
+    maxWidth: 400,
+    margin: '2rem auto',
+    boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
+}));
+
+const CardBackground = styled('div')({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.1,
+    background: 'url("data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%239C92AC" fill-opacity="0.4" fill-rule="evenodd"%3E%3Ccircle cx="3" cy="3" r="3"/%3E%3Ccircle cx="13" cy="13" r="3"/%3E%3C/g%3E%3C/svg%3E")',
+});
+
+const StyledCardContent = styled(CardContent)({
+    position: 'relative',
+    zIndex: 1,
+    padding: '2rem',
+});
+
+const Title = styled(Typography)(({ }) => ({
+    fontWeight: 'bold',
+    marginBottom: '1rem',
+    textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+}));
+
+const HighlightText = styled('span')(({ theme }) => ({
+    color: theme.palette.secondary.light,
+    fontWeight: 'bold',
+}));
+
+const IconWrapper = styled('div')({
+    display: 'flex',
+    justifyContent: 'space-around',
+    marginTop: '1.5rem',
+});
+
+
+const PromotionalCard = () => {
+    return (
+        <StyledCard>
+            <CardBackground />
+            <StyledCardContent>
+                <Title variant="h4">
+                    Join Our Platform for Free!
+                </Title>
+                <Typography variant="body1" component={motion.div} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+                    You just need to create an account and you're good to go. We're providing a <HighlightText>free subscription</HighlightText> to all users.
+                </Typography>
+                <Typography variant="body1" component={motion.div} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+                    Enjoy the service and let us know if you need any help.
+                </Typography>
+                <Typography variant="body1" component={motion.div} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
+                    <HighlightText>Limited spots available!</HighlightText> We currently have a waitlist due to high demand.
+                </Typography>
+                <IconWrapper>
+                    <Star />
+                    <Rocket />
+                    <ThumbsUp />
+                </IconWrapper>
+            </StyledCardContent>
+        </StyledCard>
+    );
+};

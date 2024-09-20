@@ -5,7 +5,8 @@ import { styled } from 'styled-components';
 import { useSpring, animated } from 'react-spring';
 import API_HOST from '../config';
 import { useTheme } from './styles/theme';
-import EditIcon from '@mui/icons-material/Edit';
+// import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -18,15 +19,20 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import useNotification from '../General/useNotification';
+import WaitingListJoinForm from "./Waiting_list_join_form";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const StyledPaper = styled(Paper)`
 background-color: ${({ theme }) => theme.colors.background};
 color: ${({ theme }) => theme.colors.text};
 width: 100%;
 padding: 20px;
+box-shadow: ${({ theme }) => theme.colors.shadow};
+border-radius: 10px;
 
 @media (max-width: 600px) {
-  padding: 0px;
+  padding: 10px;
 }
 
 `;
@@ -35,7 +41,6 @@ const StyledDiv = styled.div`
   margin: 0;
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
-  padding: 0;
   min-height: 100vh;
   padding: 20px;
 
@@ -47,15 +52,16 @@ const StyledDiv = styled.div`
 const StyledButton = styled(Button)`
 margin-top: 16px;
 background-color: ${({ theme }) => theme.colors.primary};
+color: ${({ theme }) => theme.colors.white};
 &:hover {
   background-color: ${({ theme }) => theme.colors.secondary};
 }
 `;
 
 const StyledList = styled.div`
-  border-radius: 9px;
+  border-radius: 10px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   padding: 10px;
   box-shadow: ${({ theme }) => theme.colors.shadow};
@@ -68,12 +74,20 @@ const StyledList = styled.div`
 
   @media (max-width: 400px) {
     grid-template-columns: 1fr;
+    width: 100%;
   }
 `;
 
-const StyledButton2 = styled(Button)`
+const StyledButton2 = styled.div`
 color: ${({ theme }) => theme.colors.primary};
-border: 1px solid ${({ theme }) => theme.colors.background};
+margin: 20px;
+padding: 10px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+border-radius: 9px;
+background-color: ${({ theme }) => theme.colors.white};
 
 &:hover {
     box-shadow: ${({ theme }) => theme.colors.primary}55 2px 2px 9px 5px;
@@ -85,28 +99,54 @@ border: 1px solid ${({ theme }) => theme.colors.background};
     box-shadow: 0px 0px 0px 0px;
   }
 
+  @media (max-width: 600px) {
+    width: 100%;
+    margin: 0px;
+    padding: 10px;
+  }
+`;
+
+const BusinessName = styled.div`
+    color: ${({ theme }) => theme.colors.primary};
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+`;
+
+const DetailsStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 9px;
 `;
 
 const StyledForm = styled.form`
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-background-color: ${({ theme }) => theme.colors.white};
-color: ${({ theme }) => theme.colors.black};
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: ${({ theme }) => theme.colors.white};
+    color: ${({ theme }) => theme.colors.black};
 `;
 
 const ListImage = styled.img`
-width: 100px;
-height: 100px;
-object-fit: cover;
-border-radius: 12px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 20px;
 `;
 
 
 function TimeView({ settimedata }: { settimedata: any }) {
     const { theme } = useTheme();
     // start time and end time for each day
+
     type Time = {
         [key: string]: string,
     }
@@ -296,7 +336,6 @@ function TimeView({ settimedata }: { settimedata: any }) {
                                     'label': {
                                         color: theme.colors.text,
                                     },
-
                                 }}
                             />
                             <TimePicker
@@ -356,7 +395,6 @@ function TimeView({ settimedata }: { settimedata: any }) {
                                                 'label': {
                                                     color: theme.colors.text,
                                                 },
-
                                             }}
                                             label="Opening Time"
                                             onChange={(newValue) => setstarttime1(newValue, day)}
@@ -409,12 +447,32 @@ export default function Create_restorant() {
     const [description, setDescription] = useState('');
     const [logo, setLogo] = useState<any>('');
     const [timedata, setTimedata] = useState<any>(); // store time data for each day
+    const [backdrop, setBackdrop] = useState(false)
 
     const [showForm, setShowForm] = useState(false);
+    const [UserHaspermission, setUserHaspermission] = useState(false);
+    const [waitingList, setWaitingList] = useState(false);
     function show() {
         setShowForm(!showForm);
     }
-
+    useEffect(() => {
+        if (showForm) {
+            window.history.pushState(null, '', window.location.href);
+        }
+    }, [showForm]);
+    window.addEventListener('popstate', () => {
+        if (showForm) {
+            setShowForm(false);
+        }
+    });
+    // spring animation for the form
+    const nameSpring = useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 200 });
+    const addressSpring = useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 400 });
+    const phoneSpring = useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 600 });
+    const emailSpring = useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 800 });
+    const websiteSpring = useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1000 });
+    const descriptionSpring = useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1200 });
+    const logoSpring = useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1400 });
 
     const AnimatedTextField = animated(TextField);
     // navigation
@@ -425,10 +483,10 @@ export default function Create_restorant() {
         'staffs': [],
         'created_by': [],
     }
-
     const [restorants, setRestorants] = useState<Restorant>();
 
     useEffect(() => {
+        setBackdrop(true)
         let yourToken = localStorage.getItem('token');
         fetch(`${API_HOST}/restorants/`, {
             method: 'GET',
@@ -445,12 +503,34 @@ export default function Create_restorant() {
                     return response.json()
                 }
             })
-            .then(data => setRestorants(data))
-            .catch((error) => console.error('Error:', error));
+            .then(data => {
+                setRestorants(data)
+                console.log(data, 'data1214');
+            })
+            .catch((error) => {
+                openNotification('error', 'Error', 'Error: ' + error.message)
+            })
+            .finally(() => setBackdrop(false))
 
     }, []);
+    useEffect(() => {
+        let yourToken = localStorage.getItem('token');
+        fetch(`${API_HOST}/api/check/user_has_permission/`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Token ${yourToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                setUserHaspermission(data.permission);
+                setWaitingList(data.waiting_list);
+            })
+            .catch(error => console.error('Error:', error));
+    }, [])
 
     function onSubmit(e: any) {
+        setBackdrop(true)
         e.preventDefault();
         const formdata = new FormData();
         formdata.append('name', name);
@@ -465,18 +545,22 @@ export default function Create_restorant() {
         }
         if (!name || !address || !phone || !email || !website || !description) {
             openNotification('warning', 'Warning', 'Please fill all the fields');
+            setBackdrop(false)
             return;
         }
         if (logo.size > 2000000) {
             openNotification('warning', 'Warning', 'Image size should be less than 1MB');
+            setBackdrop(false)
             return;
         }
         if (logo.type !== 'image/jpeg' && logo.type !== 'image/png') {
             openNotification('warning', 'Warning', 'Image should be in jpeg or png format');
+            setBackdrop(false)
             return;
         }
         if (website && !website.includes('https')) {
             openNotification('warning', 'Warning', 'Website should start with https://');
+            setBackdrop(false)
             return;
         }
 
@@ -504,6 +588,7 @@ export default function Create_restorant() {
 
                 } else {
                     openNotification('error', 'Error', 'Error: ' + response.statusText);
+                    setBackdrop(false)
                     return;
                 }
                 return response.json();
@@ -522,41 +607,45 @@ export default function Create_restorant() {
                     console.log(data);
                 }).catch(_err => {
                     openNotification('error', 'Error', 'Something went wrong! Please try again later.');
+                    setBackdrop(false)
                 })
             })
             .catch((_error) => {
                 openNotification('error', 'Error', 'Something went wrong! Please try again later.');
-            });
-
-
+                setBackdrop(false)
+            })
     }
     return (
         <StyledDiv>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={backdrop}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Grid item xs={12} sm={8} md={6} style={{
                 margin: 'auto',
                 padding: '20px',
                 borderRadius: '9px',
-                backgroundColor: theme.colors.white,
+                background: theme.colors.gradiant1,
                 color: theme.colors.text,
             }}>
                 <StyledPaper style={{
-                    backgroundColor: theme.colors.white,
                     color: theme.colors.text,
+                    background: '#ffffff00',
+                    boxShadow: 'none'
                 }}>
                     <Typography variant="h4" align="center" style={{
                         marginBottom: '20px',
                         fontSize: '1.3rem',
-                        color: theme.colors.primary,
+                        color: theme.colors.text,
                         fontFamily: 'Arial, sans-serif',
                         fontWeight: 'bold',
-                        backgroundColor: theme.colors.white,
-                    }}
-                        color='primary'
-                    >
+                    }}>
                         My Restaurants
                     </Typography>
                     <StyledList style={{
-                        backgroundColor: theme.colors.background,
+                        backgroundColor: '#ffffff00',
                         marginBottom: '30px',
                     }} >
                         {restorants?.created_by.length === 0 && restorants?.manager_restorant.length === 0 && restorants?.staffs.length === 0 && <h2 style={{
@@ -565,104 +654,103 @@ export default function Create_restorant() {
                             marginTop: '20px',
                         }}>No restaurants found.</h2>}
                         {restorants?.created_by.map((created_by: any) => (
-                            <StyledButton2 style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: '10px',
-                                borderRadius: '9px',
-                                backgroundColor: theme.colors.white,
-                                color: `${({ theme }: any) => theme.colors.text}`,
-                                margin: '20px'
-                            }} key={created_by.id}
+                            <StyledButton2 key={created_by.id}
                                 onClick={() => navigate(`/restorant/${created_by.id}`, { state: { created_by } })}
                             >
                                 <ListImage src={created_by.logo} alt={created_by.name} />
-                                <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${created_by.id}`, { state: { created_by } })} style={{
-                                    color: theme.colors.primary,
-                                    backgroundColor: `${({ theme }: any) => theme.colors.white}`,
-                                    borderRadius: '10px',
-                                    padding: '10px',
-                                    marginTop: '10px',
-                                    boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
-                                }}>
+                                <BusinessName>
                                     {created_by.name}
-                                </StyledButton2>
+                                </BusinessName>
+                                <DetailsStyled>
+                                    <Typography variant="body1" style={{
+                                        color: theme.colors.text + 99,
+                                        fontSize: '0.8rem',
+                                        textAlign: 'left',
+                                    }}>
+                                        {created_by.address}
+                                        <br />
+                                        {created_by.phone}
+                                        <br />
+                                        {created_by.email}
+                                    </Typography>
+                                </DetailsStyled>
                             </StyledButton2>
                         ))}
                     </StyledList>
-                    {restorants?.manager_restorant.length && restorants?.manager_restorant.length > 0 && <StyledList>
+                    {restorants?.manager_restorant && restorants?.manager_restorant.length > 0 && <StyledList>
                         {restorants?.manager_restorant.map((restorant: any) => (
-                            <StyledButton2 style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: '10px',
-                                borderRadius: '9px',
-                                border: `1px solid ${theme.colors.primary}`,
-                                backgroundColor: `${({ theme }: any) => theme.colors.white}`,
-                                color: `${({ theme }: any) => theme.colors.text}`,
-                            }} key={restorant.id}
+                            <StyledButton2 key={restorant.id}
                                 onClick={() => navigate(`/restorant/${restorant.id}`, { state: { restorant } })}
                             >
                                 <ListImage src={restorant.logo} alt={restorant.name} />
-                                <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${restorant.id}`, { state: { restorant } })} style={{
-                                    color: theme.colors.primary,
-                                    backgroundColor: `${({ theme }: any) => theme.colors.white}`,
-                                    borderRadius: '10px',
-                                    padding: '10px',
-                                    marginTop: '10px',
-                                    boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
-                                }}>
+                                <BusinessName>
                                     {restorant.name}
-                                </StyledButton2>
+                                </BusinessName>
+                                <DetailsStyled>
+                                    <Typography variant="body1" style={{
+                                        color: theme.colors.text + 99,
+                                        fontSize: '0.8rem',
+                                        textAlign: 'left',
+                                    }}>
+                                        {restorant.address}
+                                        <br />
+                                        {restorant.phone}
+                                        <br />
+                                        {restorant.email}
+                                    </Typography>
+                                </DetailsStyled>
                             </StyledButton2>
                         ))}
                     </StyledList>}
-                    {restorants?.staffs.length && restorants.staffs.length > 0 && <StyledList>
-                        {restorants?.staffs.map((staff: any) => (
-                            <StyledButton2 style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: '10px',
-                                borderRadius: '9px',
-                                border: `1px solid ${theme.colors.primary}`,
-                                backgroundColor: `${({ theme }: any) => theme.colors.white}`,
-                                color: `${({ theme }: any) => theme.colors.text}`,
-                            }} key={staff.id}
-                                onClick={() => navigate(`/restorant/${staff.id}`, { state: { staff } })}
-                            >
-                                <ListImage src={staff.logo} alt={staff.name} />
-                                <StyledButton2 variant="text" onClick={() => navigate(`/restorant/${staff.id}`, { state: { staff } })} style={{
-                                    color: theme.colors.primary,
-                                    backgroundColor: `${({ theme }: any) => theme.colors.white}`,
-                                    borderRadius: '10px',
-                                    padding: '10px',
-                                    marginTop: '10px',
-                                    boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
-                                }}>
-                                    {staff.name}
+                    {restorants?.staffs && restorants.staffs.length > 0 &&
+                        <StyledList style={{
+                            color: theme.colors.primary,
+                        }}>
+                            {restorants?.staffs.map((staff: any) => (
+                                <StyledButton2 key={staff.id}
+                                    onClick={() => navigate(`/restorant/${staff.id}`, { state: { staff } })}
+                                >
+                                    <ListImage src={staff.logo} alt={staff.name} />
+                                    <BusinessName>
+                                        {staff.name}
+                                    </BusinessName>
+                                    <DetailsStyled>
+                                        <Typography variant="body1" style={{
+                                            color: theme.colors.text + 99,
+                                            fontSize: '0.8rem',
+                                            textAlign: 'left',
+                                        }}>
+                                            {staff.address}
+                                            <br />
+                                            {staff.phone}
+                                            <br />
+                                            {staff.email}
+                                        </Typography>
+                                    </DetailsStyled>
                                 </StyledButton2>
-                            </StyledButton2>
-                        ))}
-                    </StyledList>}
+                            ))}
+                        </StyledList>}
                     <Button onClick={() => show()} style={{
-                        backgroundColor: `${({ theme }: any) => theme.colors.primary}`,
-                        color: `${({ theme }: any) => theme.colors.white}`,
+                        background: `${({ theme }: any) => theme.colors.gradiant1}`,
+                        color: `#fff`,
                         borderRadius: '10px',
                         padding: '10px',
                         marginBottom: '20px',
                         boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
                     }}
+                        sx={{
+                            '&:hover': {
+                                background: `${({ theme }: any) => theme.colors.gradiant1}`,
+                                scale: '1.02',
+                            },
+                        }}
+                        endIcon={<AddIcon />}
                         variant="contained"
-                        endIcon={<EditIcon />}
-                    >Create Restorant</Button>
+                    >
+                        {UserHaspermission ? 'Create Restorant' : 'Waiting List'}
+                    </Button>
                     {/* form */}
-                    <StyledForm onSubmit={onSubmit} style={{
+                    {UserHaspermission ? <StyledForm onSubmit={onSubmit} style={{
                         display: showForm ? 'block' : 'none',
                         paddingTop: '20px',
                         position: 'fixed',
@@ -682,7 +770,6 @@ export default function Create_restorant() {
                                 fontFamily: ' Roboto, Lato, Arial, sans-serif',
                             }}
                         >Create Restaurant</h2>
-                        {/* close button */}
                         <Button onClick={() => show()} style={{
                             backgroundColor: `${({ theme }: any) => theme.colors.primary}`,
                             color: `${({ theme }: any) => theme.colors.white}`,
@@ -708,7 +795,7 @@ export default function Create_restorant() {
                             }}
                             value={name}
                             style={{
-                                ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 200 }),
+                                ...nameSpring,
                                 backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
@@ -726,7 +813,7 @@ export default function Create_restorant() {
                             label="Address" variant="outlined"
                             onChange={e => setAddress(e.target.value)}
                             style={{
-                                ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 400 }),
+                                ...addressSpring,
                                 backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
@@ -744,7 +831,7 @@ export default function Create_restorant() {
                             value={phone}
                             onChange={e => setPhone(e.target.value)}
                             style={{
-                                ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 600 }),
+                                ...phoneSpring,
                                 backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
@@ -761,7 +848,7 @@ export default function Create_restorant() {
                             label="Email" variant="outlined"
                             onChange={e => setEmail(e.target.value)}
                             style={{
-                                ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 800 }),
+                                ...emailSpring,
                                 backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
@@ -778,11 +865,10 @@ export default function Create_restorant() {
                             label="Website" variant="outlined"
                             onChange={e => {
                                 e.preventDefault()
-                                // e.persist();
                                 setWebsite(e.target.value)
                             }}
                             style={{
-                                ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1000 }),
+                                ...websiteSpring,
                                 backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 border: `1px solid ${({ theme }: any) => theme.colors.primary}`,
@@ -799,7 +885,7 @@ export default function Create_restorant() {
                             label="Description" variant="outlined"
                             onChange={e => setDescription(e.target.value)}
                             style={{
-                                ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1200 }),
+                                ...descriptionSpring,
                                 borderRadius: '10px',
                                 backgroundColor: theme.colors.background,
                                 width: '97%',
@@ -813,7 +899,7 @@ export default function Create_restorant() {
                             type="file"
                             onChange={(e: any) => setLogo(e.target.files ? e.target.files[0] : '')}
                             style={{
-                                ...useSpring({ from: { opacity: 0 }, to: { opacity: 1 }, delay: 1400 }),
+                                ...logoSpring,
                                 backgroundColor: theme.colors.background,
                                 borderRadius: '10px',
                                 width: '27%',
@@ -821,7 +907,6 @@ export default function Create_restorant() {
                             }}
                             sx={{ input: { color: theme.colors.text }, label: { color: theme.colors.text } }}
                         />
-                        {/* show choosen image */}
                         {logo && <img src={URL.createObjectURL(logo)} alt="logo" style={{
                             width: '100px',
                             height: '100px',
@@ -831,9 +916,6 @@ export default function Create_restorant() {
                             marginBottom: '20px',
                             display: 'block',
                         }} />}
-                        {/* set restorant opening and closing time */}
-                        {/* tow options for this set same time for every day or set diffrent time indivigualy for each day */}
-                        {/* if use is on second option set time for each weekday once user selcated first day in the ui to show user */}
                         <TimeView settimedata={setTimedata} />
                         <StyledButton
                             fullWidth
@@ -852,7 +934,36 @@ export default function Create_restorant() {
                             disabled={!(name && address && phone && email && website && description && timedata)}
                         >Create Restaurant
                         </StyledButton>
-                    </StyledForm>
+                    </StyledForm> :
+                        <StyledForm
+                            style={{
+                                display: showForm ? 'block' : 'none',
+                                position: 'fixed',
+                                top: '0',
+                                left: '0',
+                                overflow: 'auto',
+                                width: '100%',
+                                height: '100%',
+                                zIndex: 1,
+                            }}
+                        >
+                            <Button onClick={() => show()} style={{
+                                backgroundColor: `${({ theme }: any) => theme.colors.white}`,
+                                color: `${({ theme }: any) => theme.colors.primary}`,
+                                borderRadius: '10px',
+                                padding: '10px',
+                                marginBottom: '20px',
+                                boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
+                                position: 'absolute',
+                                top: '12px',
+                                right: '0',
+                                fontSize: '1.5rem',
+                            }}
+                                variant="text"
+                            >X</Button>
+                            <WaitingListJoinForm waitingList={waitingList} setWaitingList={(value: any) => setWaitingList(value)} />
+                        </StyledForm>
+                    }
                 </StyledPaper>
             </Grid>
         </StyledDiv>

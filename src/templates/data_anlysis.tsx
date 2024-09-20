@@ -28,7 +28,7 @@ function Data_anlysis() {
         <div style={{
             backgroundColor: theme.colors.background,
             padding: '20px',
-
+            minHeight: '100vh',
         }}>
             {data && <Dashboard data={data} />}
         </div>

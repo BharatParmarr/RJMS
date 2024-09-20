@@ -6,13 +6,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import useNotification from "../../General/useNotification";
+import Button from "@mui/material/Button";
+import WaitingListJoinForm from "../../templates/Waiting_list_join_form";
+import API_HOST from "../../config";
 const DivContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: ${({ theme }) => theme.colors.background};
     margin-bottom: 50px;
+    @media (max-width: 768px) {
+        margin-bottom: 10px;
+    }
 `;
 
 const Heading = styled.h1`
@@ -20,8 +25,9 @@ const Heading = styled.h1`
     font-family: 'Roboto', sans-serif;
     text-transform: capitalize;
     align-self: flex-start;
-    margin-left: 20px;
-    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
 `;
 
 const BusinessList = styled.ul`
@@ -31,13 +37,13 @@ const BusinessList = styled.ul`
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
-    width: 100%;
-    max-width: 1200px;
+    width: 90%;
     margin: 0 auto;
-    padding: 20px;
+    padding: 40px;
     border-radius: 8px;
-    background-color: ${({ theme }) => theme.colors.background};
+    background: ${({ theme }) => theme.colors.gradiant1};
     margin-bottom: 50px;
+    margin-top: 30px;
     @media (max-width: 768px) {
         padding: 10px;
     }
@@ -48,7 +54,7 @@ const Business = styled.li`
     flex-direction: column;
     justify-content: center;
     margin: 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     width: 30%;
     min-width: 300px;
     transition: all 0.3s ease;
@@ -82,9 +88,18 @@ const BusinessAddress = styled.p`
     margin-bottom: 10px;
 `;
 
+const StyledForm = styled.form`
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+background-color: ${({ theme }) => theme.colors.white};
+color: ${({ theme }) => theme.colors.black};
+`;
+
 const StyledButton = styled.button`
     background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.white};
+    color: #ffffff;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
@@ -92,12 +107,12 @@ const StyledButton = styled.button`
     cursor: pointer;
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    left: 20px;
     transition: all 0.3s ease;
 
-
     &:hover {
-        background-color: ${({ theme }) => theme.colors.secondary};
+        background-color: ${({ theme }) => theme.colors.black};
+        color: ${({ theme }) => theme.colors.white};
     }
 `;
 
@@ -119,9 +134,10 @@ const StyledButton2 = styled.button`
 
 const BusinesesImage = styled.img`
     width: 100%;
-    height: 200px;
-    border-radius: 5px 5px 0px 0px;
+    height: 100%;
+    border-radius: 10px 10px 0px 0px;
     object-fit: contain;
+    object-position: center;
 `;
 
 
@@ -131,6 +147,40 @@ function Busineses({ props }: any) {
     const type = props.params.type
     const [businesses, setBusinesses] = useState([]);
     const [backdrop, setBackdrop] = useState(false)
+    const [showForm, setShowForm] = useState(false);
+    const [UserHaspermission, setUserHaspermission] = useState(false);
+    const [waitingList, setWaitingList] = useState(false);
+    function show() {
+        setShowForm(!showForm);
+    }
+    useEffect(() => {
+        if (showForm) {
+            window.history.pushState(null, '', window.location.href);
+        }
+    }, [showForm]);
+    window.addEventListener('popstate', () => {
+        if (showForm) {
+            setShowForm(false);
+        }
+    });
+    useEffect(() => {
+        let yourToken = localStorage.getItem('token');
+        fetch(`${API_HOST}/api/check/user_has_permission/`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Token ${yourToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.waiting_list, 'data');
+                setUserHaspermission(data.permission);
+                setWaitingList(data.waiting_list);
+            })
+            .catch(error => console.error('Error:', error));
+    }, [])
+
+
     const { openNotification } = useNotification()
     const navigate = useNavigate();
     useEffect(() => {
@@ -143,14 +193,13 @@ function Busineses({ props }: any) {
                     setBusinesses(response.data.results);
                     // set local storage
                     let posistion_obj: any = {
-                        'hospital': []
+                        'hospital': {}
                     }
                     response.data.results.forEach((business: any) => {
-                        posistion_obj.hospital.push({
-                            [business.id]: business.position
-                        })
+                        posistion_obj.hospital[business.id] = business.position
                     })
                     localStorage.setItem('position', JSON.stringify(posistion_obj));
+                    console.log(posistion_obj, 'posistion_obj')
                 } catch (error) {
                     console.error('Error fetching businesses:', error);
                     openNotification('error', 'Error', 'Error fetching businesses')
@@ -191,16 +240,44 @@ function Busineses({ props }: any) {
                         <BusinessName>No {type} found</BusinessName>
                     </Business>}
             </BusinessList>
-            {businesses.length > 0 ? <StyledButton onClick={() => {
-                navigate(`/Manage/create/${type.toLowerCase()}`)
-            }}>Register New {type}</StyledButton> :
-                <StyledButton onClick={() => {
-                    navigate(`/Manage/create/${type.toLowerCase()}`)
-                }}>Register First {type}</StyledButton>}
-            {/* button to go back to home page */}
             <StyledButton2 onClick={() => {
                 navigate('/')
             }}><ArrowBackIcon /></StyledButton2>
+            {UserHaspermission ?
+                <StyledButton onClick={() => {
+                    navigate(`/Manage/create/${type.toLowerCase()}`)
+                }}>New {type}</StyledButton>
+                :
+                <StyledButton onClick={() => { show() }}>Waiting List</StyledButton>}
+
+            {showForm && <StyledForm
+                style={{
+                    display: showForm ? 'block' : 'none',
+                    position: 'fixed',
+                    top: '0',
+                    left: '0',
+                    overflow: 'auto',
+                    width: '100%',
+                    height: '100%',
+                    zIndex: 1,
+                }}
+            >
+                <Button onClick={() => show()} style={{
+                    backgroundColor: `${({ theme }: any) => theme.colors.white}`,
+                    color: `${({ theme }: any) => theme.colors.primary}`,
+                    borderRadius: '10px',
+                    padding: '10px',
+                    marginBottom: '20px',
+                    boxShadow: `${({ theme }: any) => theme.colors.shadow}`,
+                    position: 'absolute',
+                    top: '12px',
+                    right: '0',
+                    fontSize: '1.5rem',
+                }}
+                    variant="text"
+                >X</Button>
+                <WaitingListJoinForm waitingList={waitingList} setWaitingList={(value: any) => setWaitingList(value)} />
+            </StyledForm>}
         </DivContainer>
     )
 }

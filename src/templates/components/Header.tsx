@@ -151,8 +151,9 @@ function Header({ mode, toggleColorMode }: AppAppBarProps) {
   console.assert(mode);
   const { openNotification } = useNotification();
   const Services_list = {
-    'Coustemer': 'coustemer',
+    // 'Coustemer': 'coustemer',
     'Restorant Management': 'create-restaurant',
+    'Hospital Management': 'Manage/Hospital?type=hospital',
   }
 
   const { theme } = useTheme();

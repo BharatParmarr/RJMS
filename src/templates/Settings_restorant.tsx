@@ -5,15 +5,20 @@ import {
     Button,
     TextField,
     InputLabel,
+    Typography,
 } from '@mui/material';
 import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import PersonRemoveAlt1RoundedIcon from '@mui/icons-material/PersonRemoveAlt1Rounded';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
-import Side_pannel from "./components/Side_pannel";
 import Hospital_Timings from "../src2/component2/Hospital_timings";
+import Side_pannel_genral from "../src2/component2/Side_pannel_genral";
+import { Card, CardContent, Collapse, IconButton } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import GroupIcon from '@mui/icons-material/Group';
+import InfoIcon from '@mui/icons-material/Info';
 
 const StyledDiv = styled.div`
     padding: 20px;
@@ -71,17 +76,6 @@ const HiddenInput = styled(TextField)`
   display: none;
 `;
 
-const StyledButton = styled(Button)`
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.text};
-    margin-top: 20px;
-    width: 30%;
-
-    @media (max-width: 768px) {
-        width: 100%;
-    }
-    `;
-
 const StyledSubmitButton = styled(Button)`
     background-color: ${({ theme }) => theme.colors.primary};
     color: ${({ theme }) => theme.colors.text};
@@ -99,7 +93,6 @@ const StyldeButton = styled(Button)`
     color: ${({ theme }) => theme.colors.text};
     margin-top: 20px;
     width: 15%;
-
     @media (max-width: 768px) {
         width: 70%;
     }
@@ -112,6 +105,8 @@ const StyledDivHolder = styled.div`
     border-bottom: 1px solid ${({ theme }) => theme.colors.gray};
     color: ${({ theme }) => theme.colors.text};
     padding-bottom: 10px;
+    align-items: center;
+    justify-content: space-between;
 
     @media (max-width: 768px) {
         flex-direction: column;
@@ -130,6 +125,18 @@ const ContainerHOlder = styled.div`
 
     `;
 
+const StyledCard = styled(Card)`
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+`;
+
+const StyledCardHeader = styled(CardContent)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.text};
+`;
 
 function Hostel_info_change({ hosteldata }: any) {
     const { theme } = useTheme()
@@ -145,7 +152,6 @@ function Hostel_info_change({ hosteldata }: any) {
         website: hosteldata.website ? hosteldata.website : '',
     });
     const [image, setImage] = useState<Blob | MediaSource | null>(hosteldata.logo ? hosteldata.logo : null);
-    const [isOpen, setIsOpen] = useState(false);
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
         setHostelDetails({
@@ -178,7 +184,7 @@ function Hostel_info_change({ hosteldata }: any) {
 
         api.put(`/restorant`, formData).then((response) => {
             if (response.status === 200) {
-                setIsOpen(false)
+                alert('Hostel details updated successfully')
             }
         }).catch((error) => {
             console.log(error)
@@ -189,17 +195,9 @@ function Hostel_info_change({ hosteldata }: any) {
     return (
         <StyledDivcontainer style={{
             backgroundColor: theme.colors.white,
-            borderRadius: 10,
-            boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
             padding: 20,
         }}>
-            <StyledButton style={{
-                backgroundColor: theme.colors.primary,
-                color: 'white',
-            }} startIcon={<CreateRoundedIcon />} variant="contained" onClick={() => setIsOpen(!isOpen)} >
-                Update Details
-            </StyledButton>
-            {isOpen && <StyledTypography>
+            <StyledTypography>
                 <StyledTextfield label="Name" variant="outlined"
                     name="name"
                     value={hostelDetails.name}
@@ -278,10 +276,35 @@ function Hostel_info_change({ hosteldata }: any) {
                 <StyledSubmitButton variant="contained" onClick={handleSubmit}>
                     Submit
                 </StyledSubmitButton>
-            </StyledTypography>}
+            </StyledTypography>
         </StyledDivcontainer>
     )
+}
 
+
+function SettingsSection({ title, icon, children }: any) {
+    const [expanded, setExpanded] = useState(false);
+
+    return (
+        <StyledCard>
+            <StyledCardHeader onClick={() => setExpanded(!expanded)}>
+                <Typography variant="h6" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    {icon}
+                    {title}
+                </Typography>
+                <IconButton
+                    onClick={() => setExpanded(!expanded)}
+                    aria-expanded={expanded}
+                    aria-label="show more"
+                >
+                    <ExpandMoreIcon />
+                </IconButton>
+            </StyledCardHeader>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <CardContent>{children}</CardContent>
+            </Collapse>
+        </StyledCard>
+    );
 }
 
 function Settings_component() {
@@ -395,89 +418,91 @@ function Settings_component() {
     const [showStaff, setShowStaff] = useState(false);
     return (
         <StyledDivcontainer>
-            <StyledTypography style={{
-                backgroundColor: theme.colors.white,
-                padding: '14px',
-                color: theme.colors.gray,
-                borderRadius: 10,
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
-            }}>
-                Manager
-                {Manager && <StyledDivHolder>
-                    <div style={{ display: 'flex', gap: 20, }}>{Manager}</div>
-                    <StyldeButton startIcon={<PersonRemoveAlt1RoundedIcon />} variant="contained" color="error" onClick={() => { removeManger() }}>Remove</StyldeButton>
-                </StyledDivHolder>}
-                <StyldeButton style={{
-                    marginTop: 20,
-                    color: theme.colors.white,
-                    borderColor: theme.colors.white,
-                    borderWidth: 2
-                }} variant="contained" startIcon={!showManager && <PersonAddAlt1RoundedIcon />} onClick={() => { setShowManager(!showManager) }}>{showManager ? 'Close' : 'Add Manager'}</StyldeButton>
-                {showManager && <>
-                    <StyledTextfield label="Manager" variant="outlined"
-                        value={Manager_name}
-                        required
-                        onChange={(e) => setManager_name(e.target.value)}
-                        sx={{
-                            label: { color: theme.colors.text },
-                            '& .MuiOutlinedInput-root': { color: theme.colors.text },
-                            '& .MuiInputLabel-root': { color: theme.colors.text },
-                            '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.colors.text },
-                        }} />
-                    <SaveButton style={{
-                        width: '10%',
-                    }} variant="contained" onClick={handleSubmit}>
-                        Save
-                    </SaveButton>
-                </>}
-            </StyledTypography>
-            <StyledTypography style={{
-                backgroundColor: theme.colors.white,
-                padding: '14px',
-                color: theme.colors.gray,
-                borderRadius: 10,
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
-                marginBottom: 20
-            }}>
-                Staff
-                <>
-                    {Staff && Staff.map((staff) => {
-                        return (
-                            <StyledDivHolder>
-                                {staff}
-                                <StyldeButton startIcon={<PersonRemoveAlt1RoundedIcon />} variant="contained" color="error" onClick={() => { removeStaff(staff) }}>Remove</StyldeButton>
-                            </StyledDivHolder>
-                        )
-                    })}
+            <SettingsSection title="Manager" icon={<SupervisorAccountIcon />}>
+                <StyledTypography style={{
+                    backgroundColor: theme.colors.white,
+                    padding: '14px',
+                    color: theme.colors.text,
+                    borderRadius: 10,
+                }}>
+                    {Manager && <StyledDivHolder>
+                        <div style={{ display: 'flex', gap: 20, }}>{Manager}</div>
+                        <StyldeButton startIcon={<PersonRemoveAlt1RoundedIcon />} variant="text" color="error" onClick={() => { removeManger() }}>Remove</StyldeButton>
+                    </StyledDivHolder>}
                     <StyldeButton style={{
                         marginTop: 20,
                         color: theme.colors.white,
                         borderColor: theme.colors.white,
                         borderWidth: 2
-                    }} variant="contained" startIcon={!showStaff && <PersonAddAlt1RoundedIcon />} onClick={() => { setShowStaff(!showStaff) }}>{showStaff ? 'Close' : 'Add Staff'}</StyldeButton>
-                </>
-                {showStaff && <>
-                    <StyledTextfield label="Staff" variant="outlined"
-                        value={Staff_name}
-                        required
-                        onChange={(e) => setStaff_name(e.target.value)}
-                        sx={{
-                            label: { color: theme.colors.text },
-                            '& .MuiOutlinedInput-root': { color: theme.colors.text },
-                            '& .MuiInputLabel-root': { color: theme.colors.text },
-                            '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.colors.text },
-                        }} />
-                    <SaveButton style={{
-                        width: '10%',
-                    }} variant="contained" onClick={handleSubmit2}>
-                        Save
-                    </SaveButton>
-                </>}
-            </StyledTypography>
-            {hostels && <Hostel_info_change hosteldata={hostels} />}
+                    }} variant="contained" startIcon={!showManager && <PersonAddAlt1RoundedIcon />} onClick={() => { setShowManager(!showManager) }}>{showManager ? 'Close' : ''}</StyldeButton>
+                    {showManager && <>
+                        <StyledTextfield label="Manager" variant="outlined"
+                            value={Manager_name}
+                            required
+                            onChange={(e) => setManager_name(e.target.value)}
+                            sx={{
+                                label: { color: theme.colors.text },
+                                '& .MuiOutlinedInput-root': { color: theme.colors.text },
+                                '& .MuiInputLabel-root': { color: theme.colors.text },
+                                '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.colors.text },
+                            }} />
+                        <SaveButton style={{
+                            width: '10%',
+                        }} variant="contained" onClick={handleSubmit}>
+                            Save
+                        </SaveButton>
+                    </>}
+                </StyledTypography>
+            </SettingsSection>
+            <SettingsSection title="Staff" icon={<GroupIcon />}>
+                <StyledTypography style={{
+                    backgroundColor: theme.colors.white,
+                    padding: '14px',
+                    color: theme.colors.gray,
+                    borderRadius: 10,
+                }}>
+                    <>
+                        {Staff && Staff.map((staff) => {
+                            return (
+                                <StyledDivHolder>
+                                    {staff}
+                                    <StyldeButton startIcon={<PersonRemoveAlt1RoundedIcon />} variant="text" color="error" onClick={() => { removeStaff(staff) }}>Remove</StyldeButton>
+                                </StyledDivHolder>
+                            )
+                        })}
+                        <StyldeButton style={{
+                            marginTop: 20,
+                            color: theme.colors.white,
+                            borderColor: theme.colors.white,
+                            borderWidth: 2
+                        }} variant="contained" startIcon={!showStaff && <PersonAddAlt1RoundedIcon />} onClick={() => { setShowStaff(!showStaff) }}>{showStaff ? 'Close' : ''}</StyldeButton>
+                    </>
+                    {showStaff && <>
+                        <StyledTextfield label="Staff" variant="outlined"
+                            value={Staff_name}
+                            required
+                            onChange={(e) => setStaff_name(e.target.value)}
+                            sx={{
+                                label: { color: theme.colors.text },
+                                '& .MuiOutlinedInput-root': { color: theme.colors.text },
+                                '& .MuiInputLabel-root': { color: theme.colors.text },
+                                '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.colors.text },
+                            }} />
+                        <SaveButton style={{
+                            width: '10%',
+                        }} variant="contained" onClick={handleSubmit2}>
+                            Save
+                        </SaveButton>
+                    </>}
+                </StyledTypography>
+            </SettingsSection>
+            <SettingsSection title="Hostel Information" icon={<InfoIcon />}>
+                {hostels && <Hostel_info_change hosteldata={hostels} />}
+            </SettingsSection>
         </StyledDivcontainer>
     )
 }
+
 
 
 
@@ -492,19 +517,18 @@ function Settings_restorant({ For = "restorant", Settings = Settings_component }
 
     return (
         <ContainerHOlder>
-            <Side_pannel id={id} option={'Settings'} />
+            <Side_pannel_genral id={id} option={'Settings'} type_page="Restorant" />
             <StyledDiv>
                 <h1 style={{
                     display: 'flex',
                     gap: 10,
                     alignItems: 'center',
-                    color: theme.colors.text
+                    color: theme.colors.text,
+                    marginBottom: 20,
+                    fontSize: 20
                 }}>Settings<SettingsRoundedIcon style={{
-                    fontSize: 30
-                }} /><h5 style={{
-                    fontSize: 14,
-                    color: theme.colors.gray
-                }}>{For}</h5></h1>
+                    fontSize: 20
+                }} /></h1>
                 <Settings />
                 <Hospital_Timings For={For} sub_id={id as string} />
             </StyledDiv >
