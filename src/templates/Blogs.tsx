@@ -4,7 +4,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Typography, Card, CardContent, Grid } from '@mui/material';
 import { useSpring, animated } from 'react-spring';
-
+import Logo_img from '../assets/Static/logo.png';
 const HeroSectionBlogs = styled.div`
   display: flex;
   flex-direction: column;
@@ -12,7 +12,7 @@ const HeroSectionBlogs = styled.div`
   gap: 2rem;
   padding: 2rem 0;
   text-align: center;
-  color: #ffffff;
+  color: #000000;
   margin-bottom: 2rem;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
@@ -37,14 +37,12 @@ const SeconSection = styled.div`
 `
 
 const PageContainer = styled.div`
-  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
   min-height: 100vh;
-  background: rgb(19,28,71);
-background: radial-gradient(circle, rgba(19,28,71,1) 0%, rgba(27,5,10,1) 100%);
+background: linear-gradient(194deg, rgba(193,197,255,1) 17%, rgba(255,226,236,1) 100%);
 `;
 
 const Title = styled(motion.h1)`
-  color: #ffffff;
+  color: #000000;
   font-size: 3rem;
   text-align: center;
   margin-bottom: 6rem;
@@ -70,12 +68,12 @@ const BlogImage = styled.img`
 `;
 
 const BlogTitle = styled(Typography)`
-  color: #ffffff;
+  color: #000000;
   font-weight: bold;
 `;
 
 const BlogExcerpt = styled(Typography)`
-  color: #cccccc;
+  color: #000000;
 `;
 
 const Navbar = styled.div`
@@ -85,11 +83,6 @@ const Navbar = styled.div`
   padding: 1rem 2rem;
   position: relative;
   z-index: 2;
-  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
-  background: rgb(131,58,180);
-background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%);
-background: rgb(19,28,71);
-background: radial-gradient(circle, rgba(19,28,71,1) 0%, rgba(27,5,10,1) 100%);
 `;
 
 const NavbarBrand = styled.a`
@@ -105,7 +98,7 @@ const Logo = styled.img`
 `;
 
 const BrandText = styled.h1`
-  color: #ffffff;
+  color: #000000;
   font-size: 1.5rem;
 `;
 
@@ -115,13 +108,13 @@ const NavMenu = styled.nav`
 `;
 
 const NavItem = styled.a`
-  color: #ffffff;
+  color: #000000;
   text-decoration: none;
   font-weight: 500;
     transition: all 0.3s ease;
 
     &:hover {
-        color: #ffcc00;
+        color: #000000;
     }
 
     &:after {
@@ -129,7 +122,7 @@ const NavItem = styled.a`
         display: block;
         height: 2px;
         width: 0;
-        background: #ffcc00;
+        background: #000000;
         transition: width 0.3s;
     }
 
@@ -139,7 +132,7 @@ const NavItem = styled.a`
 `;
 
 const StyledSubtitleTypography = styled(Typography)`
-    color: #ffffff;
+    color: #000000;
     font-weight: 300;
     width: 50%;
     `;
@@ -147,10 +140,10 @@ const StyledSubtitleTypography = styled(Typography)`
 const AnimatedGrid = animated(Grid);
 
 const blogPosts = [
-    { id: 1, title: 'The Future of AI', excerpt: 'Exploring the potential impact of artificial intelligence on our daily lives.', image: 'https://plus.unsplash.com/premium_photo-1683120966127-14162cdd0935?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { id: 2, title: 'Sustainable Business Practices', excerpt: 'How companies are adapting to meet environmental challenges.', image: 'https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    { id: 3, title: 'Remote Work Revolution', excerpt: 'The shifting landscape of office culture and productivity in the digital age.', image: 'https://source.unsplash.com/random/800x600?remote-work' },
-    { id: 4, title: 'Blockchain in Finance', excerpt: 'Understanding the role of blockchain technology in reshaping financial systems.', image: 'https://source.unsplash.com/random/800x600?blockchain' },
+    { id: 1, title: 'The Future of AI With Business prespective', excerpt: 'Businesses are increasingly turning to AI to enhance their operations and stay competitive. This article explores the latest trends and technologies in AI and how they are transforming the business landscape.', image: 'https://plus.unsplash.com/premium_photo-1683120966127-14162cdd0935?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+    { id: 2, title: 'Sustainable Business Practices For Exponential Growth', excerpt: 'Sustainable business practices are essential for exponential growth. This article explores the latest trends and technologies in AI and how they are transforming the business landscape.', image: 'https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+    { id: 3, title: 'Work Environment for Better Productivity', excerpt: 'Employee satisfaction is a key factor in productivity. This article explores the latest trends and technologies in AI and how they are transforming the business landscape.', image: 'https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+    { id: 4, title: 'Blockchain in Finance and Business', excerpt: 'New technologies are emerging that are changing the way businesses operate. This article explores the latest trends and technologies in AI and how they are transforming the business landscape.', image: 'https://source.unsplash.com/random/800x600?blockchain' },
     { id: 5, title: 'The Psychology of Leadership', excerpt: 'Insights into effective leadership strategies and team management.', image: 'https://source.unsplash.com/random/800x600?leadership' },
     { id: 6, title: 'Data-Driven Decision Making', excerpt: 'How businesses are leveraging big data to inform strategic choices.', image: 'https://source.unsplash.com/random/800x600?data' },
 ];
@@ -191,14 +184,13 @@ const BlogListing = () => {
         >
             <Navbar>
                 <NavbarBrand href="/">
-                    <Logo src="/logo.svg" alt="Logo" />
-                    <BrandText>BizWayn</BrandText>
+                    <Logo src={Logo_img} alt="Logo" />
+                    <BrandText>Bizwayn</BrandText>
                 </NavbarBrand>
                 <NavMenu>
-                    <NavItem href="#blog-listing">About</NavItem>
-                    <NavItem href="/">Services</NavItem>
-                    <NavItem href="/contact">Contact</NavItem>
-                    <NavItem href="#">Blog</NavItem>
+                    <NavItem href="#blogs">Blogs</NavItem>
+                    <NavItem href="/about">About</NavItem>
+                    <NavItem href="/auth">Sing In</NavItem>
                 </NavMenu>
             </Navbar>
             <HeroSectionBlogs>
@@ -222,6 +214,7 @@ const BlogListing = () => {
                     container
                     spacing={4}
                     style={{ transform: xy.interpolate(trans1) }}
+                    id='blogs'
                 >
                     {blogPosts.map((post, index) => (
                         <Grid item xs={12} sm={6} md={4} key={post.id}>

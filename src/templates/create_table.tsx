@@ -30,7 +30,7 @@ const Wrapper = styled.div`
     color: ${({ theme }) => theme.colors.text};
     padding: 20px;
     height: 100vh;
-    width: 85%;
+    width: 100%;
     overflow: auto;
 
     @media (max-width: 768px) {

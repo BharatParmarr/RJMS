@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Typography, Container, Grid, List, ListItemText, AppBar, Toolbar, IconButton, Drawer, useMediaQuery, useTheme } from '@mui/material';
+import { Typography, Container, Grid, List, ListItemText, AppBar, Toolbar, IconButton, Drawer, useMediaQuery, useTheme, Link } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link as ScrollLink, Element } from 'react-scroll';
+import Logo from '../../assets/Static/logo.png';
 
 const PageContainer = styled.div`
   background-color: #f5f5f5;
@@ -13,7 +14,6 @@ const PageContainer = styled.div`
 `;
 
 const ContentContainer = styled(Container)`
-  padding-top: 80px;
   padding-bottom: 40px;
 `;
 
@@ -21,6 +21,7 @@ const BlogTitle = styled(motion.h1)`
   font-size: 2.5rem;
   color: #333;
   margin-bottom: 1rem;
+  margin-top: 2rem;
 `;
 
 const BlogMeta = styled.div`
@@ -56,7 +57,8 @@ const TableOfContents = styled(motion.div)`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   position: sticky;
-  top: 80px;
+  top: 10px;
+  margin-top: 1rem;
 `;
 
 const NavBar = styled(AppBar)`
@@ -100,7 +102,137 @@ const DrawerContent2 = styled.div`
     }
 `;
 
+const StyledHeaderTypography = styled(Typography)`
+    font-weight: bold;
+    font-size: 2rem;
+    font-family: 'Poppins', sans-serif;
+    margin-left: 1rem;
+    
 
+    @media (max-width: 768px) {
+        font-size: 1.8rem;
+    }
+`;
+
+const LinksHolder = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    float: right;
+    right: 30px;
+    position: absolute;
+`;
+
+const SingInButtonLink = styled(Link)`
+    color: #333;
+    margin: 0 1rem;
+    cursor: pointer;
+    
+    &:hover {
+        color: #007bff;
+    }
+`;
+
+
+const FooterContainer = styled.div`
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+`;
+
+const FooterContinueAnimation = styled.div`
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    background: linear-gradient(90deg, rgb(9 75 67) 0%, rgb(18 20 56) 100%);
+`;
+
+const FooterContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+`;
+
+const FooterText = styled.p`
+    font-size: 1rem;
+    color: #fff;
+    margin: 0;
+`;
+
+const FooterLinks = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+`;
+
+const FooterSocial = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+`;
+
+const FooterSocialIcon = styled(Link)`
+    color: #fff;
+    margin: 0 1rem;
+    cursor: pointer;
+    &:hover {
+        color: #007bff;
+    }
+`;
+
+const FooterLink = styled(Link)`
+    color: #fff;
+    margin: 0 1rem;
+    cursor: pointer;
+    &:hover {
+        color: #007bff;
+    }
+`;
+
+
+// footer component
+function Footer() {
+    return (
+        <FooterContainer>
+            <FooterContinueAnimation>
+                <FooterContent>
+                    <FooterText>© 2024 BizWayn. All rights reserved.</FooterText>
+                    <FooterLinks>
+                        <FooterLink href="/">Home</FooterLink>
+                        <FooterLink href="/blog">Blog</FooterLink>
+                        <FooterLink href="/about">About Us</FooterLink>
+                        <FooterLink href="/auth">Sign In</FooterLink>
+                    </FooterLinks>
+                    <FooterSocial>
+                        <FooterSocialIcon href="#">Facebook</FooterSocialIcon>
+                        <FooterSocialIcon href="#">Twitter</FooterSocialIcon>
+                        <FooterSocialIcon href="#">Instagram</FooterSocialIcon>
+                        <FooterSocialIcon href="#">LinkedIn</FooterSocialIcon>
+                    </FooterSocial>
+                </FooterContent>
+            </FooterContinueAnimation>
+        </FooterContainer>
+    );
+}
 
 const BlogPost_1 = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -162,17 +294,39 @@ const BlogPost_1 = () => {
 
     return (
         <PageContainer>
-            <NavBar position="fixed">
+            <NavBar position="relative">
                 <Toolbar>
                     {isMobile ? (
-                        <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-                            <MenuIcon />
-                            <Typography variant="h6" color="inherit">
-                                BizWayn
-                            </Typography>
+                        <IconButton edge="start" color="inherit" aria-label="menu" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }} >
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <img src={Logo} alt="BizWayn" style={{ width: '30px', height: '30px' }} />
+                                <StyledHeaderTypography variant="h2" color="inherit" >
+                                    Bizwayn
+                                </StyledHeaderTypography>
+                            </div>
+                            <MenuIcon onClick={toggleDrawer(true)} />
                         </IconButton>
                     ) : (
-                        renderNavLinks()
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <img src={Logo} alt="BizWayn" style={{ width: '30px', height: '30px' }} />
+                            <StyledHeaderTypography variant="h2" color="inherit" >
+                                Bizwayn
+                            </StyledHeaderTypography>
+                            <LinksHolder >
+                                <SingInButtonLink href="/">
+                                    Home
+                                </SingInButtonLink>
+                                <SingInButtonLink href="/blog">
+                                    Blog
+                                </SingInButtonLink>
+                                <SingInButtonLink href="/about">
+                                    About Us
+                                </SingInButtonLink>
+                                <SingInButtonLink href="/auth">
+                                    Sign In
+                                </SingInButtonLink>
+                            </LinksHolder>
+                        </div>
                     )}
                 </Toolbar>
             </NavBar>
@@ -199,7 +353,7 @@ const BlogPost_1 = () => {
                                     How Business Management Software Can Boost Small Business Growth
                                 </BlogTitle>
                                 <BlogMeta>
-                                    <time dateTime="2024-03-15">March 15, 2024</time> | By Sarah Johnson
+                                    <time dateTime="2024-09-25">Sep 25, 2024</time> | By Bharat Parmar
                                 </BlogMeta>
                                 <BlogImage src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Business Management Software" />
                             </header>
@@ -275,7 +429,7 @@ const BlogPost_1 = () => {
                                 </section>
                             </Element>
 
-                            <Element name="conclusion">
+                            <Element id="conclusion" name="conclusion">
                                 <section>
                                     <SectionTitle variants={fadeInUp} animate={controls}>
                                         Conclusion
@@ -288,7 +442,7 @@ const BlogPost_1 = () => {
                         </article>
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={4} style={{ display: isMobile ? 'none' : 'block' }}>
                         <TableOfContents
                             initial="hidden"
                             animate="visible"
@@ -302,10 +456,15 @@ const BlogPost_1 = () => {
                                     </NavLinkStyled>
                                 ))}
                             </List>
+                            {/* ads */}
+                            {/* <div style={{ width: '100%' }}>
+                                <img src={Logo} alt="BizWayn" style={{ width: '100%', height: '100%' }} />
+                            </div> */}
                         </TableOfContents>
                     </Grid>
                 </Grid>
             </ContentContainer>
+            <Footer />
         </PageContainer>
     );
 };

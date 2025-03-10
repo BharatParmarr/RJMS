@@ -505,7 +505,19 @@ export default function Create_restorant() {
             })
             .then(data => {
                 setRestorants(data)
-                console.log(data, 'data1214');
+                let posistion_obj: any = {
+                    'restorant': {}
+                }
+                data.staffs.forEach((business: any) => {
+                    posistion_obj.restorant[business.id] = 'staff'
+                })
+                data.manager_restorant.forEach((business: any) => {
+                    posistion_obj.restorant[business.id] = 'manager'
+                })
+                data.created_by.forEach((business: any) => {
+                    posistion_obj.restorant[business.id] = 'owner'
+                })
+                localStorage.setItem('position', JSON.stringify(posistion_obj));
             })
             .catch((error) => {
                 openNotification('error', 'Error', 'Error: ' + error.message)

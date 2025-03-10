@@ -13,7 +13,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from '../../templates/styles/theme';
 import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import WebIcon from '@mui/icons-material/Web';
+import ToggleColorMode from '../../templates/components/ToggleColorMode';
 
 const NavigationWrap = styled.div`
     display: flex;
@@ -22,7 +24,7 @@ const NavigationWrap = styled.div`
     flex-direction: column;
     width: 100%;
     flex: 1;
-    padding-top: 20px;
+    padding-top: 0px;
     background-color: ${({ theme }) => theme.colors.white};
 
     & > button {
@@ -38,7 +40,6 @@ const NavigationWrap = styled.div`
         justify-content: flex-start;
         text-align: left;
 
-        
     }
 `;
 
@@ -51,7 +52,6 @@ const TypographyDiv = styled(Typography)`
     background-color: ${({ theme }) => theme.colors.white};
     transition: all 0.3s;
     left: 0;
-
      @media (max-width: 768px) {
         position: fixed;
         top: 0;
@@ -59,9 +59,21 @@ const TypographyDiv = styled(Typography)`
         width: 100%;
         height: 100%;
         z-index: 100;
+        overflow-y: auto; 
+    }
+
+    // scrollbar
+    &::-webkit-scrollbar {
+        width: 7px;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: ${({ theme }) => theme.colors.white};
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.colors.gray}32;
+        border-radius: 10px;
     }
     `;
-
 
 
 const MenuburgerDiv = styled.div`
@@ -72,20 +84,47 @@ const MenuburgerDiv = styled.div`
     padding: 10px;
     background-color: ${({ theme }) => theme.colors.white};
     position: fixed;
-    top: 0;
-    right: 0;
+    top: 5px;
+    right: 6px;
     z-index: 1001;
-    border-radius: 0 0 0 5px;
+    border-radius: 5px;
+    gap: 3px;
+    box-shadow: 0 0 10px 0 ${({ theme }) => theme.colors.gray}32;
 
     @media (max-width: 768px) {
         display: flex;
     }
     `;
 
+const MenuburgerDiv2 = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    z-index: 1001;
+    border-radius: 0 0 0 5px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 5px;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
+    `;
+const Burgerlayer2 = styled.div`
+    width: 23px;
+    height: 3px;
+    border-bottom: 3px solid ${({ theme }) => theme.colors.text + 'aa'};
+    transition: all 0.3s;
+    border-radius: 10px;
+
+    &:nth-child(1) {
+    margin-top: 0;
+    }
+    `;
 const Burgerlayer = styled.div`
     width: 30px;
     height: 3px;
-    margin: 3px;
+    margin: 0px;
     border-bottom: 3px solid ${({ theme }) => theme.colors.text};
     transition: all 0.3s;
     border-radius: 10px;
@@ -101,7 +140,7 @@ const Maindiv = styled.div`
     overflow: auto;
 
     @media (max-width: 768px) {
-        width: 100%;
+        width: 100%; 
     }
 
     // scrollbar
@@ -131,8 +170,27 @@ const StyledButton = styled(Button)`
     }
 `;
 
+function BurgerButton(params: any) {
 
-
+    return (
+        <MenuburgerDiv2 onClick={() => {
+            params.setopen(!params.open);
+        }} >
+            <Burgerlayer2 style={{
+                transform: params.open ? 'rotate(-45deg)' : 'none',
+                position: params.open ? 'absolute' : 'relative',
+            }} ></Burgerlayer2>
+            <Burgerlayer2 style={{
+                transition: 'all 0.1s',
+                opacity: params.open ? '0' : '1',
+            }} ></Burgerlayer2>
+            <Burgerlayer2 style={{
+                transform: params.open ? 'rotate(45deg)' : 'none',
+                position: params.open ? 'absolute' : 'relative',
+            }} ></Burgerlayer2>
+        </MenuburgerDiv2>
+    );
+}
 
 function Menuburger(params: any) {
 
@@ -156,19 +214,54 @@ function Menuburger(params: any) {
     );
 }
 function Side_pannel_genral(params: any) {
-    const { theme } = useTheme();
+    const { theme, toggleTheme } = useTheme();
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const option = params.option;
     const type_page = params.type_page as keyof typeof links_obj;
 
+    // burger button
+    const [openBurger, setOpenBurger] = useState(() => {
+        console.log(window.innerWidth, 'window.innerWidth');
+        if (window.innerWidth <= 768) {
+            return true;
+        }
+        else {
+            let savedState = localStorage.getItem('openBurger');
+            console.log(savedState, 'savedState');
+            if (savedState === null) {
+                return true;
+            }
+            else {
+                console.log(savedState, 'savedState return');
+                return savedState === 'true';
+            }
+        }
+    });
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth <= 768) {
+                setOpenBurger(true);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Set initial state
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('openBurger', openBurger.toString());
+    }, [openBurger]);
 
 
     const { id, sub_id } = useParams();
     type links_obj_type = {
         [key: string]: {
             [key: string]: {
-                [key: string]: [string, JSX.Element];
+                [key: string]: [string, JSX.Element, boolean?];
             };
         };
     };
@@ -188,13 +281,17 @@ function Side_pannel_genral(params: any) {
                 'Order History': [`/order-history/${id}`, <HistoryIcon />],
             },
             'Staff': {
-                'Staff': [`/restorant/Manage/staff/restorant/${id}`, <GroupsRoundedIcon />],
-                'Attendance': [`/restorant/Manage/staff/attendance/restorant/${id}`, <BadgeRoundedIcon />],
+                'Staff': [`/restorant/Manage/staff/restorant/${id}`, <GroupsRoundedIcon />, true],
+                'Attendance': [`/restorant/Manage/staff/attendance/restorant/${id}`, <BadgeRoundedIcon />, true],
             },
             'Manage': {
                 'Products': [`/restorant/Manage/${id}`, <SettingsRoundedIcon />],
                 'Settings': [`/restorant/Settings/${id}`, <ManageAccountsRoundedIcon />],
+            },
+            'Ai Chat': {
+                'BizMind': [`/restorant/Ai_chat/${id}`, <AutoAwesomeIcon />, true],
             }
+
         },
         'hospital': {
             'Web Page': {
@@ -270,14 +367,18 @@ function Side_pannel_genral(params: any) {
 
 
     return (
-        <Maindiv>
+        <Maindiv style={{
+            width: open ? '100%' : openBurger ? '18%' : '3.8%',
+            overflowX: 'hidden',
+            transition: 'all 0.3s',
+        }}>
             <Menuburger open={open} setopen={setOpen} />
             <TypographyDiv variant="h1"
                 style={{
                     display: 'flex',
                     left: open ? '0%' : `${window.innerWidth > 768 ? '-15.2%' : '-100%'}`,
-                }}
-            >
+                    transition: 'all 0.3s',
+                }} >
                 <div style={{
                     display: 'flex',
                     width: '100%',
@@ -295,7 +396,16 @@ function Side_pannel_genral(params: any) {
                         textTransform: 'capitalize',
                         padding: '10px',
                         letterSpacing: '0.5px',
-                    }}>Bizwayn</span>
+                    }}>{openBurger ? 'Bizwayn' : null}
+                        <div style={{
+                            position: 'relative',
+                            display: 'inline',
+                            float: openBurger ? 'right' : 'none',
+                            borderRadius: '5px',
+                        }}>
+                            <BurgerButton open={openBurger} setopen={setOpenBurger} />
+                        </div>
+                    </span>
                     <NavigationWrap >
                         {Object.keys(links_obj[type_page]).map((key, _index) => (
                             <>
@@ -311,16 +421,39 @@ function Side_pannel_genral(params: any) {
                                         borderRadius: '5px',
                                         paddingLeft: '10px',
                                         transition: 'all 0.2s',
+                                        // border: links_obj[type_page][key][key2][2] ? '1px solid #FFD70088' : 'none',
                                     }} key={index2} onClick={() => navigate(links_obj[type_page][key][key2][0])} startIcon={links_obj[type_page][key][key2][1]}
                                     >
-                                        {key2}
+                                        {links_obj[type_page][key][key2][2] ? <span style={{
+                                            position: 'absolute',
+                                            right: '10px',
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            color: '#000',
+                                            fontSize: '0.6rem',
+                                            fontWeight: 'bold',
+                                            textTransform: 'uppercase',
+                                            padding: '2px 5px',
+                                            backgroundColor: '#FFD700',
+                                            borderRadius: '5px',
+                                        }}>Pro</span> : null}
+                                        {openBurger ? key2 : null}
                                     </StyledButton>
                                 ))}
                             </>
                         ))}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 'auto',
+                        }}>
+                            <ToggleColorMode mode={theme.colors.white == '#fff' ? 'light' : 'dark'} toggleColorMode={toggleTheme} />
+                        </div>
                     </NavigationWrap>
                 </div>
-            </TypographyDiv></Maindiv>
+            </TypographyDiv>
+        </Maindiv>
     )
 }
 

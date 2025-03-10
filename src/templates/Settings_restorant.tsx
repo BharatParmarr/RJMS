@@ -24,7 +24,7 @@ const StyledDiv = styled.div`
     padding: 20px;
     background-color: ${({ theme }) => theme.colors.background};
     height: 100vh;
-    width: 85%;
+    width: 100%;
     overflow: auto;
     display: flex;
     flex-direction: column;

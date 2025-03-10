@@ -64,6 +64,7 @@ import AboutUsSection from "./templates/Pages";
 import BlogPost_1 from "./templates/Post/How Business Management Software Can Boost Small Business Growth";
 import Waitinglist from "./templates/Waitinglist";
 import Business_create_form from "./Salon/Components/Business_create_form";
+import Ai_chat from "./templates/Ai_chat";
 
 function Main() {
   return (
@@ -131,6 +132,8 @@ function Main() {
             <Route path="/Hospital/:sub_id" element={<HomePage_Landingpage />} />
             <Route path="/Education/create" element={<CreateStudent />} />
             <Route path="/Education/*" element={<Education_App />} />
+            {/* Ai chat */}
+            <Route path="/restorant/Ai_chat/:id" element={<Ai_chat />} />
             {/* salon */}
             <Route path="/Salon/create" element={<Business_create_form initialValues={{}} />} />
             {/* leagal */}
